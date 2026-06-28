@@ -552,39 +552,199 @@ __turbopack_context__.s([
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/framer-motion/dist/es/render/components/motion/proxy.mjs [app-ssr] (ecmascript)");
-"use client";
+'use client';
 ;
 ;
 ;
+function FAQItem({ item, index, isOpen, onToggle }) {
+    const [tilt, setTilt] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
+        rx: 0,
+        ry: 0
+    });
+    const [glow, setGlow] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
+        x: '50%',
+        y: '50%'
+    });
+    const [hovering, setHovering] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const handleMouseMove = (e)=>{
+        const rect = e.currentTarget.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        setTilt({
+            rx: -py * 5,
+            ry: px * 5
+        });
+        setGlow({
+            x: `${e.clientX - rect.left}px`,
+            y: `${e.clientY - rect.top}px`
+        });
+    };
+    const handleMouseLeave = ()=>{
+        setHovering(false);
+        setTilt({
+            rx: 0,
+            ry: 0
+        });
+    };
+    const panelId = `faq-panel-${item.id}`;
+    const buttonId = `faq-trigger-${item.id}`;
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
+        initial: {
+            opacity: 0,
+            y: 22
+        },
+        whileInView: {
+            opacity: 1,
+            y: 0
+        },
+        viewport: {
+            once: true,
+            amount: 0.15
+        },
+        transition: {
+            duration: 0.6,
+            delay: index * 0.08,
+            ease: 'easeOut'
+        },
+        onMouseEnter: ()=>setHovering(true),
+        onMouseMove: handleMouseMove,
+        onMouseLeave: handleMouseLeave,
+        style: {
+            transform: `perspective(800px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
+            transition: hovering ? 'border-color .3s ease' : 'transform .5s ease, border-color .3s ease'
+        },
+        className: "relative overflow-hidden rounded-sm border border-[#eaeaea]/[0.08] bg-[#121212]/70 backdrop-blur-sm",
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "pointer-events-none absolute inset-0 transition-opacity duration-300",
+                style: {
+                    opacity: hovering ? 1 : 0,
+                    background: `radial-gradient(220px circle at ${glow.x} ${glow.y}, rgba(234,234,234,0.10), transparent 70%)`
+                }
+            }, void 0, false, {
+                fileName: "[project]/components/FAQ.jsx",
+                lineNumber: 44,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                type: "button",
+                id: buttonId,
+                "aria-controls": panelId,
+                "aria-expanded": isOpen,
+                onClick: onToggle,
+                className: "relative z-10 flex w-full items-center justify-between gap-6 px-6 py-5 text-left",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                        className: "text-[0.92rem] text-[#eaeaea] pr-4",
+                        children: item.question
+                    }, void 0, false, {
+                        fileName: "[project]/components/FAQ.jsx",
+                        lineNumber: 60,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].span, {
+                        animate: {
+                            rotate: isOpen ? 45 : 0
+                        },
+                        transition: {
+                            duration: 0.3,
+                            ease: 'easeOut'
+                        },
+                        className: "shrink-0 text-[#acaba9]",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                            width: "18",
+                            height: "18",
+                            viewBox: "0 0 24 24",
+                            fill: "none",
+                            stroke: "currentColor",
+                            strokeWidth: "1.5",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                    d: "M12 5v14",
+                                    strokeLinecap: "round"
+                                }, void 0, false, {
+                                    fileName: "[project]/components/FAQ.jsx",
+                                    lineNumber: 67,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                    d: "M5 12h14",
+                                    strokeLinecap: "round"
+                                }, void 0, false, {
+                                    fileName: "[project]/components/FAQ.jsx",
+                                    lineNumber: 68,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/components/FAQ.jsx",
+                            lineNumber: 66,
+                            columnNumber: 11
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/components/FAQ.jsx",
+                        lineNumber: 61,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/components/FAQ.jsx",
+                lineNumber: 52,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
+                id: panelId,
+                role: "region",
+                "aria-labelledby": buttonId,
+                initial: false,
+                animate: {
+                    height: isOpen ? 'auto' : 0,
+                    opacity: isOpen ? 1 : 0
+                },
+                transition: {
+                    duration: 0.35,
+                    ease: 'easeInOut'
+                },
+                className: "relative z-10 overflow-hidden",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                    className: "px-6 pb-5 text-[0.85rem] leading-relaxed text-[#acaba9]",
+                    children: item.answer
+                }, void 0, false, {
+                    fileName: "[project]/components/FAQ.jsx",
+                    lineNumber: 82,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/components/FAQ.jsx",
+                lineNumber: 73,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/components/FAQ.jsx",
+        lineNumber: 28,
+        columnNumber: 5
+    }, this);
+}
 function FAQ({ faqs }) {
     const [openId, setOpenId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(-1);
     const toggle = (id)=>setOpenId((prev)=>prev === id ? -1 : id);
-    const setGlow = (e)=>{
-        const el = e.currentTarget;
-        const rect = el.getBoundingClientRect();
-        el.style.setProperty("--faq-x", `${e.clientX - rect.left}px`);
-        el.style.setProperty("--faq-y", `${e.clientY - rect.top}px`);
-    };
-    const clearGlow = (e)=>{
-        e.currentTarget.style.removeProperty("--faq-x");
-        e.currentTarget.style.removeProperty("--faq-y");
-    };
     // Schema.org FAQPage — ajuda o Google a exibir rich snippets de pergunta/resposta
     const jsonLd = {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
         mainEntity: faqs.map((f)=>({
-                "@type": "Question",
+                '@type': 'Question',
                 name: f.question,
                 acceptedAnswer: {
-                    "@type": "Answer",
+                    '@type': 'Answer',
                     text: f.answer
                 }
             }))
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
         id: "faq",
-        className: "relative w-full bg-[#121212] px-6 sm:px-10 py-24",
+        className: "relative w-full overflow-hidden bg-[#2c2c2c] px-6 sm:px-10 py-24",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("script", {
                 type: "application/ld+json",
@@ -593,18 +753,107 @@ function FAQ({ faqs }) {
                 }
             }, void 0, false, {
                 fileName: "[project]/components/FAQ.jsx",
-                lineNumber: 36,
+                lineNumber: 106,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
+                className: "pointer-events-none absolute -top-44 -left-28 w-[480px] h-[480px] rounded-full",
+                style: {
+                    background: 'rgba(172,171,169,0.14)',
+                    filter: 'blur(70px)'
+                },
+                animate: {
+                    x: [
+                        0,
+                        60,
+                        0
+                    ],
+                    y: [
+                        0,
+                        40,
+                        0
+                    ]
+                },
+                transition: {
+                    duration: 22,
+                    repeat: Infinity,
+                    ease: 'easeInOut'
+                }
+            }, void 0, false, {
+                fileName: "[project]/components/FAQ.jsx",
+                lineNumber: 112,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
+                className: "pointer-events-none absolute -bottom-40 -right-24 w-[420px] h-[420px] rounded-full",
+                style: {
+                    background: 'rgba(234,234,234,0.05)',
+                    filter: 'blur(70px)'
+                },
+                animate: {
+                    x: [
+                        0,
+                        -50,
+                        0
+                    ],
+                    y: [
+                        0,
+                        -30,
+                        0
+                    ]
+                },
+                transition: {
+                    duration: 26,
+                    repeat: Infinity,
+                    ease: 'easeInOut'
+                }
+            }, void 0, false, {
+                fileName: "[project]/components/FAQ.jsx",
+                lineNumber: 118,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
+                className: "pointer-events-none absolute top-[40%] left-[60%] w-[300px] h-[300px] rounded-full",
+                style: {
+                    background: 'rgba(117,112,111,0.18)',
+                    filter: 'blur(70px)'
+                },
+                animate: {
+                    x: [
+                        0,
+                        -40,
+                        0
+                    ],
+                    y: [
+                        0,
+                        30,
+                        0
+                    ],
+                    scale: [
+                        1,
+                        1.15,
+                        1
+                    ]
+                },
+                transition: {
+                    duration: 18,
+                    repeat: Infinity,
+                    ease: 'easeInOut'
+                }
+            }, void 0, false, {
+                fileName: "[project]/components/FAQ.jsx",
+                lineNumber: 124,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "mx-auto max-w-3xl",
+                className: "relative z-10 mx-auto max-w-3xl",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        className: "font-archivo text-[0.7rem] tracking-[0.3em] uppercase text-[#75706f]",
+                        className: "font-archivo text-[0.7rem] tracking-[0.3em] uppercase text-[#acaba9]",
                         children: "FAQ"
                     }, void 0, false, {
                         fileName: "[project]/components/FAQ.jsx",
-                        lineNumber: 39,
+                        lineNumber: 132,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -612,145 +861,36 @@ function FAQ({ faqs }) {
                         children: "Perguntas frequentes"
                     }, void 0, false, {
                         fileName: "[project]/components/FAQ.jsx",
-                        lineNumber: 40,
+                        lineNumber: 133,
                         columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
-                        className: "mt-10 space-y-3",
-                        children: faqs.map((item)=>{
-                            const open = openId === item.id;
-                            const panelId = `faq-panel-${item.id}`;
-                            const buttonId = `faq-trigger-${item.id}`;
-                            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
-                                onMouseMove: setGlow,
-                                onMouseLeave: clearGlow,
-                                className: "group relative overflow-hidden rounded-sm border border-[#75706f]/20 bg-[#2c2c2c]",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-                                        style: {
-                                            background: "radial-gradient(220px circle at var(--faq-x, 50%) var(--faq-y, 50%), rgba(234,234,234,0.06), transparent 70%)"
-                                        }
-                                    }, void 0, false, {
-                                        fileName: "[project]/components/FAQ.jsx",
-                                        lineNumber: 54,
-                                        columnNumber: 17
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                        type: "button",
-                                        id: buttonId,
-                                        "aria-controls": panelId,
-                                        "aria-expanded": open,
-                                        onClick: ()=>toggle(item.id),
-                                        className: "relative flex w-full items-center justify-between gap-6 px-6 py-5 text-left",
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: "text-[0.95rem] text-[#eaeaea] pr-4",
-                                                children: item.question
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/FAQ.jsx",
-                                                lineNumber: 69,
-                                                columnNumber: 19
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].span, {
-                                                animate: {
-                                                    rotate: open ? 45 : 0
-                                                },
-                                                transition: {
-                                                    duration: 0.3,
-                                                    ease: "easeOut"
-                                                },
-                                                className: "shrink-0 text-[#acaba9]",
-                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-                                                    width: "18",
-                                                    height: "18",
-                                                    viewBox: "0 0 24 24",
-                                                    fill: "none",
-                                                    stroke: "currentColor",
-                                                    strokeWidth: "1.5",
-                                                    children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                                                            d: "M12 5v14",
-                                                            strokeLinecap: "round"
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/components/FAQ.jsx",
-                                                            lineNumber: 75,
-                                                            columnNumber: 23
-                                                        }, this),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                                                            d: "M5 12h14",
-                                                            strokeLinecap: "round"
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/components/FAQ.jsx",
-                                                            lineNumber: 76,
-                                                            columnNumber: 23
-                                                        }, this)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/components/FAQ.jsx",
-                                                    lineNumber: 74,
-                                                    columnNumber: 21
-                                                }, this)
-                                            }, void 0, false, {
-                                                fileName: "[project]/components/FAQ.jsx",
-                                                lineNumber: 70,
-                                                columnNumber: 19
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/components/FAQ.jsx",
-                                        lineNumber: 62,
-                                        columnNumber: 17
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].div, {
-                                        id: panelId,
-                                        role: "region",
-                                        "aria-labelledby": buttonId,
-                                        initial: false,
-                                        animate: {
-                                            height: open ? "auto" : 0,
-                                            opacity: open ? 1 : 0
-                                        },
-                                        transition: {
-                                            duration: 0.35,
-                                            ease: "easeInOut"
-                                        },
-                                        className: "overflow-hidden",
-                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                            className: "px-6 pb-5 text-[0.875rem] leading-relaxed text-[#acaba9]",
-                                            children: item.answer
-                                        }, void 0, false, {
-                                            fileName: "[project]/components/FAQ.jsx",
-                                            lineNumber: 89,
-                                            columnNumber: 19
-                                        }, this)
-                                    }, void 0, false, {
-                                        fileName: "[project]/components/FAQ.jsx",
-                                        lineNumber: 81,
-                                        columnNumber: 17
-                                    }, this)
-                                ]
-                            }, item.id, true, {
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "mt-10 flex flex-col gap-3",
+                        children: faqs.map((item, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(FAQItem, {
+                                item: item,
+                                index: i,
+                                isOpen: openId === item.id,
+                                onToggle: ()=>toggle(item.id)
+                            }, item.id, false, {
                                 fileName: "[project]/components/FAQ.jsx",
-                                lineNumber: 49,
-                                columnNumber: 15
-                            }, this);
-                        })
+                                lineNumber: 139,
+                                columnNumber: 13
+                            }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/FAQ.jsx",
-                        lineNumber: 42,
+                        lineNumber: 137,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/FAQ.jsx",
-                lineNumber: 38,
+                lineNumber: 131,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/FAQ.jsx",
-        lineNumber: 35,
+        lineNumber: 105,
         columnNumber: 5
     }, this);
 }
