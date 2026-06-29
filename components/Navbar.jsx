@@ -1,39 +1,110 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
+const NAV_LINKS = [
+  { label: 'Sobre', href: '#sobre' },
+  { label: 'Depoimentos', href: '#depoimentos' },
+  { label: 'FAQ', href: '#faq' },
+];
+
+/* ─── Variants ────────────────────────────────────────────────────────── */
+const navVariants = {
+  hidden: { opacity: 0, y: -10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 260,
+      damping: 26,
+      staggerChildren: 0.07,
+      delayChildren: 0.08,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: -8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 260,
+      damping: 26,
+    },
+  },
+};
+
+/* ─── Component ───────────────────────────────────────────────────────── */
 export default function Navbar() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <motion.nav
-      initial={{ opacity: 0, y: -12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="fixed top-0 left-0 w-full z-50 flex items-center justify-end gap-10 px-12 py-6 bg-transparent sm:gap-10"
+      variants={navVariants}
+      initial="hidden"
+      animate="visible"
+      className={[
+        'fixed top-0 left-0 w-full z-50',
+        'flex items-center justify-between',
+        'px-8 sm:px-12 py-5',
+        'transition-[background,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
+        isScrolled
+          ? 'backdrop-blur-md bg-[#121212]/65 border-b border-white/5'
+          : 'bg-transparent border-b border-transparent',
+      ].join(' ')}
     >
-      <a
-        href="#depoimentos"
-        className="hidden sm:inline text-[0.74rem] tracking-[0.12em] uppercase text-[#acaba9] hover:text-[#eaeaea] transition-colors"
+      {/* Brand */}
+      <motion.a
+        variants={itemVariants}
+        href="#"
+        className="text-sm font-light tracking-widest uppercase text-[#acaba9] hover:text-[#eaeaea] transition-colors duration-300"
       >
-        Depoimentos
-      </a>
-      <a
-        href="#faq"
-        className="hidden sm:inline text-[0.74rem] tracking-[0.12em] uppercase text-[#acaba9] hover:text-[#eaeaea] transition-colors"
+        Montabox
+      </motion.a>
+
+      {/* Nav links */}
+      <motion.div
+        variants={navVariants}
+        className="hidden sm:flex items-center gap-9"
       >
-        FAQ
-      </a>
-      <a
+        {NAV_LINKS.map(({ label, href }) => (
+          <motion.a
+            key={href}
+            variants={itemVariants}
+            href={href}
+            className="text-[0.72rem] font-light tracking-widest uppercase text-[#acaba9] hover:text-[#eaeaea] transition-colors duration-300"
+          >
+            {label}
+          </motion.a>
+        ))}
+      </motion.div>
+
+      {/* CTA */}
+      <motion.a
+        variants={itemVariants}
         href="#contato"
-        className="hidden sm:inline text-[0.74rem] tracking-[0.12em] uppercase text-[#acaba9] hover:text-[#eaeaea] transition-colors"
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        className={[
+          'text-[0.72rem] font-light tracking-widest uppercase',
+          'border border-[#acaba9]/50 text-[#eaeaea]',
+          'px-5 py-2',
+          'hover:bg-[#eaeaea] hover:text-[#121212] hover:border-[#eaeaea]',
+          'transition-colors duration-300',
+        ].join(' ')}
       >
-        Contato
-      </a>
-      <a
-        href="#contato"
-        className="text-[0.74rem] tracking-[0.1em] uppercase border border-[#acaba9] text-[#eaeaea] px-5 py-2 rounded-sm hover:bg-[#eaeaea] hover:text-[#121212] hover:border-[#eaeaea] transition-colors"
-      >
-        Solicitar Orçamento
-      </a>
+        Orçamento
+      </motion.a>
     </motion.nav>
   );
 }
