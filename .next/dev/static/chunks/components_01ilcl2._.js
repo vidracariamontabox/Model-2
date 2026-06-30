@@ -28,7 +28,7 @@ const NAV_LINKS = [
         href: '#faq'
     }
 ];
-const containerVariants = {
+/* ─── Variants ────────────────────────────────────────────────────────── */ const navVariants = {
     hidden: {
         opacity: 0,
         y: -10
@@ -37,15 +37,11 @@ const containerVariants = {
         opacity: 1,
         y: 0,
         transition: {
-            duration: 0.55,
-            ease: [
-                0.22,
-                1,
-                0.36,
-                1
-            ],
+            type: 'spring',
+            stiffness: 260,
+            damping: 26,
             staggerChildren: 0.07,
-            delayChildren: 0.1
+            delayChildren: 0.08
         }
     }
 };
@@ -58,13 +54,9 @@ const itemVariants = {
         opacity: 1,
         y: 0,
         transition: {
-            duration: 0.4,
-            ease: [
-                0.22,
-                1,
-                0.36,
-                1
-            ]
+            type: 'spring',
+            stiffness: 260,
+            damping: 26
         }
     }
 };
@@ -85,15 +77,15 @@ function Navbar() {
         }
     }["Navbar.useEffect"], []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].nav, {
-        variants: containerVariants,
+        variants: navVariants,
         initial: "hidden",
         animate: "visible",
         className: [
             'fixed top-0 left-0 w-full z-50',
             'flex items-center justify-between',
             'px-8 sm:px-12 py-5',
-            'transition-all duration-500',
-            isScrolled ? 'backdrop-blur-md bg-[#121212]/60 border-b border-white/5' : 'bg-transparent border-b border-transparent'
+            'transition-[background,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
+            isScrolled ? 'backdrop-blur-md bg-[#121212]/65 border-b border-white/5' : 'bg-transparent border-b border-transparent'
         ].join(' '),
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].a, {
@@ -103,11 +95,11 @@ function Navbar() {
                 children: "Montabox"
             }, void 0, false, {
                 fileName: "[project]/components/Navbar.jsx",
-                lineNumber: 60,
+                lineNumber: 67,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
-                variants: containerVariants,
+                variants: navVariants,
                 className: "hidden sm:flex items-center gap-9",
                 children: NAV_LINKS.map(({ label, href })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].a, {
                         variants: itemVariants,
@@ -116,34 +108,40 @@ function Navbar() {
                         children: label
                     }, href, false, {
                         fileName: "[project]/components/Navbar.jsx",
-                        lineNumber: 74,
+                        lineNumber: 81,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/components/Navbar.jsx",
-                lineNumber: 69,
+                lineNumber: 76,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].a, {
                 variants: itemVariants,
                 href: "#contato",
+                whileHover: {
+                    scale: 1.02
+                },
+                whileTap: {
+                    scale: 0.98
+                },
                 className: [
                     'text-[0.72rem] font-light tracking-widest uppercase',
-                    'border border-[#acaba9]/60 text-[#eaeaea]',
+                    'border border-[#acaba9]/50 text-[#eaeaea]',
                     'px-5 py-2',
                     'hover:bg-[#eaeaea] hover:text-[#121212] hover:border-[#eaeaea]',
-                    'transition-all duration-300'
+                    'transition-colors duration-300'
                 ].join(' '),
                 children: "Orçamento"
             }, void 0, false, {
                 fileName: "[project]/components/Navbar.jsx",
-                lineNumber: 86,
+                lineNumber: 93,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/Navbar.jsx",
-        lineNumber: 45,
+        lineNumber: 52,
         columnNumber: 5
     }, this);
 }
@@ -266,14 +264,8 @@ var _s = __turbopack_context__.k.signature();
 ;
 /* ─── Copy ─────────────────────────────────────────────────────────── */ const TITLE_LINE_1 = 'Vidro com';
 const TITLE_LINE_2 = 'precisão.';
-const BODY_LEFT = `Somos uma vidraçaria especializada em projetos personalizados de vidro
-e alumínio para ambientes residenciais e comerciais. Com mais de uma
-década de experiência no setor, entregamos soluções que unem estética
-refinada e engenharia de alta performance.`;
-const BODY_RIGHT = `Cada projeto é desenvolvido sob medida, do briefing ao acabamento final,
-com materiais selecionados e instalação feita por nossa própria equipe.
-Acreditamos que vidro não é apenas material — é luz, amplitude e presença
-arquitetônica com personalidade.`;
+const BODY_LEFT = `Somos uma vidraçaria especializada em projetos personalizados de vidro e alumínio para ambientes residenciais e comerciais. Com mais de uma década de experiência no setor, entregamos soluções que unem estética refinada e engenharia de alta performance.`;
+const BODY_RIGHT = `Cada projeto é desenvolvido sob medida, do briefing ao acabamento final, com materiais selecionados e instalação feita por nossa própria equipe. Acreditamos que vidro não é apenas material — é luz, amplitude e presença arquitetônica com personalidade.`;
 const STATS = [
     {
         value: '10+',
@@ -292,27 +284,27 @@ const STATS = [
     hidden: {},
     visible: {
         transition: {
-            staggerChildren: 0.12,
-            delayChildren: 0.05
+            staggerChildren: 0.09,
+            delayChildren: 0.04
         }
     }
 };
-const charVariants = {
+/* stagger por caractere: spring preciso, sem bounce */ const charVariants = {
     hidden: {
         opacity: 0,
-        y: 14
+        y: 16
     },
     visible: {
         opacity: 1,
         y: 0,
         transition: {
             type: 'spring',
-            stiffness: 260,
-            damping: 26
+            stiffness: 280,
+            damping: 28
         }
     }
 };
-const fadeUp = {
+/* fade-up genérico com delay customizável */ const fadeUp = {
     hidden: {
         opacity: 0,
         y: 20
@@ -322,18 +314,26 @@ const fadeUp = {
             y: 0,
             transition: {
                 type: 'spring',
-                stiffness: 200,
-                damping: 24,
+                stiffness: 220,
+                damping: 26,
                 delay
             }
         })
 };
-/* ─── Helpers ───────────────────────────────────────────────────────── */ function AnimatedTitle({ line1, line2 }) {
+const statVariants = {
+    hidden: {},
+    visible: {
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
+/* ─── Animated title (letter-by-letter) ───────────────────────────── */ function AnimatedTitle({ line1, line2 }) {
     const chars1 = line1.split('');
     const chars2 = line2.split('');
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
         "aria-label": `${line1} ${line2}`,
-        className: "text-[clamp(3rem,7vw,6rem)] font-black tracking-tight leading-[1.02] text-[#eaeaea] overflow-hidden",
+        className: "text-[clamp(3rem,7vw,6rem)] font-black tracking-tight leading-[1.02] text-[#eaeaea]",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                 className: "block overflow-hidden",
@@ -346,16 +346,16 @@ const fadeUp = {
                         children: ch
                     }, `l1-${i}`, false, {
                         fileName: "[project]/components/About.jsx",
-                        lineNumber: 70,
+                        lineNumber: 80,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/components/About.jsx",
-                lineNumber: 68,
+                lineNumber: 78,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                className: "block overflow-hidden pl-[0.12em]",
+                className: "block overflow-hidden pl-[0.08em]",
                 children: chars2.map((ch, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].span, {
                         variants: charVariants,
                         className: "inline-block",
@@ -365,18 +365,18 @@ const fadeUp = {
                         children: ch
                     }, `l2-${i}`, false, {
                         fileName: "[project]/components/About.jsx",
-                        lineNumber: 83,
+                        lineNumber: 94,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/components/About.jsx",
-                lineNumber: 81,
+                lineNumber: 92,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/About.jsx",
-        lineNumber: 63,
+        lineNumber: 73,
         columnNumber: 5
     }, this);
 }
@@ -391,10 +391,7 @@ function About() {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
         id: "sobre",
         ref: ref,
-        className: [
-            'relative bg-[#121212] overflow-hidden',
-            'py-28 sm:py-36 px-8 sm:px-12 lg:px-20'
-        ].join(' '),
+        className: "relative bg-[#121212] overflow-hidden py-28 sm:py-36 px-8 sm:px-12 lg:px-20",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 "aria-hidden": true,
@@ -404,7 +401,7 @@ function About() {
                 }
             }, void 0, false, {
                 fileName: "[project]/components/About.jsx",
-                lineNumber: 112,
+                lineNumber: 120,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -420,7 +417,7 @@ function About() {
                         children: "Quem somos"
                     }, void 0, false, {
                         fileName: "[project]/components/About.jsx",
-                        lineNumber: 128,
+                        lineNumber: 136,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(AnimatedTitle, {
@@ -428,7 +425,7 @@ function About() {
                         line2: TITLE_LINE_2
                     }, void 0, false, {
                         fileName: "[project]/components/About.jsx",
-                        lineNumber: 137,
+                        lineNumber: 145,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -437,7 +434,7 @@ function About() {
                         className: "mt-12 mb-12 h-px bg-[#75706f]/20 w-full"
                     }, void 0, false, {
                         fileName: "[project]/components/About.jsx",
-                        lineNumber: 140,
+                        lineNumber: 148,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -445,45 +442,45 @@ function About() {
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].p, {
                                 variants: fadeUp,
-                                custom: 0.26,
-                                className: "font-light text-[0.95rem] leading-[1.85] text-[#acaba9] whitespace-pre-line",
+                                custom: 0.28,
+                                className: "font-light text-[0.95rem] leading-[1.85] text-[#acaba9]",
                                 children: BODY_LEFT
                             }, void 0, false, {
                                 fileName: "[project]/components/About.jsx",
-                                lineNumber: 148,
+                                lineNumber: 156,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].p, {
                                 variants: fadeUp,
-                                custom: 0.36,
-                                className: "font-light text-[0.95rem] leading-[1.85] text-[#acaba9] whitespace-pre-line",
+                                custom: 0.38,
+                                className: "font-light text-[0.95rem] leading-[1.85] text-[#acaba9]",
                                 children: BODY_RIGHT
                             }, void 0, false, {
                                 fileName: "[project]/components/About.jsx",
-                                lineNumber: 155,
+                                lineNumber: 163,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/About.jsx",
-                        lineNumber: 147,
+                        lineNumber: 155,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                         variants: fadeUp,
-                        custom: 0.44,
+                        custom: 0.46,
                         className: "mt-14 mb-14 h-px bg-[#75706f]/20 w-full"
                     }, void 0, false, {
                         fileName: "[project]/components/About.jsx",
-                        lineNumber: 165,
+                        lineNumber: 173,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
-                        variants: sectionVariants,
+                        variants: statVariants,
                         className: "grid grid-cols-3 gap-4",
                         children: STATS.map(({ value, label }, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                                 variants: fadeUp,
-                                custom: 0.5 + i * 0.1,
+                                custom: 0.52 + i * 0.1,
                                 className: "flex flex-col gap-1",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -491,7 +488,7 @@ function About() {
                                         children: value
                                     }, void 0, false, {
                                         fileName: "[project]/components/About.jsx",
-                                        lineNumber: 183,
+                                        lineNumber: 191,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -499,30 +496,30 @@ function About() {
                                         children: label
                                     }, void 0, false, {
                                         fileName: "[project]/components/About.jsx",
-                                        lineNumber: 186,
+                                        lineNumber: 194,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, label, true, {
                                 fileName: "[project]/components/About.jsx",
-                                lineNumber: 177,
+                                lineNumber: 185,
                                 columnNumber: 13
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/About.jsx",
-                        lineNumber: 172,
+                        lineNumber: 180,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/About.jsx",
-                lineNumber: 121,
+                lineNumber: 129,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/About.jsx",
-        lineNumber: 103,
+        lineNumber: 114,
         columnNumber: 5
     }, this);
 }
