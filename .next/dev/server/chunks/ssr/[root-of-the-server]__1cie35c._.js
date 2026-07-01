@@ -161,7 +161,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Navbar$2e$jsx_
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Hero$2e$jsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/Hero.jsx [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$About$2e$jsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/About.jsx [app-rsc] (ecmascript)");
 (()=>{
-    const e = new Error("Cannot find module '@/components/Testimonials/Testimonials'");
+    const e = new Error("Cannot find module '../../components/Testimonials/Testimonials'");
     e.code = 'MODULE_NOT_FOUND';
     throw e;
 })();
@@ -196,7 +196,6 @@ function Page() {
                 lineNumber: 13,
                 columnNumber: 7
             }, this),
-            "           ",
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$FAQ$2e$jsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/app/page.jsx",
                 lineNumber: 14,
