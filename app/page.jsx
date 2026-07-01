@@ -1,7 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
-import Testimonials from '../../components/Testimonials/Testimonials';
+import Testimonials from '@/components/Testimonials/Testimonials.jsx';
 import FAQ from '@/components/FAQ';
 
 export default function Page() {
