@@ -10,8 +10,8 @@ export default function Page() {
       <Navbar />
       <Hero />
       <About />
-      {/* <Testimonials /> */}
-      {/* <FAQ /> */}
+      <Testimonials />
+      <FAQ />
     </main>
   );
 }

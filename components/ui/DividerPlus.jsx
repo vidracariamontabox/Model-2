@@ -1,13 +1,8 @@
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import "./testimonials-ui.css";
+"use client";
+import {useEffect, useRef} from "react";
+import {gsap} from "gsap";
 
-export default function DividerPlus({
-  customClass = "",
-  lineClass = "",
-  plusClass = "",
-  iconColor = "#272727",
-}) {
+export default function DividerPlus({customClass = "", lineClass = "", plusClass = "", iconColor = "#272727"}) {
   const rootRef = useRef(null);
   const lineRef = useRef(null);
   const plusRef = useRef(null);
@@ -18,8 +13,8 @@ export default function DividerPlus({
     const plus = plusRef.current;
     if (!root || !line || !plus) return;
 
-    gsap.set(line, { scaleX: 0, transformOrigin: "left center" });
-    gsap.set(plus, { autoAlpha: 0, scale: 0.8 });
+    gsap.set(line, {scaleX: 0, transformOrigin: "left center"});
+    gsap.set(plus, {autoAlpha: 0, scale: 0.8});
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -41,7 +36,7 @@ export default function DividerPlus({
           });
         });
       },
-      { threshold: 0.2 }
+      {threshold: 0.2},
     );
 
     observer.observe(root);
@@ -59,8 +54,7 @@ export default function DividerPlus({
         viewBox="0 0 12 12"
         fill="none"
         className={`plus ${plusClass}`.trim()}
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <line x1="6" y1="0" x2="6" y2="12" stroke={iconColor} />
         <line x1="12" y1="6" x2="0" y2="6" stroke={iconColor} />
       </svg>

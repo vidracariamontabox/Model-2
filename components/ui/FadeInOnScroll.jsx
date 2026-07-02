@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import "./testimonials-ui.css";
+"use client";
+import {useEffect, useRef} from "react";
+import {gsap} from "gsap";
 
 export default function FadeInOnScroll({
   children,
@@ -20,14 +20,14 @@ export default function FadeInOnScroll({
     const animateIn = () => {
       gsap.fromTo(
         node,
-        { autoAlpha: 0, y },
+        {autoAlpha: 0, y},
         {
           autoAlpha: 1,
           y: 0,
           delay,
           duration,
           ease: "power3.out",
-        }
+        },
       );
     };
 
@@ -44,7 +44,7 @@ export default function FadeInOnScroll({
           if (once) observer.disconnect();
         });
       },
-      { threshold: 0.15, rootMargin: start === "top 100%" ? "0px 0px 100px 0px" : "0px" }
+      {threshold: 0.15, rootMargin: start === "top 100%" ? "0px 0px 100px 0px" : "0px"},
     );
 
     observer.observe(node);

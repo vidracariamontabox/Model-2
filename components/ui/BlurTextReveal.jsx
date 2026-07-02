@@ -1,25 +1,23 @@
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react";
-import { gsap } from "gsap";
-import "./testimonials-ui.css";
+"use client";
+import {forwardRef, useEffect, useImperativeHandle, useMemo, useRef} from "react";
+import {gsap} from "gsap";
 
 function splitContent(text, html, animationType) {
   if (html) {
-    return { __html: html };
+    return {__html: html};
   }
 
   const raw = typeof text === "string" ? text : "";
   if (animationType === "words") {
-    return raw
-      .split(/(\s+)/)
-      .map((part, index) =>
-        /\s+/.test(part) ? (
-          part
-        ) : (
-          <span className="blur-text__word" key={`${part}-${index}`}>
-            {part}
-          </span>
-        )
-      );
+    return raw.split(/(\s+)/).map((part, index) =>
+      /\s+/.test(part) ? (
+        part
+      ) : (
+        <span className="blur-text__word" key={`${part}-${index}`}>
+          {part}
+        </span>
+      ),
+    );
   }
 
   return raw.split("").map((char, index) => (
@@ -30,16 +28,8 @@ function splitContent(text, html, animationType) {
 }
 
 const BlurTextReveal = forwardRef(function BlurTextReveal(
-  {
-    as: Tag = "div",
-    text = "",
-    html = "",
-    className = "",
-    animationType = "chars",
-    stagger = 0.05,
-    once = true,
-  },
-  ref
+  {as: Tag = "div", text = "", html = "", className = "", animationType = "chars", stagger = 0.05, once = true},
+  ref,
 ) {
   const rootRef = useRef(null);
   const timelineRef = useRef(null);
@@ -56,7 +46,7 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
     const items = root.querySelectorAll(".blur-text__char, .blur-text__word");
     if (!items.length) return;
 
-    gsap.set(items, { opacity: 0, y: 18, filter: "blur(10px)" });
+    gsap.set(items, {opacity: 0, y: 18, filter: "blur(10px)"});
 
     const io = new IntersectionObserver(
       (entries) => {
@@ -79,7 +69,7 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
           }
         });
       },
-      { threshold: 0.2 }
+      {threshold: 0.2},
     );
 
     io.observe(root);
@@ -92,7 +82,7 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
 
   return (
     <Tag ref={rootRef} className={`blur-text-reveal ${className}`.trim()}>
-      {html ? <span dangerouslySetInnerHTML={{ __html: html }} /> : content}
+      {html ? <span dangerouslySetInnerHTML={{__html: html}} /> : content}
     </Tag>
   );
 });

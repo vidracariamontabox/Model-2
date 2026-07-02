@@ -1,6 +1,6 @@
-import { useMemo, useRef } from "react";
-import { gsap } from "gsap";
-import "./testimonials-ui.css";
+"use client";
+import {useMemo, useRef} from "react";
+import {gsap} from "gsap";
 
 function makeNodes(text) {
   return String(text)
@@ -12,7 +12,7 @@ function makeNodes(text) {
     ));
 }
 
-export default function HoverBlur({ children }) {
+export default function HoverBlur({children}) {
   const rootRef = useRef(null);
 
   const text = useMemo(() => String(children ?? ""), [children]);
@@ -54,12 +54,7 @@ export default function HoverBlur({ children }) {
   };
 
   return (
-    <span
-      ref={rootRef}
-      className="hover-blur nav-link"
-      onMouseEnter={handleEnter}
-      onMouseLeave={handleLeave}
-    >
+    <span ref={rootRef} className="hover-blur nav-link" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
       <span className="hover-blur__original text-layer original">{chars}</span>
       <span className="hover-blur__clone text-layer clone" aria-hidden="true">
         {chars}

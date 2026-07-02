@@ -1,6 +1,7 @@
-import { useCallback, useRef, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, EffectFade, Navigation } from "swiper/modules";
+"use client";
+import {useCallback, useRef, useState} from "react";
+import {Swiper, SwiperSlide} from "swiper/react";
+import {Autoplay, EffectFade, Navigation} from "swiper/modules";
 
 import BlurTextReveal from "../ui/BlurTextReveal";
 import FadeInOnScroll from "../ui/FadeInOnScroll";
@@ -8,19 +9,15 @@ import HoverBlur from "../ui/HoverBlur";
 import WordShiftButton from "../ui/WordShiftButton";
 import DividerPlus from "../ui/DividerPlus";
 import TestimonialCard from "./TestimonialCard";
-import { TestimonialsData } from "../../data/TestimonialsData";
+import {TestimonialsData} from "../../data/TestimonialsData";
 
-import "swiper/css";
-import "swiper/css/effect-fade";
-import "swiper/css/navigation";
-import "./Testimonials.css";
-import "../ui/testimonials-ui.css";
+// import "swiper/css";
+// import "swiper/css/effect-fade";
+// import "swiper/css/navigation";
+// import "./testimonials.css";
+// import "./testimonials-ui.css";
 
-export default function Testimonials({
-  customClass = "",
-  swiperOptions = {},
-  showBottomLine = false,
-}) {
+export default function Testimonials({customClass = "", swiperOptions = {}, showBottomLine = false}) {
   const swiperRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const closeVideo = useCallback(() => {
@@ -38,10 +35,7 @@ export default function Testimonials({
   }, []);
 
   return (
-    <section
-      id="testimonials"
-      className={`testimonials-section ${customClass}`.trim()}
-    >
+    <section id="testimonials" className={`testimonials-section ${customClass}`.trim()}>
       <div className="testimonials-section__container">
         <div className="testimonials-section__header">
           <BlurTextReveal
@@ -81,16 +75,10 @@ export default function Testimonials({
                   type="button"
                   aria-current={activeIndex === index ? "true" : undefined}
                   aria-label={`Show testimonial from ${item.companyName}`}
-                  className={`testimonial-company-button ${
-                    activeIndex === index ? "is-active" : ""
-                  }`}
-                  onClick={() => handleCompanyClick(index)}
-                >
+                  className={`testimonial-company-button ${activeIndex === index ? "is-active" : ""}`}
+                  onClick={() => handleCompanyClick(index)}>
                   <span className="title">{item.companyName}</span>
-                  <span
-                    className={`icon ${activeIndex === index ? "is-visible" : ""}`}
-                    aria-hidden="true"
-                  >
+                  <span className={`icon ${activeIndex === index ? "is-visible" : ""}`} aria-hidden="true">
                     →
                   </span>
                 </button>
@@ -101,25 +89,20 @@ export default function Testimonials({
               <button
                 type="button"
                 className="custom-arrow left js-testimonials-prev"
-                aria-label="Previous testimonial"
-              >
-                  <span className="arrow-icon">←</span>
-                </button>
-                <button
-                  type="button"
-                  className="custom-arrow right js-testimonials-next"
-                  aria-label="Next testimonial"
-                >
-                  <span className="arrow-icon">→</span>
-                </button>
-              </div>
+                aria-label="Previous testimonial">
+                <span className="arrow-icon">←</span>
+              </button>
+              <button type="button" className="custom-arrow right js-testimonials-next" aria-label="Next testimonial">
+                <span className="arrow-icon">→</span>
+              </button>
             </div>
+          </div>
 
           <div className="testimonials-section__swiperWrap">
             <Swiper
               modules={[Autoplay, EffectFade, Navigation]}
               effect="fade"
-              fadeEffect={{ crossFade: true }}
+              fadeEffect={{crossFade: true}}
               speed={600}
               autoplay={{
                 delay: 5000,
@@ -136,8 +119,7 @@ export default function Testimonials({
               }}
               onSlideChange={handleSlideChange}
               className="testimonials-swiper swiper-row"
-              {...swiperOptions}
-            >
+              {...swiperOptions}>
               {TestimonialsData.map((item) => (
                 <SwiperSlide key={item.id} className="testimonial-slide">
                   <TestimonialCard item={item} />

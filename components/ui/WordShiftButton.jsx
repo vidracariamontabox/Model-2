@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef } from "react";
-import "./testimonials-ui.css";
+"use client";
+import {useEffect, useMemo, useRef} from "react";
 
 function splitWords(text) {
   return String(text)
@@ -12,12 +12,7 @@ function splitWords(text) {
     ));
 }
 
-export default function WordShiftButton({
-  text,
-  href = "#",
-  target,
-  customClass = "",
-}) {
+export default function WordShiftButton({text, href = "#", target, customClass = ""}) {
   const rootRef = useRef(null);
   const words = useMemo(() => splitWords(text), [text]);
 
@@ -31,7 +26,7 @@ export default function WordShiftButton({
 
     node.addEventListener("mouseenter", onEnter);
     node.addEventListener("mouseleave", onLeave);
-    node.addEventListener("touchstart", onEnter, { passive: true });
+    node.addEventListener("touchstart", onEnter, {passive: true});
     node.addEventListener("touchend", onLeave);
     node.addEventListener("touchcancel", onLeave);
 

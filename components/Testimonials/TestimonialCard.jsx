@@ -1,4 +1,5 @@
-export default function TestimonialCard({ item }) {
+"use client";
+export default function TestimonialCard({item}) {
   return (
     <article className="testimonial-item">
       <span className="testimonial-item__company mobile-only">{item.companyName}</span>
@@ -9,11 +10,7 @@ export default function TestimonialCard({ item }) {
         <div className="testimonial-item__footer">
           <div className="testimonial-item__client">
             <div className="testimonial-item__avatar">
-              <img
-                src={item.clientImage}
-                alt={item.companyName}
-                className="testimonial-item__avatarImg"
-              />
+              <img src={item.clientImage} alt={item.companyName} className="testimonial-item__avatarImg" />
             </div>
 
             <div className="testimonial-item__meta">
@@ -21,7 +18,6 @@ export default function TestimonialCard({ item }) {
               <p className="testimonial-item__deg">{item.clientDeg}</p>
             </div>
           </div>
-
         </div>
       </div>
     </article>
