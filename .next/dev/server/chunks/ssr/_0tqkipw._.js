@@ -1075,46 +1075,142 @@ __turbopack_context__.s([
 ]);
 const TestimonialsData = [
     {
-        id: "luxury-presence",
-        companyName: "Luxury presence",
-        clientName: "Malte Smith",
-        clientDeg: "Founder & CEO · USA",
-        clientImage: "/images/malte.webp",
-        quoteMessage: "A polished, collaborative experience that helped us present the brand with more confidence.",
+        id: "Qualidade do material",
+        companyName: "Qualidade do material",
+        clientName: "Gustavo Salomão",
+        clientDeg: "Cliente",
+        clientImage: "/images/placeholder.webp",
+        quoteMessage: "Não conhecia a Montabox - responsável e proprietário Ronaldo, foi por uma indicação, realmente me surpreenderam em toda a experiência do serviço. Parcelaram no cartão de crédito para me ajudar na parte financeira, me entregaram no prazo combinado( 15 dias). O serviço deles foi impecável e o material de primeira qualidade, o instalador Dhiego é super atencioso e também aos detalhes, não deixaram sujeira após a instalação, realmente fiquei encantado com o serviço e o atendimento, nota 10/10. Parabéns.",
         videoURL: "https://www.youtube.com/embed/rOAsYNtPAmQ?autoplay=1"
     },
+    // {
+    //   id: "Qualidade do material",
+    //   companyName: "Qualidade do material",
+    //   clientName: "Claudia B.",
+    //   clientDeg: "Cliente",
+    //   clientImage: "/images/placeholder.webp",
+    //   quoteMessage:
+    //     "Trabalho excelente, material de boa qualidade e acabamento muito bom. Cuidado e eficiência na assistência pós venda me faz indicar os serviços da Montabox.",
+    //   videoURL: "https://www.youtube.com/embed/rOAsYNtPAmQ?autoplay=1",
+    // },
+    // { id: "Qualidade do material",
+    //   companyName: "Qualidade do material",
+    //   clientName: "Guilherme Daneze",
+    //   clientDeg: "Cliente",
+    //   clientImage: "/images/placeholder.webp",
+    //   quoteMessage:
+    //     "Ótimo atendimento, muita seriedade no trabalho e qualidade do material é sensacional!",
+    //   videoURL: "https://www.youtube.com/embed/rOAsYNtPAmQ?autoplay=1",
+    // },
     {
-        id: "credible",
-        companyName: "credible",
-        clientName: "Stephen Dash",
-        clientDeg: "Founder & CEO · USA",
-        clientImage: "/images/stephen.webp",
-        quoteMessage: "Clean execution, fast turnaround, and a level of attention that made everything easier."
+        id: "Acabamento",
+        companyName: "Acabamento",
+        clientName: "Victoria De Bonis",
+        clientDeg: "Cliente",
+        clientImage: "/images/placeholder.webp",
+        quoteMessage: "Gostaria de destacar o serviço prestado pelo Ronaldo e sua equipe, que realmente superou minhas expectativas. O trabalho foi executado com alta qualidade, apresentando um acabamento impecável e atenção aos detalhes. Além disso, o atendimento foi sempre cordial, eficiente e muito prestativo, demonstrando comprometimento e respeito durante todo o processo. Recomendo fortemente essa equipe a quem busca confiabilidade e excelência."
     },
+    // {
+    //   id: "Acabamento",
+    //   companyName: "Acabamento",
+    //   clientName: "Barbara Salioni",
+    //   clientDeg: "Cliente",
+    //   clientImage: "/images/placeholder.webp",
+    //   quoteMessage:
+    //     "Ótimo atendimento, muita educação e atenção!! preço mais barato de todos os orçamentos e qualidade perfeita!",
+    // },
+    // // {
+    //   id: "Acabamento",
+    //   companyName: "Acabamento",
+    //   clientName: "Milena Govoni",
+    //   clientDeg: "Cliente",
+    //   clientImage: "/images/placeholder.webp",
+    //   quoteMessage:
+    //     "Atenderam dentro do prazo, super atenciosos e rápidos para realizar serviço.",
+    // },
     {
-        id: "fast-resume",
-        companyName: "Fast resume",
-        clientName: "Doug Petrie",
-        clientDeg: "Founder & CEO · USA",
-        clientImage: "/images/doug.webp",
-        quoteMessage: "The final result felt premium, direct, and fully aligned with what we needed.",
+        id: "Esquadrias",
+        companyName: "Esquadrias",
+        clientName: "Junior Mazza",
+        clientDeg: "Cliente",
+        clientImage: "/images/placeholder.webp",
+        quoteMessage: "Desde o início, fui muito bem atendido. A empresa apresentou todos os projetos e medidas das esquadrias com clareza e cumpriu integralmente o prazo de entrega. Durante a obra, precisei adiar a entrega do material, e fui prontamente atendido com compreensão. Após a instalação, alguns ajustes foram necessários e foram resolvidos rapidamente pelo Sr. Ronaldo. Destaco a excelente qualidade do pós-venda. Recomendo a empresa..",
         videoURL: "https://www.youtube.com/embed/eKB_kigzDwA?autoplay=1"
     },
+    // {
+    //   id: "Esquadrias",
+    //   companyName: "Esquadrias",
+    //   clientName: "Mauro Nunes Pereira Junior",
+    //   clientDeg: "Cliente",
+    //   clientImage: "/images/placeholder.webp",
+    //   quoteMessage:
+    //     "Excelente atendimento com esquadrias de alumínio de qualidade e entrega no prazo combinado!",
+    //   videoURL: "https://www.youtube.com/embed/eKB_kigzDwA?autoplay=1",
+    // },
+    // {
+    //   id: "Esquadrias",
+    //   companyName: "Esquadrias",
+    //   clientName: "Bruna Tarina",
+    //   clientDeg: "Cliente",
+    //   clientImage: "/images/placeholder.webp",
+    //   quoteMessage:
+    //     "Atendimento impecável, produto de excelente qualidade e serviço rápido.Me surpreendi com a eficiência da equipe!",
+    //   videoURL: "https://www.youtube.com/embed/eKB_kigzDwA?autoplay=1",
+    // },
     {
-        id: "technis",
-        companyName: "Technis",
-        clientName: "Jean-Baptiste Biolay",
-        clientDeg: "General Manager · UAE",
-        clientImage: "/images/jean.webp",
-        quoteMessage: "A thoughtful process and a sharp result that elevated the entire experience."
+        id: "Cumpre o que promete",
+        companyName: "Cumpre o que promete",
+        clientName: "Pinotti Maquinas",
+        clientDeg: "Empresário",
+        clientImage: "/images/placeholder.webp",
+        quoteMessage: "Empresa excelente, com atendimento de qualidade, equipe atenciosa e comprometida. Sempre cumpre o que promete e com muita agilidade."
     },
+    // {
+    //   id: "Cumpre o que promete",
+    //   companyName: "Cumpre o que promete",
+    //   clientName: "André Fávaro",
+    //   clientDeg: "Dr. Oftalmologista - Franca-SP",
+    //   clientImage: "/images/placeholder.webp",
+    //   quoteMessage:
+    //     "Empresa muito competente e idônea, cumpre o que promete!",
+    //   videoURL: "https://www.youtube.com/embed/eKB_kigzDwA?autoplay=1",
+    // },
     {
-        id: "ventigence",
-        companyName: "Ventigence",
-        clientName: "Zoltan Csonka",
-        clientDeg: "Founder & CEO · UAE",
-        clientImage: "/images/zoltan.webp",
-        quoteMessage: "Exactly the kind of refined visual language we wanted for the project.",
+        id: "Profissionais",
+        companyName: "Profissionais",
+        clientName: "Cassio Fouad",
+        clientDeg: "Cliente",
+        clientImage: "/images/placeholder.webp",
+        quoteMessage: "Muito satisfeito com o resultado e entrega antes do prazo combinado. Profissionais atenciosos e acabamento nos mínimos detalhes.Recomendo!.",
+        videoURL: "https://www.youtube.com/embed/9F4WsbJ1mrc?autoplay=1"
+    },
+    // {
+    //   id: "Profissionais",
+    //   companyName: "Profissionais",
+    //   clientName: "Mateus Eduardo Rodrigues",
+    //   clientDeg: "Cliente",
+    //   clientImage: "/images/placeholder.webp",
+    //   quoteMessage:
+    //     "Muito bom !! Colocou os vidros no prazo que combinou. Quem trabalha com obra sabe que hoje são poucos profissionais que entregam no prazo .",
+    //   videoURL: "https://www.youtube.com/embed/9F4WsbJ1mrc?autoplay=1",
+    // },
+    // {
+    //   id: "Profissionais",
+    //   companyName: "Profissionais",
+    //   clientName: "Cristiane Freitas",
+    //   clientDeg: "Cliente",
+    //   clientImage: "/images/placeholder.webp",
+    //   quoteMessage:
+    //     "Ótimo atendimento e prossifionais exemplares!",
+    //   videoURL: "https://www.youtube.com/embed/9F4WsbJ1mrc?autoplay=1",
+    // },
+    {
+        id: "Excelência",
+        companyName: "Excelência",
+        clientName: "Maria M.",
+        clientDeg: "Cliente",
+        clientImage: "/images/placeholder.webp",
+        quoteMessage: "Empresa muita séria e capacitada. Serviços entregues com rapidez e qualidade. Aqui fica nosso muito obrigada ao Ronaldo e toda equipe pelos ótimos serviços prestados.",
         videoURL: "https://www.youtube.com/embed/9F4WsbJ1mrc?autoplay=1"
     }
 ];
@@ -1177,13 +1273,13 @@ function Testimonials({ customClass = "", swiperOptions = {}, showBottomLine = f
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$BlurTextReveal$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                                 as: "h2",
-                                text: "Client stories",
+                                text: "História dos clientes",
                                 animationType: "chars",
                                 stagger: 0.05,
                                 className: "testimonials-section__title"
                             }, void 0, false, {
                                 fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                lineNumber: 41,
+                                lineNumber: 35,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1193,39 +1289,33 @@ function Testimonials({ customClass = "", swiperOptions = {}, showBottomLine = f
                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                         className: "testimonials-section__intro",
                                         children: [
-                                            "Great work is built through ",
+                                            "Pequenos ou grandes projetos.",
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                 fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                                lineNumber: 52,
-                                                columnNumber: 45
+                                                lineNumber: 47,
+                                                columnNumber: 17
                                             }, this),
-                                            "partnership. Here's what ",
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
-                                                fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                                lineNumber: 53,
-                                                columnNumber: 47
-                                            }, this),
-                                            "our clients say."
+                                            " A qualidadde é a mesma."
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                        lineNumber: 51,
+                                        lineNumber: 45,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                    lineNumber: 50,
+                                    lineNumber: 44,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                lineNumber: 49,
+                                lineNumber: 43,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                        lineNumber: 40,
+                        lineNumber: 34,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1237,12 +1327,12 @@ function Testimonials({ customClass = "", swiperOptions = {}, showBottomLine = f
                             iconColor: "#272727"
                         }, void 0, false, {
                             fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                            lineNumber: 61,
+                            lineNumber: 54,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                        lineNumber: 60,
+                        lineNumber: 53,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1265,7 +1355,7 @@ function Testimonials({ customClass = "", swiperOptions = {}, showBottomLine = f
                                                         children: item.companyName
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                                        lineNumber: 80,
+                                                        lineNumber: 73,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1274,18 +1364,18 @@ function Testimonials({ customClass = "", swiperOptions = {}, showBottomLine = f
                                                         children: "→"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                                        lineNumber: 81,
+                                                        lineNumber: 74,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, item.id, true, {
                                                 fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                                lineNumber: 73,
+                                                lineNumber: 66,
                                                 columnNumber: 17
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                        lineNumber: 71,
+                                        lineNumber: 64,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1300,12 +1390,12 @@ function Testimonials({ customClass = "", swiperOptions = {}, showBottomLine = f
                                                     children: "←"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                                    lineNumber: 93,
+                                                    lineNumber: 86,
                                                     columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                                lineNumber: 89,
+                                                lineNumber: 82,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1317,24 +1407,24 @@ function Testimonials({ customClass = "", swiperOptions = {}, showBottomLine = f
                                                     children: "→"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                                    lineNumber: 96,
+                                                    lineNumber: 89,
                                                     columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                                lineNumber: 95,
+                                                lineNumber: 88,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                        lineNumber: 88,
+                                        lineNumber: 81,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                lineNumber: 70,
+                                lineNumber: 63,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1373,50 +1463,51 @@ function Testimonials({ customClass = "", swiperOptions = {}, showBottomLine = f
                                                     item: item
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                                    lineNumber: 125,
+                                                    lineNumber: 118,
                                                     columnNumber: 19
                                                 }, this)
                                             }, item.id, false, {
                                                 fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                                lineNumber: 124,
+                                                lineNumber: 117,
                                                 columnNumber: 17
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                        lineNumber: 102,
+                                        lineNumber: 95,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "testimonials-section__cta",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$WordShiftButton$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                            text: "become a client",
-                                            href: "/contact"
+                                            text: "Se torne um Cliente →",
+                                            target: "_blank",
+                                            href: "https://wa.me/5516981984000"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                            lineNumber: 131,
+                                            lineNumber: 124,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                        lineNumber: 130,
+                                        lineNumber: 123,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                                lineNumber: 101,
+                                lineNumber: 94,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                        lineNumber: 69,
+                        lineNumber: 62,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                lineNumber: 39,
+                lineNumber: 33,
                 columnNumber: 7
             }, this),
             showBottomLine ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1428,18 +1519,18 @@ function Testimonials({ customClass = "", swiperOptions = {}, showBottomLine = f
                     iconColor: "#272727"
                 }, void 0, false, {
                     fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                    lineNumber: 139,
+                    lineNumber: 132,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/Testimonials/Testimonials.jsx",
-                lineNumber: 138,
+                lineNumber: 131,
                 columnNumber: 9
             }, this) : null
         ]
     }, void 0, true, {
         fileName: "[project]/components/Testimonials/Testimonials.jsx",
-        lineNumber: 38,
+        lineNumber: 32,
         columnNumber: 5
     }, this);
 }

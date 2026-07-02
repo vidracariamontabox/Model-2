@@ -6,7 +6,7 @@ export const TestimonialsData = [
     clientDeg: "Cliente",
     clientImage: "/images/placeholder.webp",
     quoteMessage:
-      "Não conhecia a Montabox - responsável e proprietário Ronaldo, foi por uma indicação, realmente me surpreenderam em toda a experiência do serviço. Parcelaram no cartão de credito para me ajudar na parte financeira, me entregaram no prazo combinado( 15 dias). O serviço deles foi impecável e o material de primeira qualidade, o instalar dhiego super atencioso e também aos detalhes, não deixaram sujeira após a instalação, realmente fiquei encantado com o serviço e o atendimento, nota 10/10. Parabéns",
+      "Não conhecia a Montabox - responsável e proprietário Ronaldo, foi por uma indicação, realmente me surpreenderam em toda a experiência do serviço. Parcelaram no cartão de crédito para me ajudar na parte financeira, me entregaram no prazo combinado( 15 dias). O serviço deles foi impecável e o material de primeira qualidade, o instalador Dhiego é super atencioso e também aos detalhes, não deixaram sujeira após a instalação, realmente fiquei encantado com o serviço e o atendimento, nota 10/10. Parabéns.",
     videoURL: "https://www.youtube.com/embed/rOAsYNtPAmQ?autoplay=1",
   },
 
@@ -158,16 +158,16 @@ export const TestimonialsData = [
     videoURL: "https://www.youtube.com/embed/9F4WsbJ1mrc?autoplay=1",
   },
 
-  {
-    id: "Excelência",
-    companyName: "Excelência",
-    clientName: "Fuad Saud",
-    clientDeg: "Cliente",
-    clientImage: "/images/placeholder.webp",
-    quoteMessage:
-      "Atendimento, preço e qualidade do serviço nota 10. Ja é o terceiro serviço grande com que fechamos e todos foram perfeitos.",
-    videoURL: "https://www.youtube.com/embed/9F4WsbJ1mrc?autoplay=1",
-  },
+  // {
+  //   id: "Excelência",
+  //   companyName: "Excelência",
+  //   clientName: "Fuad Saud",
+  //   clientDeg: "Cliente",
+  //   clientImage: "/images/placeholder.webp",
+  //   quoteMessage:
+  //     "Atendimento, preço e qualidade do serviço nota 10. Ja é o terceiro serviço grande com que fechamos e todos foram perfeitos.",
+  //   videoURL: "https://www.youtube.com/embed/9F4WsbJ1mrc?autoplay=1",
+  // },
 
   // {
   //   id: "Excelência",

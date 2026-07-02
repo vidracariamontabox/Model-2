@@ -1,6 +1,3 @@
-{"timestamp":"00:00:03.393","source":"Server","level":"LOG","message":""}
-{"timestamp":"00:00:07.830","source":"Server","level":"ERROR","message":"⨯ TypeError: Cannot read properties of undefined (reading 'map')"}
-{"timestamp":"00:00:08.434","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:00:09.106","source":"Browser","level":"ERROR","message":"uncaughtError: TypeError: Cannot read properties of undefined (reading 'map')"}
-{"timestamp":"00:00:11.003","source":"Server","level":"LOG","message":"○ Compiling /_not-found/page ..."}
-{"timestamp":"00:11:38.686","source":"Server","level":"LOG","message":"✓ Finished writing to filesystem cache in 9.2min"}
+{"timestamp":"00:00:04.373","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:14.967","source":"Server","level":"WARN","message":"⚠ Blocked cross-origin request to Next.js dev resource /_next/webpack-hmr from \"192.168.0.2\".\nCross-origin access to Next.js dev resources is blocked by default for safety.\n\nTo allow this host in development, add it to \"allowedDevOrigins\" in next.config.js and restart the dev server:\n\n// next.config.js\nmodule.exports = {\n  allowedDevOrigins: ['192.168.0.2'],\n}\n\nRead more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins"}
+{"timestamp":"00:18:32.754","source":"Server","level":"LOG","message":"✓ Compiled in 49ms"}
