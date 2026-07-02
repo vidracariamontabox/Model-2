@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import About from "@/components/About";
 import Testimonials from "@/components/Testimonials/Testimonials";
 import FAQ from "@/components/FAQ";
+import {faqs} from "@/data/faq";
 
 export default function Page() {
   return (
@@ -11,7 +12,7 @@ export default function Page() {
       <Hero />
       <About />
       <Testimonials />
-      <FAQ />
+      <FAQ faqs={faqs} />
     </main>
   );
 }
