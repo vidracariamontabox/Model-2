@@ -24,7 +24,7 @@
 .testimonials-section__title {
   grid-column: span 12;
   margin: 0;
-  font-size: clamp(2rem, 1.5vw, 4rem);
+  font-size: clamp(2rem, 3.5vw, 4rem);
   line-height: 0.9;
   letter-spacing: -0.075em;
   text-transform: uppercase;

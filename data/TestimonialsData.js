@@ -109,7 +109,7 @@ export const TestimonialsData = [
     companyName: "Cumpre o que promete",
     clientName: "André Fávaro",
     clientDeg: "Dr. Oftalmologista - Franca-SP",
-    clientImage: "/images/placeholder.webp",
+    clientImage: "public/images/favaro.jpg",
     quoteMessage:
       "Empresa muito competente e idônea, cumpre o que promete!",
     videoURL: "https://www.youtube.com/embed/eKB_kigzDwA?autoplay=1",
@@ -175,9 +175,20 @@ export const TestimonialsData = [
     companyName: "Excelência",
     clientName: "Naur",
     clientDeg: "Biofarm Tecnologia em Veterinária",
-    clientImage: "/images/placeholder.webp",
+    clientImage: "public/images/biofarm.jpg",
     quoteMessage:
-      "Atendimento, preço e qualidade do serviço nota 10. Ja é o terceiro serviço grande com que fechamos e todos foram perfeitos.",
+      "OOOO RONALDO ORÇA lÁ PRA MIMMM.",
+    videoURL: "https://www.youtube.com/embed/9F4WsbJ1mrc?autoplay=1",
+  },
+
+  {
+    id: "Excelência",
+    companyName: "Excelência",
+    clientName: "Naur",
+    clientDeg: "Oxiquímica Agrociência",
+    clientImage: "public/images/oxiquimica.jpg",
+    quoteMessage:
+      ".",
     videoURL: "https://www.youtube.com/embed/9F4WsbJ1mrc?autoplay=1",
   },
 ];
