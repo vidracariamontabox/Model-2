@@ -11,12 +11,6 @@ import DividerPlus from "../ui/DividerPlus";
 import TestimonialCard from "./TestimonialCard";
 import {TestimonialsData} from "../../data/TestimonialsData";
 
-// import "swiper/css";
-// import "swiper/css/effect-fade";
-// import "swiper/css/navigation";
-// import "./testimonials.css";
-// import "./testimonials-ui.css";
-
 export default function Testimonials({customClass = "", swiperOptions = {}, showBottomLine = false}) {
   const swiperRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -40,7 +34,7 @@ export default function Testimonials({customClass = "", swiperOptions = {}, show
         <div className="testimonials-section__header">
           <BlurTextReveal
             as="h2"
-            text="Client stories"
+            text="História dos clientes"
             animationType="chars"
             stagger={0.05}
             className="testimonials-section__title"
@@ -49,9 +43,8 @@ export default function Testimonials({customClass = "", swiperOptions = {}, show
           <div className="testimonials-section__introWrap">
             <FadeInOnScroll delay={0.3}>
               <p className="testimonials-section__intro">
-                Great work is built through <br />
-                partnership. Here&apos;s what <br />
-                our clients say.
+                Pequenos ou grandes projetos.
+                <br /> A qualidadde é a mesma.
               </p>
             </FadeInOnScroll>
           </div>
@@ -128,7 +121,7 @@ export default function Testimonials({customClass = "", swiperOptions = {}, show
             </Swiper>
 
             <div className="testimonials-section__cta">
-              <WordShiftButton text="become a client" href="/contact" />
+              <WordShiftButton text="Se torne um Cliente" target="_blank" href="https://wa.me/5516981984000" />
             </div>
           </div>
         </div>
