@@ -1,4 +1,0 @@
-{"timestamp":"00:00:03.056","source":"Server","level":"LOG","message":""}
-{"timestamp":"00:00:08.867","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:03:15.592","source":"Server","level":"LOG","message":"✓ Finished writing to filesystem cache in 20.6s"}
-{"timestamp":"00:09:45.890","source":"Server","level":"LOG","message":"✓ Finished writing to filesystem cache in 44s"}
