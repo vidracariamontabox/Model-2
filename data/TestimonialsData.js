@@ -33,6 +33,17 @@ export const TestimonialsData = [
   },
 
   {
+    id: "Qualidade do material",
+    companyName: "Qualidade do material",
+    clientName: "Nome do CLiente",
+    clientDeg: "Cliente ou nome da empresa",
+    clientImage: "/images/placeholder.webp",
+    quoteMessage:
+      "Coletar depoimento real para o site.",
+    videoURL: "https://www.youtube.com/embed/rOAsYNtPAmQ?autoplay=1",
+  },
+
+  {
     id: "Acabamento",
     companyName: "Acabamento",
     clientName: "Victoria De Bonis",
@@ -61,6 +72,17 @@ export const TestimonialsData = [
     quoteMessage:
       "Atenderam dentro do prazo, super atenciosos e rápidos para realizar serviço.",
   },
+
+  {
+    id: "Acabamento",
+    companyName: "Acabamento",
+    clientName: "Andre de Souza Maria",
+    clientDeg: "Grupo André Maria",
+    clientImage: "/images/grupoandremaria.jpg",
+    quoteMessage:
+      "Coletar depoimento real para o site.",
+  },
+
   {
     id: "Esquadrias",
     companyName: "Esquadrias",
@@ -95,6 +117,17 @@ export const TestimonialsData = [
   },
 
   {
+    id: "Esquadrias",
+    companyName: "Esquadrias",
+    clientName: "Claudia Goncalves de Souza",
+    clientDeg: "Construtora & Incorporadora Souza Maria",
+    clientImage: "/images/ibis.png",
+    quoteMessage:
+      "Coletar depoimento da Claudia para o site",
+    videoURL: "https://www.youtube.com/embed/eKB_kigzDwA?autoplay=1",
+  },
+
+  {
     id: "Cumpre o que promete",
     companyName: "Cumpre o que promete",
     clientName: "Pinotti Maquinas",
@@ -112,6 +145,28 @@ export const TestimonialsData = [
     clientImage: "/images/favaro.jpg",
     quoteMessage:
       "Empresa muito competente e idônea, cumpre o que promete!",
+    videoURL: "https://www.youtube.com/embed/eKB_kigzDwA?autoplay=1",
+  },
+
+  {
+    id: "Cumpre o que promete",
+    companyName: "Cumpre o que promete",
+    clientName: "Sacha Breckenfeld Reck",
+    clientDeg: "Tennessee Steak House - Ribeirão Preto-SP",
+    clientImage: "/images/tenesse.jpg",
+    quoteMessage:
+      "Coletar depoimento do Sacha para o site",
+    videoURL: "https://www.youtube.com/embed/eKB_kigzDwA?autoplay=1",
+  },
+
+  {
+    id: "Cumpre o que promete",
+    companyName: "Cumpre o que promete",
+    clientName: "Sacha Breckenfeld Reck",
+    clientDeg: "Tennessee Steak House - Ribeirão Preto-SP",
+    clientImage: "/images/tenesse.jpg",
+    quoteMessage:
+      "Coletar depoimento do Sacha para o site",
     videoURL: "https://www.youtube.com/embed/eKB_kigzDwA?autoplay=1",
   },
 
@@ -145,6 +200,17 @@ export const TestimonialsData = [
     clientImage: "/images/placeholder.webp",
     quoteMessage:
       "Ótimo atendimento e prossifionais exemplares!",
+    videoURL: "https://www.youtube.com/embed/9F4WsbJ1mrc?autoplay=1",
+  },
+
+  {
+    id: "Profissionais",
+    companyName: "Profissionais",
+    clientName: "Manuela Masso",
+    clientDeg: "S. proprietária da Artemper Distribuidora de Vidros",
+    clientImage: "/images/artemper.png",
+    quoteMessage:
+      "Coletar depoimento da Manuela para o site",
     videoURL: "https://www.youtube.com/embed/9F4WsbJ1mrc?autoplay=1",
   },
 
@@ -184,11 +250,11 @@ export const TestimonialsData = [
   {
     id: "Excelência",
     companyName: "Excelência",
-    clientName: "Naur",
+    clientName: "Claudionor Santana",
     clientDeg: "Oxiquímica Agrociência",
     clientImage: "/images/oxiquimica.jpg",
     quoteMessage:
-      ".",
+      "Avaliação Real de quem pediu orçamento e recebeu o serviço.",
     videoURL: "https://www.youtube.com/embed/9F4WsbJ1mrc?autoplay=1",
   },
 ];
