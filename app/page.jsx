@@ -5,7 +5,7 @@ import Testimonials from "@/components/Testimonials/Testimonials";
 import FAQ from "@/components/FAQ";
 import Services from "@/components/Services";
 import HorizontalTransition from "@/components/HorizontalTransition";
-import { faqs } from "@/data/faq";
+import {faqs} from "@/data/faq";
 
 export default function Page() {
   return (
@@ -15,10 +15,7 @@ export default function Page() {
       <About />
 
       {/* Transição horizontal: Testimonials → Serviços */}
-      <HorizontalTransition
-        leftSection={<Testimonials />}
-        rightSection={<Services />}
-      />
+      <HorizontalTransition leftSection={<Testimonials />} rightSection={<Services />} />
 
       <FAQ faqs={faqs} />
     </main>

@@ -8,7 +8,7 @@ import "swiper/css/navigation";
 
 const archivo = Archivo({
   subsets: ["latin"],
-  weight: ["300"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-archivo",
 });
 
@@ -20,7 +20,7 @@ export const metadata = {
 export default function RootLayout({children}) {
   return (
     <html lang="pt-BR" className={archivo.variable} style={{backgroundColor: "#121212"}}>
-      <body className="bg-[#121212] text-[#eaeaea] antialiased" style={{backgroundColor: "#121212"}}>
+      <body className="bg-[#121212] text-[#eaeaea] antialiased font-archivo" style={{backgroundColor: "#121212"}}>
         {children}
       </body>
     </html>
