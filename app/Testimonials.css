@@ -30,7 +30,7 @@
   line-height: 0.9;
   letter-spacing: -0.075em;
   text-transform: uppercase;
-  color: #272727;
+  color: #444343;
   will-change: transform, opacity;
 }
 
@@ -53,12 +53,14 @@
 }
 
 .testimonials-section__intro {
+  font-family: 'Neuehaas', sans-serif;
   margin: 0;
   color: #272727;
-  font-size: 0.95rem;
+  font-size: 11px;
   line-height: 1.55;
   opacity: 0.84;
   max-width: 220px;
+  text-transform: uppercase;
 }
 
 .testimonials-section__divider,
@@ -100,7 +102,8 @@
   cursor: pointer;
   opacity: 0.3;
   transition: opacity 0.5s ease, transform 0.5s ease;
-  font: inherit;
+  font: 'inherit';
+  line-height: 1.1;
 }
 
 .testimonial-company-button:hover,
@@ -111,7 +114,8 @@
 .testimonial-company-button .title {
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  font-size: 0.95rem;
+  font-size: 13px;
+  font-family: 'familjen', sans-serif;
 }
 
 .testimonial-company-button .icon {
@@ -193,6 +197,7 @@
   font-size: 18px;
   line-height: 1.05;
   letter-spacing: 1px;
+  font-family: 'familjen', sans-serif;
 }
 
 .testimonial-item__footer {
@@ -269,6 +274,7 @@
 
 .testimonials-section__cta {
   margin-top: 2px;
+  font-size: 11px;
 }
 
 .video-modal {

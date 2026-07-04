@@ -1,4 +1,5 @@
 import {Archivo} from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import "./Testimonials.css";
 import "./testimonials-ui.css";
@@ -17,12 +18,20 @@ export const metadata = {
   description: "Preview do site Montabox.",
 };
 
+const familjen = localFont({
+  src: "../public/fonts/FamiljenGroteskVariable_Regular.woff2",
+  variable: "--font-familjen",
+});
+
+const neueHaas = localFont({
+  src: "../public/fonts/NeueHaasDisplay_Roman.woff2",
+  variable: "--font-neuehaas",
+});
+
 export default function RootLayout({children}) {
   return (
-    <html lang="pt-BR" className={archivo.variable} style={{backgroundColor: "#121212"}}>
-      <body className="bg-[#121212] text-[#eaeaea] antialiased font-archivo" style={{backgroundColor: "#121212"}}>
-        {children}
-      </body>
+    <html lang="pt-BR" className={`${archivo.variable} ${familjen.variable} ${neueHaas.variable}`}>
+      <body className="bg-[#121212] text-[#eaeaea] antialiased font-neuehaas">{children}</body>
     </html>
   );
 }

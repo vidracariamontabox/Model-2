@@ -11,8 +11,9 @@ module.exports = {
       // ─── FONTE ────────────────────────────────────────────────
       fontFamily: {
         archivo: ['var(--font-archivo)', 'sans-serif'],
+        familjen: ['var(--font-familjen)', 'sans-serif'],  // títulos
+        neuehaas: ['var(--font-neuehaas)', 'sans-serif'],  // textos
       },
-
       // ─── PALETA MONTABOX ──────────────────────────────────────
       // Permite usar: bg-preto, text-inox, border-cinza, etc.
       colors: {

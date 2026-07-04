@@ -126,7 +126,7 @@ export default function Testimonials({customClass = "", swiperOptions = {}, show
             </Swiper>
 
             <div className="testimonials-section__cta">
-              <WordShiftButton text="Se torne um Cliente →" target="_blank" href="https://wa.me/5516981984000" />
+              <WordShiftButton text="Traga o seu projeto →" target="_blank" href="https://wa.me/5516981984000" />
             </div>
           </div>
         </div>
