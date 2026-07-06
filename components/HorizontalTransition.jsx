@@ -1,72 +1,75 @@
 "use client";
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import {useRef} from "react";
+import {motion, useScroll, useTransform} from "framer-motion";
 
 /**
- * HorizontalTransition
+ * RevealTransition
  *
- * Cria uma zona de scroll que converte movimento vertical em
- * pan horizontal — Testimonials sai para a esquerda, Services
- * entra pela direita. Uma linha vertical fina marca a fronteira.
+ * Services fica fixo embaixo (sticky).
+ * About fica em cima e se fecha da direita para esquerda
+ * via clip-path, revelando Services atrás.
  *
  * Uso em page.jsx:
- *   <HorizontalTransition
- *     leftSection={<Testimonials />}
- *     rightSection={<Services />}
+ *   <RevealTransition
+ *     topSection={<About />}
+ *     bottomSection={<Services />}
  *   />
  */
-export default function HorizontalTransition({ leftSection, rightSection }) {
-  // Container sticky: height 300vh = scroll "capturado" por 2 viewports
+export default function HorizontalTransition({leftSection, rightSection}) {
   const containerRef = useRef(null);
 
-  const { scrollYProgress } = useScroll({
+  const {scrollYProgress} = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
-  // translateX: 0% → -50% conforme scrollYProgress vai de 0 → 1
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
+  // clip-path abre da direita para esquerda
+  // inset(0% 0% 0% 0%) = About cobre tudo
+  // inset(0% 100% 0% 0%) = About fechou para esquerda, Services visível
+  const clipPath = useTransform(scrollYProgress, [0.1, 1.0], ["inset(0% 0% 0% 0%)", "inset(0% 100% 0% 0%)"]);
 
-  // Linha vertical: cresce de 0% → 100% de altura
-  const lineHeight = useTransform(scrollYProgress, [0.1, 0.9], ["0%", "100%"]);
-
-  // Opacidade da linha
-  const lineOpacity = useTransform(scrollYProgress, [0.05, 0.15, 0.85, 0.95], [0, 1, 1, 0]);
+  // Linha fixa na borda direita
+  const lineScale = useTransform(scrollYProgress, [0.05, 0.85], [0, 1]);
+  const lineOpacity = useTransform(scrollYProgress, [0.03, 0.1, 0.88, 0.97], [0, 1, 1, 0]);
+  const plusRotate = useTransform(scrollYProgress, [0.05, 0.9], [0, 360]);
+  const plusY = useTransform(scrollYProgress, [0.05, 0.85], ["0%", "100%"]);
 
   return (
-    // Container com altura artificial para capturar o scroll
-    <div ref={containerRef} className="relative h-[300vh]">
-
-      {/* Sticky: fica fixo enquanto o usuário scrolla os 300vh */}
+    <div ref={containerRef} className="relative h-[200vh]">
+      {/* Sticky container */}
       <div className="sticky top-0 h-screen overflow-hidden">
+        {/* Services — fixo atrás, sempre visível */}
+        <div className="absolute inset-0 w-full h-full">{rightSection}</div>
 
-        {/* Track horizontal: 200vw de largura (duas seções lado a lado) */}
-        <motion.div
-          style={{ x }}
-          className="flex w-[200vw] h-full will-change-transform"
-        >
-          {/* Seção esquerda (Testimonials) */}
-          <div className="w-screen h-full overflow-y-auto">
-            {leftSection}
-          </div>
-
-          {/* Seção direita (Services) */}
-          <div className="w-screen h-full overflow-y-auto">
-            {rightSection}
-          </div>
+        {/* About — em cima, fecha da direita para esquerda */}
+        <motion.div style={{clipPath}} className="absolute inset-0 w-full h-full will-change-transform">
+          {leftSection}
         </motion.div>
 
-        {/* Linha divisória vertical */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-full w-px pointer-events-none z-20 flex flex-col items-center justify-center">
+        {/* Linha fixa na borda direita com SVG + */}
+        <motion.div
+          style={{opacity: lineOpacity}}
+          className="absolute top-0 right-0 h-full w-px pointer-events-none z-30">
           <motion.div
-            style={{
-              height: lineHeight,
-              opacity: lineOpacity,
-            }}
-            className="w-px bg-[#acaba9]/30 origin-top"
+            style={{scaleY: lineScale}}
+            className="absolute top-0 left-0 w-full h-full bg-[#acaba9]/25 origin-top"
           />
-        </div>
 
+          <motion.div
+            style={{top: plusY, rotate: plusRotate}}
+            className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 13 13"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="overflow-visible">
+              <line x1="6.5" y1="0" x2="6.5" y2="13" strokeWidth="1" stroke="#acaba9" />
+              <line x1="0" y1="6.5" x2="13" y2="6.5" strokeWidth="1" stroke="#acaba9" />
+            </svg>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );

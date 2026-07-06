@@ -12,11 +12,8 @@ export default function Page() {
     <main className="bg-[#121212]">
       <Navbar />
       <Hero />
-      <About />
-
-      {/* Transição horizontal: Testimonials → Serviços */}
-      <HorizontalTransition leftSection={<Testimonials />} rightSection={<Services />} />
-
+      <HorizontalTransition leftSection={<About />} rightSection={<Services />} />
+      <Testimonials />
       <FAQ faqs={faqs} />
     </main>
   );
