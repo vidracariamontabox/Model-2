@@ -7,14 +7,14 @@ import {motion, useInView} from "framer-motion";
 const TITLE_LINE_1 = "Montabox";
 const TITLE_LINE_2 = "Vidraçaria e Serralheria de Alumínio.";
 
-const BODY_LEFT = `Especializada em projetos grandes residenciais e comerciais, entregamos soluções que unem estética refinada e engenharia de alta performance.`;
+const BODY_LEFT = `Especializada em projetos grandes, residenciais e comerciais, entregamos soluções que unem estética refinada e engenharia de alta performance.`;
 
 // const BODY_RIGHT = `Cada projeto é desenvolvido sob medida, do briefing ao acabamento final, com materiais selecionados e instalação feita por nossa própria equipe. Acreditamos que vidro não é apenas material — é luz, amplitude e presença arquitetônica com personalidade.`;
 
 const STATS = [
-  {value: "10+", label: "anos de mercado"},
-  {value: "2k+", label: "projetos concluídos"},
-  {value: "100%", label: "instalação própria"},
+  {value: "35+", label: "anos de mercado"},
+  {value: "7.040+", label: "projetos concluídos"},
+  {value: "100%", label: "Fabricação e instalação própria"},
 ];
 
 /* ─── Variants ──────────────────────────────────────────────────────── */
@@ -70,11 +70,9 @@ function AnimatedTitle({line1, line2}) {
   const chars2 = line2.split("");
 
   return (
-    <h2
-      aria-label={`${line1} ${line2}`}
-      className="text-[clamp(3rem,7vw,6rem)] font-black tracking-tight leading-[1.02] text-[#eaeaea]">
+    <h2 aria-label={`${line1} ${line2}`} className="leading-[1.02] text-[#eaeaea]">
       {/* Line 1 */}
-      <span className="block overflow-hidden">
+      <span className="block overflow-hidden text-[clamp(1.8rem,4vw,3rem)] uppercase font-black tracking-tight">
         {chars1.map((ch, i) => (
           <motion.span
             key={`l1-${i}`}
@@ -87,7 +85,8 @@ function AnimatedTitle({line1, line2}) {
       </span>
 
       {/* Line 2 — slight indent for typographic rhythm */}
-      <span className="block overflow-hidden pl-[0.08em]">
+
+      <span className="block overflow-hidden pl-[0.08em] text-[0.95rem] uppercase font-light tracking-tight text-[#d8d8d8]">
         {chars2.map((ch, i) => (
           <motion.span
             key={`l2-${i}`}
@@ -138,23 +137,27 @@ export default function About() {
 
         {/* ── Separator ── */}
         <motion.div variants={fadeUp} custom={0.18} className="mt-12 mb-12 h-px bg-[#75706f]/20 w-full" />
+
         {/* ── Two-column body ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16">
           <motion.p variants={fadeUp} custom={0.28} className="font-light text-[0.95rem] leading-[1.85] text-[#acaba9]">
             {BODY_LEFT}
           </motion.p>
+
           {/* <motion.p variants={fadeUp} custom={0.38} className="font-light text-[0.95rem] leading-[1.85] text-[#acaba9]">
             {BODY_RIGHT}
           </motion.p> */}
         </div>
+
         {/* ── Separator ── */}
         <motion.div variants={fadeUp} custom={0.46} className="mt-14 mb-14 h-px bg-[#75706f]/20 w-full" />
+
         {/* ── Stats row ── */}
-        <motion.div variants={statVariants} className="grid grid-cols-3 gap-4">
+        <motion.div variants={statVariants} className="grid grid-cols-3 gap-0">
           {STATS.map(({value, label}, i) => (
             <motion.div key={label} variants={fadeUp} custom={0.52 + i * 0.1} className="flex flex-col gap-1">
-              <span className="text-[clamp(1.8rem,4vw,3rem)] font-black tracking-tight text-[#eaeaea]">{value}</span>
-              <span className="text-[0.7rem] font-light tracking-[0.18em] uppercase text-[#75706f]">{label}</span>
+              <span className="text-[clamp(.8rem,2vw,3rem)] font-black tracking-tight text-[#eaeaea]">{value}</span>
+              <span className="text-[0.55rem] font-light tracking-[0.18em] uppercase text-[#75706f]">{label}</span>
             </motion.div>
           ))}
         </motion.div>
