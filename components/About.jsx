@@ -1,7 +1,8 @@
 "use client";
 
 import {useRef, useState, useEffect} from "react";
-import {motion, useInView, useScroll, useTransform, AnimatePresence} from "framer-motion";
+import {motion, useInView, AnimatePresence} from "framer-motion";
+// import {motion, useInView, useScroll, useTransform, AnimatePresence} from "framer-motion";
 
 /* ─── Copy ──────────────────────────────────────────────────────────── */
 const TITLE_LINE_1 = "Montabox";
@@ -87,28 +88,23 @@ function AnimatedTitle({line1, line2}) {
 }
 
 /* ─── HoverExpand Gallery ───────────────────────────────────────────── */
-function HoverExpandGallery({scrollActiveIndex}) {
-  const [hoverIndex, setHoverIndex] = useState(null);
-
-  // Prioridade: hover > scroll
-  const activeIndex = hoverIndex !== null ? hoverIndex : scrollActiveIndex;
+function HoverExpandGallery({activeIndex}) {
+  const safeActiveIndex = Number.isFinite(activeIndex) ? activeIndex : 0;
 
   return (
-    <div className="flex w-full h-full items-stretch justify-center gap-1">
+    <div className="flex w-full h-full items-stretch justify-center gap-1 overflow-hidden">
       {IMAGES.map((image, index) => (
         <motion.div
           key={index}
-          className="relative cursor-pointer overflow-hidden rounded-xl"
+          className="relative cursor-default overflow-hidden rounded-xl"
           animate={{
-            width: activeIndex === index ? "100%" : "3rem",
+            width: safeActiveIndex === index ? "24rem" : "5rem",
             height: "100%",
           }}
-          transition={{duration: 0.4, ease: "easeInOut"}}
-          onHoverStart={() => setHoverIndex(index)}
-          onHoverEnd={() => setHoverIndex(null)}>
+          transition={{duration: 0.65, ease: [0.22, 1, 0.36, 1]}}>
           {/* Overlay gradiente no ativo */}
           <AnimatePresence>
-            {activeIndex === index && (
+            {safeActiveIndex === index && (
               <motion.div
                 initial={{opacity: 0}}
                 animate={{opacity: 1}}
@@ -120,7 +116,7 @@ function HoverExpandGallery({scrollActiveIndex}) {
 
           {/* Label no ativo */}
           <AnimatePresence>
-            {activeIndex === index && (
+            {safeActiveIndex === index && (
               <motion.div
                 initial={{opacity: 0, y: 8}}
                 animate={{opacity: 1, y: 0}}
@@ -141,35 +137,41 @@ function HoverExpandGallery({scrollActiveIndex}) {
 }
 
 /* ─── Component Principal ───────────────────────────────────────────── */
-export default function About() {
+export default function About({scrollYProgress}) {
   const sectionRef = useRef(null);
   const inView = useInView(sectionRef, {once: true, margin: "-80px 0px"});
-
-  // Scroll dentro da seção controla qual imagem está ativa
-  const {scrollYProgress} = useScroll({
-    target: sectionRef,
-    offset: ["start center", "end center"],
-  });
-
-  const scrollActiveIndex = useTransform(
-    scrollYProgress,
-    IMAGES.map((_, i) => i / (IMAGES.length - 1)),
-    IMAGES.map((_, i) => i),
-  );
-
   const [activeScrollIndex, setActiveScrollIndex] = useState(0);
 
   useEffect(() => {
-    return scrollActiveIndex.on("change", (v) => {
-      setActiveScrollIndex(Math.round(v));
+    if (!scrollYProgress) return;
+
+    // Este range dá mais tempo de leitura antes da galeria começar
+    // e distribui melhor a troca entre as imagens.
+    const startProgress = 0.12;
+    const endProgress = 0.82;
+    const lastIndex = IMAGES.length - 1;
+
+    return scrollYProgress.on("change", (value) => {
+      if (value <= startProgress) {
+        setActiveScrollIndex(0);
+        return;
+      }
+
+      if (value >= endProgress) {
+        setActiveScrollIndex(lastIndex);
+        return;
+      }
+
+      const normalized = (value - startProgress) / (endProgress - startProgress);
+      setActiveScrollIndex(Math.round(normalized * lastIndex));
     });
-  }, [scrollActiveIndex]);
+  }, [scrollYProgress]);
 
   return (
     <section
       id="sobre"
       ref={sectionRef}
-      className="relative bg-[#000000] overflow-hidden py-28 sm:py-36 px-8 sm:px-12 lg:px-20 min-h-screen">
+      className="relative bg-[#000000] overflow-hidden py-24 sm:py-28 lg:py-20 px-8 sm:px-12 lg:px-20 min-h-screen">
       {/* Gradiente decorativo */}
       <div
         aria-hidden
@@ -185,9 +187,9 @@ export default function About() {
         animate={inView ? "visible" : "hidden"}
         className="relative z-10 max-w-7xl mx-auto">
         {/* ── Layout: 30% texto | 70% galeria ── */}
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-0">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-0">
           {/* ── Coluna esquerda — textos (30%) ── */}
-          <div className="lg:w-[30%] lg:pr-10 flex flex-col justify-start  pt-0">
+          <div className="lg:w-[30%] lg:pr-10 flex flex-col justify-start pt-0">
             <motion.p
               variants={fadeUp}
               custom={0}
@@ -222,8 +224,11 @@ export default function About() {
           </div>
 
           {/* ── Coluna direita — galeria HoverExpand (70%) ── */}
-          <motion.div variants={fadeUp} custom={0.3} className="lg:w-[70%] flex items-stretch min-h-[500px]">
-            <HoverExpandGallery scrollActiveIndex={activeScrollIndex} />
+          <motion.div
+            variants={fadeUp}
+            custom={0.3}
+            className="lg:w-[70%] flex items-stretch h-[380px] sm:h-[420px] lg:h-[clamp(360px,34vh,420px)] lg:self-start">
+            <HoverExpandGallery activeIndex={activeScrollIndex} />
           </motion.div>
         </div>
       </motion.div>

@@ -1,5 +1,5 @@
 "use client";
-import {useRef} from "react";
+import {cloneElement, isValidElement, useRef} from "react";
 import {motion, useScroll, useTransform} from "framer-motion";
 
 /**
@@ -23,19 +23,22 @@ export default function HorizontalTransition({leftSection, rightSection}) {
     offset: ["start start", "end end"],
   });
 
-  // clip-path abre da direita para esquerda
-  // inset(0% 0% 0% 0%) = About cobre tudo
-  // inset(0% 100% 0% 0%) = About fechou para esquerda, Services visível
-  const clipPath = useTransform(scrollYProgress, [0.1, 1.0], ["inset(0% 0% 0% 0%)", "inset(0% 100% 0% 0%)"]);
+  // Cortina: este range controla só o fechamento final.
+  // Quanto mais perto de 1.0 começar, mais tempo o About fica livre para as imagens.
+  const clipPath = useTransform(scrollYProgress, [0.86, 1.0], ["inset(0% 0% 0% 0%)", "inset(0% 100% 0% 0%)"]);
 
   // Linha fixa na borda direita
-  const lineScale = useTransform(scrollYProgress, [0.05, 0.85], [0, 1]);
-  const lineOpacity = useTransform(scrollYProgress, [0.03, 0.1, 0.88, 0.97], [0, 1, 1, 0]);
-  const plusRotate = useTransform(scrollYProgress, [0.05, 0.9], [0, 360]);
-  const plusY = useTransform(scrollYProgress, [0.05, 0.85], ["0%", "100%"]);
+  const lineScale = useTransform(scrollYProgress, [0.84, 0.98], [0, 1]);
+  const lineOpacity = useTransform(scrollYProgress, [0.82, 0.86, 0.98, 1], [0, 1, 1, 0]);
+  const plusRotate = useTransform(scrollYProgress, [0.84, 1], [0, 360]);
+  const plusY = useTransform(scrollYProgress, [0.84, 0.98], ["0%", "100%"]);
+
+  const leftSectionWithScroll = isValidElement(leftSection)
+    ? cloneElement(leftSection, {scrollYProgress})
+    : leftSection;
 
   return (
-    <div ref={containerRef} className="relative h-[200vh]">
+    <div ref={containerRef} className="relative h-[700vh]">
       {/* Sticky container */}
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Services — fixo atrás, sempre visível */}
@@ -43,7 +46,7 @@ export default function HorizontalTransition({leftSection, rightSection}) {
 
         {/* About — em cima, fecha da direita para esquerda */}
         <motion.div style={{clipPath}} className="absolute inset-0 w-full h-full will-change-transform">
-          {leftSection}
+          {leftSectionWithScroll}
         </motion.div>
 
         {/* Linha fixa na borda direita com SVG + */}
