@@ -21,11 +21,12 @@ export default function HorizontalTransition({leftSection, rightSection}) {
   const {scrollYProgress} = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
+    layoutEffect: false,
   });
 
-  // Cortina: este range controla só o fechamento final.
-  // Quanto mais perto de 1.0 começar, mais tempo o About fica livre para as imagens.
-  const clipPath = useTransform(scrollYProgress, [0.86, 1.0], ["inset(0% 0% 0% 0%)", "inset(0% 100% 0% 0%)"]);
+  // Cortina: quanto maior esse intervalo, mais lenta fica a abertura/fechamento.
+  // Se estiver entrando rápido demais, aumente o início do range para 0.82/0.84.
+  const clipPath = useTransform(scrollYProgress, [0.84, 1.0], ["inset(0% 0% 0% 0%)", "inset(0% 100% 0% 0%)"]);
 
   // Linha fixa na borda direita
   const lineScale = useTransform(scrollYProgress, [0.84, 0.98], [0, 1]);
@@ -38,7 +39,7 @@ export default function HorizontalTransition({leftSection, rightSection}) {
     : leftSection;
 
   return (
-    <div ref={containerRef} className="relative h-[700vh]">
+    <div ref={containerRef} className="relative h-[300vh]">
       {/* Sticky container */}
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Services — fixo atrás, sempre visível */}

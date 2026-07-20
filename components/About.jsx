@@ -145,10 +145,8 @@ export default function About({scrollYProgress}) {
   useEffect(() => {
     if (!scrollYProgress) return;
 
-    // Este range dá mais tempo de leitura antes da galeria começar
-    // e distribui melhor a troca entre as imagens.
-    const startProgress = 0.12;
-    const endProgress = 0.82;
+    const startProgress = 0.28;
+    const endProgress = 0.9;
     const lastIndex = IMAGES.length - 1;
 
     return scrollYProgress.on("change", (value) => {
@@ -227,7 +225,7 @@ export default function About({scrollYProgress}) {
           <motion.div
             variants={fadeUp}
             custom={0.3}
-            className="lg:w-[70%] flex items-stretch h-[380px] sm:h-[420px] lg:h-[clamp(360px,34vh,420px)] lg:self-start">
+            className="lg:w-[70%] flex items-stretch h-[380px] sm:h-[420px] lg:h-[clamp(480px,46vh,480px)] lg:self-start">
             <HoverExpandGallery activeIndex={activeScrollIndex} />
           </motion.div>
         </div>
