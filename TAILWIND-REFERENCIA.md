@@ -195,6 +195,7 @@ Todas as classes usadas no projeto, organizadas por categoria, com descrição e
 | `font-semibold`     | `font-weight: 600`                      |
 | `font-black`        | `font-weight: 900` — títulos principais |
 | `font-archivo`      | Fonte Archivo (Google Fonts)            |
+| `font-sheila`       | Fonte sheila                            |
 | `uppercase`         | `text-transform: uppercase`             |
 | `tracking-tight`    | `letter-spacing: -0.025em`              |
 | `tracking-widest`   | `letter-spacing: 0.1em`                 |
