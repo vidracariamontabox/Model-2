@@ -25,8 +25,12 @@ export default function HorizontalTransition({leftSection, rightSection}) {
   });
 
   // Cortina: quanto maior esse intervalo, mais lenta fica a abertura/fechamento.
-  // Se estiver entrando rápido demais, aumente o início do range para 0.82/0.84.
-  const clipPath = useTransform(scrollYProgress, [0.84, 1.0], ["inset(0% 0% 0% 0%)", "inset(0% 100% 0% 0%)"]);
+  // A faixa final mantém a cortina fechada por um tempo, dando respiro para ler "Nossos Serviços".
+  const clipPath = useTransform(
+    scrollYProgress,
+    [0.22, 0.82, 0.92, 1.0],
+    ["inset(0% 0% 0% 0%)", "inset(0% 100% 0% 0%)", "inset(0% 100% 0% 0%)", "inset(0% 100% 0% 0%)"]
+  );
 
   // Linha fixa na borda direita
   const lineScale = useTransform(scrollYProgress, [0.84, 0.98], [0, 1]);
@@ -39,7 +43,7 @@ export default function HorizontalTransition({leftSection, rightSection}) {
     : leftSection;
 
   return (
-    <div ref={containerRef} className="relative h-[300vh]">
+    <div ref={containerRef} className="relative h-[380vh]">
       {/* Sticky container */}
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Services — fixo atrás, sempre visível */}

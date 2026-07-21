@@ -6,6 +6,7 @@ import FAQ from "@/components/FAQ";
 import Services from "@/components/Services";
 import HorizontalTransition from "@/components/HorizontalTransition";
 import {faqs} from "@/data/faq";
+import Footer from "@/components/Footer";
 
 export default function Page() {
   return (
@@ -15,6 +16,7 @@ export default function Page() {
       <HorizontalTransition leftSection={<About />} rightSection={<Services />} />
       <Testimonials />
       <FAQ faqs={faqs} />
+      <Footer />
     </main>
   );
 }
