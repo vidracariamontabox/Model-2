@@ -41,13 +41,16 @@ export default function HorizontalTransition({leftSection, rightSection}) {
   const leftSectionWithScroll = isValidElement(leftSection)
     ? cloneElement(leftSection, {scrollYProgress})
     : leftSection;
+  const rightSectionWithScroll = isValidElement(rightSection)
+    ? cloneElement(rightSection, {transitionProgress: scrollYProgress})
+    : rightSection;
 
   return (
     <div ref={containerRef} className="relative h-[380vh]">
       {/* Sticky container */}
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Services — fixo atrás, sempre visível */}
-        <div className="absolute inset-0 w-full h-full">{rightSection}</div>
+        <div className="absolute inset-0 w-full h-full">{rightSectionWithScroll}</div>
 
         {/* About — em cima, fecha da direita para esquerda */}
         <motion.div style={{clipPath}} className="absolute inset-0 w-full h-full will-change-transform">

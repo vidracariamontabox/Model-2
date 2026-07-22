@@ -2,6 +2,7 @@
 
 import {useState} from "react";
 import {motion} from "framer-motion";
+import BlurTextReveal from "./ui/BlurTextReveal";
 
 function FAQItem({item, index, isOpen, onToggle}) {
   const [tilt, setTilt] = useState({rx: 0, ry: 0});
@@ -124,7 +125,12 @@ export default function FAQ({faqs}) {
 
       <div className="relative z-10 mx-auto max-w-3xl">
         <p className="font-archivo text-[0.7rem] tracking-[0.3em] uppercase text-[#acaba9]">FAQ</p>
-        <h2 className="mt-2 font-archivo font-light text-2xl sm:text-3xl text-[#eaeaea]">Perguntas frequentes</h2>
+        <BlurTextReveal
+          text="Perguntas frequentes"
+          animationType="words"
+          stagger={0.12}
+          className="mt-2 font-archivo font-light text-2xl sm:text-3xl text-[#eaeaea]"
+        />
 
         <div className="mt-10 flex flex-col gap-3">
           {faqs.map((item, i) => (

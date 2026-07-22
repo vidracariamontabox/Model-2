@@ -195,8 +195,9 @@ Todas as classes usadas no projeto, organizadas por categoria, com descrição e
 | `font-semibold`     | `font-weight: 600`                      |
 | `font-black`        | `font-weight: 900` — títulos principais |
 | `font-archivo`      | Fonte Archivo (Google Fonts)            |
-| `font-sheila`       | Fonte sheila                            |
+| `font-Ivypresto`    | Fonte Ivy presto                        |
 | `uppercase`         | `text-transform: uppercase`             |
+| `font-ivy-italic`   | `estilo italico`                        |
 | `tracking-tight`    | `letter-spacing: -0.025em`              |
 | `tracking-widest`   | `letter-spacing: 0.1em`                 |
 | `tracking-[0.18em]` | Espaçamento personalizado               |

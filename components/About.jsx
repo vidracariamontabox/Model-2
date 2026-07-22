@@ -2,6 +2,7 @@
 
 import {useRef, useState, useEffect} from "react";
 import {motion, useInView, AnimatePresence} from "framer-motion";
+import BlurTextReveal from "./ui/BlurTextReveal";
 // import {motion, useInView, useScroll, useTransform, AnimatePresence} from "framer-motion";
 
 /* ─── Copy ──────────────────────────────────────────────────────────── */
@@ -32,15 +33,6 @@ const sectionVariants = {
   },
 };
 
-const charVariants = {
-  hidden: {opacity: 0, y: 16},
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {type: "spring", stiffness: 280, damping: 28},
-  },
-};
-
 const fadeUp = {
   hidden: {opacity: 0, y: 20},
   visible: (delay = 0) => ({
@@ -57,33 +49,19 @@ const statVariants = {
 
 /* ─── Animated Title ────────────────────────────────────────────────── */
 function AnimatedTitle({line1, line2}) {
-  const chars1 = line1.split("");
-  const chars2 = line2.split("");
   return (
-    <h2 aria-label={`${line1} ${line2}`} className="leading-[1.02] text-[#eaeaea]">
+    <BlurTextReveal
+      aria-label={`${line1} ${line2}`}
+      animationType="chars"
+      stagger={0.025}
+      className="leading-[1.02] text-[#eaeaea]">
       <span className="block overflow-hidden text-[clamp(1.8rem,4vw,3rem)] uppercase font-black tracking-tight">
-        {chars1.map((ch, i) => (
-          <motion.span
-            key={`l1-${i}`}
-            variants={charVariants}
-            className="inline-block"
-            style={{whiteSpace: ch === " " ? "pre" : "normal"}}>
-            {ch}
-          </motion.span>
-        ))}
+        {line1}
       </span>
       <span className="block overflow-hidden pl-[0.08em] text-[0.95rem] uppercase font-light tracking-tight text-[#d8d8d8]">
-        {chars2.map((ch, i) => (
-          <motion.span
-            key={`l2-${i}`}
-            variants={charVariants}
-            className="inline-block"
-            style={{whiteSpace: ch === " " ? "pre" : "normal"}}>
-            {ch}
-          </motion.span>
-        ))}
+        {line2}
       </span>
-    </h2>
+    </BlurTextReveal>
   );
 }
 

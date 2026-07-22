@@ -13,7 +13,7 @@ module.exports = {
         archivo: ['var(--font-archivo)', 'sans-serif'],
         familjen: ['var(--font-familjen)', 'sans-serif'],  // títulos
         neuehaas: ['var(--font-neuehaas)', 'sans-serif'],  // textos
-        sheila: ['var(--font-sheila)', 'sans-serif'],  // services
+        'ivy-presto': ['var(--font-ivy-presto)', 'serif'],
       },
       // ─── PALETA MONTABOX ──────────────────────────────────────
       // Permite usar: bg-preto, text-inox, border-cinza, etc.

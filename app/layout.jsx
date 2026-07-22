@@ -29,9 +29,16 @@ const neueHaas = localFont({
   variable: "--font-neuehaas",
 });
 
+const ivyPrestoDisplay = localFont({
+  src: "../public/fonts/ivy-presto-display-thin.woff2",
+  variable: "--font-ivy-presto",
+});
+
 export default function RootLayout({children}) {
   return (
-    <html lang="pt-BR" className={`${archivo.variable} ${familjen.variable} ${neueHaas.variable}`}>
+    <html
+      lang="pt-BR"
+      className={`${archivo.variable} ${familjen.variable} ${neueHaas.variable} ${ivyPrestoDisplay.variable}`}>
       <body className="bg-[#121212] text-[#eaeaea] antialiased font-neuehaas">
         <SmoothScroll>{children}</SmoothScroll>
       </body>

@@ -36,7 +36,7 @@ function MapPinIcon(props) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="1.3"
       strokeLinecap="round"
       strokeLinejoin="round"
       {...props}>
@@ -184,7 +184,7 @@ export default function Footer() {
       href: "https://br.pinterest.com/montabox_vidros/",
     },
     {
-      icon: <MapPinIcon className="h-5 w-5 text-[#eaeaea]" />,
+      icon: <MapPinIcon className="h-7 w-7 text-[#eaeaea]" />,
       label: "Maps",
       href: "https://share.google/e7G9PhQQ1gHud9Q6f",
     },
@@ -238,10 +238,10 @@ export default function Footer() {
               href="https://www.instagram.com/bms_trafego/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#acaba9] text-sm hover:text-[#3ca2fa] transition-colors bms-font">
-              <span className="bms-letter-b text-[white] font-black">B</span>
-              <span className="bms-letter-m text-[red] font-semibold">M</span>
-              <span className="bms-letter-s text-[white] font-semibold">S</span>
+              className="text-[#75706f] text-sm font-black hover:text-[#3ca2fa] transition-colors">
+              <span className="bms-letter-b text-[#75706f]">B</span>
+              <span className="bms-letter-m text-[75706f]">M</span>
+              <span className="bms-letter-s text-[75706f]">S</span>
             </a>
           </div>
         </div>
