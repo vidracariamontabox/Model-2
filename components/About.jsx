@@ -17,12 +17,12 @@ const STATS = [
 
 /* Placeholders — substitua pelos caminhos reais depois */
 const IMAGES = [
-  {src: "/images/placeholder.webp", alt: "Fachada pele de vidro"},
-  {src: "/images/placeholder.webp", alt: "Porta pivotante"},
-  {src: "/images/placeholder.webp", alt: "Esquadria de alumínio"},
-  {src: "/images/placeholder.webp", alt: "Porta de correr"},
-  {src: "/images/placeholder.webp", alt: "Vitrô cozinha"},
-  {src: "/images/placeholder.webp", alt: "Fechamento garagem"},
+  {src: "/images/obra-1.jpeg", alt: "Oxíquimica"},
+  {src: "/images/obra-2.jpg", alt: "Porta Ripado - residência"},
+  {src: "/images/obra-3.jpg", alt: "Centro empresarial e Hotel ìbis"},
+  {src: "/images/obra-4.jpg", alt: "Clínica médica"},
+  {src: "/images/obra-5.jpg", alt: "Condomínio residencial"},
+  {src: "/images/obra-6.jpg", alt: "Residencia completa"},
 ];
 
 /* ─── Variants ──────────────────────────────────────────────────────── */

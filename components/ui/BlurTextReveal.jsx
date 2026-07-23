@@ -105,7 +105,8 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
     className = "",
     animationType = "chars", // "chars" | "words"
     stagger = 0.05,
-    duration = 0.8,
+    // Duração base do BlurTextReveal: aumente este valor para deixar toda a revelação mais lenta.
+    duration = 1.2,
     ease = "power2.out",
     start = "top 90%",
     once = true,

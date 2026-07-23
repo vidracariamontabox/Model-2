@@ -4,6 +4,9 @@ import {motion, useInView} from "framer-motion";
 import BlurTextReveal from "./ui/BlurTextReveal";
 
 const services = ["Fachada Pele de Vidro.", "Esquadrias de Alumínio.", "Painel Ripado."];
+const CURTAIN_COMPLETE_PROGRESS = 0.82;
+// Tempo de leitura depois que a cortina termina antes de revelar o título de Serviços.
+const HEADER_REVEAL_DELAY = 1000;
 
 const containerVariants = {
   hidden: {},
@@ -56,7 +59,6 @@ function CursiveAltoPadrao({play}) {
       play={play}
       animationType="chars"
       stagger={0.055}
-      duration={0.7}
       className="font-ivy-presto text-3xl leading-none text-[#acaba9] md:text-4xl"
     />
   );
@@ -66,6 +68,7 @@ export default function Services({transitionProgress}) {
   const ref = useRef(null);
   const isInView = useInView(ref, {once: true, margin: "-10%"});
   const [isHeaderReady, setIsHeaderReady] = useState(() => !transitionProgress);
+  const headerDelayRef = useRef(null);
 
   useEffect(() => {
     if (!transitionProgress) {
@@ -73,12 +76,21 @@ export default function Services({transitionProgress}) {
       return;
     }
 
-    const updateHeaderState = (value) => {
-      if (value >= 0.84) setIsHeaderReady(true);
+    const scheduleHeaderReveal = (value) => {
+      if (value < CURTAIN_COMPLETE_PROGRESS || headerDelayRef.current) return;
+
+      headerDelayRef.current = window.setTimeout(() => {
+        setIsHeaderReady(true);
+      }, HEADER_REVEAL_DELAY);
     };
 
-    updateHeaderState(transitionProgress.get());
-    return transitionProgress.on("change", updateHeaderState);
+    scheduleHeaderReveal(transitionProgress.get());
+    const unsubscribe = transitionProgress.on("change", scheduleHeaderReveal);
+
+    return () => {
+      unsubscribe();
+      if (headerDelayRef.current) window.clearTimeout(headerDelayRef.current);
+    };
   }, [transitionProgress]);
 
   return (

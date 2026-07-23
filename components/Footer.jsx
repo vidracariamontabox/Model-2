@@ -169,27 +169,27 @@ export const FooterBackgroundGradient = () => {
 export default function Footer() {
   const contactLinks = [
     {
-      icon: <FacebookIcon className="h-5 w-5 text-[#eaeaea]" />,
+      icon: <FacebookIcon className="h-5 w-5 text-[#75706f]" />,
       label: "Facebook",
       href: "https://www.facebook.com/profile.php?id=100083338509379",
     },
     {
-      icon: <InstagramIcon className="h-5 w-5 text-[#eaeaea]" />,
+      icon: <InstagramIcon className="h-5 w-5 text-[#75706f]" />,
       label: "Instagram",
       href: "https://www.instagram.com/montabox_vidros/",
     },
     {
-      icon: <PinterestIcon className="h-5 w-5 text-[#eaeaea]" />,
+      icon: <PinterestIcon className="h-5 w-5 text-[#75706f]" />,
       label: "Pinterest",
       href: "https://br.pinterest.com/montabox_vidros/",
     },
     {
-      icon: <MapPinIcon className="h-7 w-7 text-[#eaeaea]" />,
+      icon: <MapPinIcon className="h-7 w-7 text-[#75706f]" />,
       label: "Maps",
       href: "https://share.google/e7G9PhQQ1gHud9Q6f",
     },
     {
-      icon: <WhatsAppIcon className="h-5 w-5 text-[#eaeaea]" />,
+      icon: <WhatsAppIcon className="h-5 w-5 text-[#75706f]" />,
       label: "WhatsApp",
       href: "https://wa.me/5516981984000",
     },
