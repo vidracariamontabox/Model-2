@@ -1,34 +1,64 @@
 "use client";
 
-import {useCallback, useState} from "react";
-import HeroBrand from "@/components/hero/HeroBrand";
-import HeroScene from "@/components/hero/HeroScene";
-import HeroScrollIndicator from "@/components/hero/HeroScrollIndicator";
-import {HERO_SCENE_CONFIG} from "@/config/heroScene";
-import {DEFAULT_HERO_PRESET} from "@/config/heroPresets";
+import {Suspense, useEffect, useRef} from "react";
+import {Canvas, useFrame, useThree} from "@react-three/fiber";
+import {PerspectiveCamera, useGLTF} from "@react-three/drei";
+import * as THREE from "three";
 
-// Semantic Hero shell that composes the scene and its interface layers.
+const GRID_SCALE = 1;
+
+function HeroModel() {
+  const {scene} = useGLTF("/models/hero-grid.gltf");
+  const cubesRef = useRef([]);
+  const {pointer} = useThree();
+
+  useEffect(() => {
+    const cubes = [];
+
+    scene.scale.setScalar(GRID_SCALE);
+
+    scene.traverse((child) => {
+      if (child.isMesh) {
+        child.material = new THREE.MeshStandardMaterial({
+          color: "#d8d8d8",
+          metalness: 0.6,
+          roughness: 0.25,
+        });
+        cubes.push(child);
+      }
+    });
+
+    cubesRef.current = cubes;
+  }, [scene]);
+
+  useFrame(() => {
+    const cursorX = pointer.x;
+    const cursorY = pointer.y;
+
+    cubesRef.current.forEach((mesh) => {
+      const targetX = THREE.MathUtils.clamp(cursorY * 0.12 + mesh.position.y * 0.02, -0.15, 0.15);
+      const targetY = THREE.MathUtils.clamp(cursorX * 0.12 - mesh.position.x * 0.02, -0.15, 0.15);
+
+      mesh.rotation.x = THREE.MathUtils.lerp(mesh.rotation.x, targetX, 0.08);
+      mesh.rotation.y = THREE.MathUtils.lerp(mesh.rotation.y, targetY, 0.08);
+    });
+  });
+
+  return <primitive object={scene} position={[0, -0.2, 0]} />;
+}
+
 export default function Hero() {
-  const [scenePhase, setScenePhase] = useState("initializing");
-  const isFallback = scenePhase === "fallback";
-  const isSceneReady = scenePhase === "sceneReady" || scenePhase === "entering" || scenePhase === "introFinished" || isFallback;
-  const isBrandRevealed = scenePhase === "introFinished" || isFallback;
-
-  const handleScenePhaseChange = useCallback((nextPhase) => {
-    setScenePhase(nextPhase);
-  }, []);
-
   return (
     <section className="relative h-screen w-full overflow-hidden bg-[#121212]">
-      {/* The scene owns the canvas lifecycle; this component only composes Hero layers. */}
-      <HeroScene config={HERO_SCENE_CONFIG} preset={DEFAULT_HERO_PRESET} onPhaseChange={handleScenePhaseChange} />
-      {!isSceneReady && (
-        <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center" role="status" aria-live="polite">
-          <span className="h-px w-16 bg-[#75706f]/70" aria-label="Carregando cena" />
-        </div>
-      )}
-      <HeroBrand revealed={isBrandRevealed} />
-      <HeroScrollIndicator visible={isSceneReady && isBrandRevealed} />
+      <Canvas className="h-screen w-full">
+        <color attach="background" args={["#121212"]} />
+        <ambientLight intensity={0.7} />
+        <directionalLight position={[5, 5, 5]} intensity={1.2} />
+        <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={45} />
+        <Suspense fallback={null}>
+          <HeroModel />
+        </Suspense>
+      </Canvas>
     </section>
   );
 }
