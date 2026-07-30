@@ -26,8 +26,6 @@ Este projeto e um site em Next.js para a Montabox. A interface e composta por co
 | Tecnologia | Versao | Uso |
 | --- | --- | --- |
 | Swiper | `14.0.1` | Carrosseis e conteudos deslizaveis. |
-| @splinetool/react-spline | `4.1.0` | Integracao de cenas e elementos 3D do Spline com React. |
-| @splinetool/runtime | `1.12.98` | Runtime necessario para executar os recursos 3D do Spline. |
 
 ## Desenvolvimento e Build
 

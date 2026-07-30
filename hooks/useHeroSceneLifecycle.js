@@ -18,7 +18,6 @@ export default function useHeroSceneLifecycle({canvasRef, config, preset, onPhas
 
   useEffect(() => {
     const reportPhase = (phase) => {
-      console.info(`[HeroScene] ${phase}`);
       onPhaseChange?.(phase);
     };
 
@@ -29,7 +28,6 @@ export default function useHeroSceneLifecycle({canvasRef, config, preset, onPhas
     const context = canvas?.getContext("2d");
 
     if (!canvas || !context) {
-      console.warn("[HeroScene] fallback: 2D canvas context unavailable");
       setIsFallback(true);
       reportPhase("fallback");
       return undefined;
@@ -72,50 +70,79 @@ export default function useHeroSceneLifecycle({canvasRef, config, preset, onPhas
     input.init();
     renderer.init();
     viewport.init();
-    timeline.init({onComplete: () => reportPhase("idle")});
+    reportPhase("sceneReady");
+    timeline.init({onComplete: () => reportPhase("introFinished")});
 
     let animationFrameId = null;
     let lastTimestamp = null;
-    let sceneTime = 0;
     let isLoopActive = true;
-    const debugState = {
-      fps: 0,
-      sceneTime: 0,
-      camera: camera.getDebugState(),
-      animator: animator.getDebugState(),
-      input: input.getDebugState(),
+    let isHeroVisible = true;
+    const shouldRunLoop = () => {
+      const {performance} = config;
+
+      return isLoopActive
+        && (!performance.pauseWhenOffscreen || isHeroVisible)
+        && (!performance.pauseWhenDocumentHidden || !document.hidden);
+    };
+
+    const stopLoop = () => {
+      if (animationFrameId !== null) {
+        window.cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+
+      lastTimestamp = null;
     };
 
     const renderLoop = (timestamp) => {
-      if (!isLoopActive) return;
+      animationFrameId = null;
+      if (!shouldRunLoop()) return;
 
       const previousTimestamp = lastTimestamp ?? timestamp;
       const deltaTime = Math.min((timestamp - previousTimestamp) / 1000, config.performance.maxDeltaTime);
-      const fps = deltaTime > 0 ? Math.round(1 / deltaTime) : 0;
-
       lastTimestamp = timestamp;
 
       if (!prefersReducedMotion) {
-        sceneTime += deltaTime;
         input.update(deltaTime);
         camera.setPointerInput(input.getState());
         animator.update(deltaTime);
         camera.update(deltaTime);
       }
 
-      debugState.fps = fps;
-      debugState.sceneTime = sceneTime;
-      renderer.render(debugState);
+      renderer.render();
 
+      if (shouldRunLoop()) animationFrameId = window.requestAnimationFrame(renderLoop);
+    };
+
+    const startLoop = () => {
+      if (!shouldRunLoop() || animationFrameId !== null) return;
+
+      lastTimestamp = null;
       animationFrameId = window.requestAnimationFrame(renderLoop);
     };
 
-    animationFrameId = window.requestAnimationFrame(renderLoop);
-    console.info("[HeroScene] RAF started");
+    const handleDocumentVisibility = () => {
+      if (shouldRunLoop()) {
+        startLoop();
+      } else {
+        stopLoop();
+      }
+    };
+
+    const visibilityObserver = "IntersectionObserver" in window
+      ? new IntersectionObserver(([entry]) => {
+        isHeroVisible = entry.isIntersecting;
+        handleDocumentVisibility();
+      }, {threshold: 0})
+      : null;
+
+    visibilityObserver?.observe(canvas);
+    document.addEventListener("visibilitychange", handleDocumentVisibility);
+    startLoop();
 
     if (prefersReducedMotion) {
       timeline.timeline.progress(1).pause();
-      reportPhase("idle");
+      reportPhase("introFinished");
     } else {
       reportPhase("entering");
       timeline.play();
@@ -124,13 +151,11 @@ export default function useHeroSceneLifecycle({canvasRef, config, preset, onPhas
     return () => {
       reportPhase("disposing");
       isLoopActive = false;
-
-      if (animationFrameId !== null) {
-        window.cancelAnimationFrame(animationFrameId);
-      }
+      stopLoop();
+      visibilityObserver?.disconnect();
+      document.removeEventListener("visibilitychange", handleDocumentVisibility);
 
       [...resources, timeline].reverse().forEach((resource) => resource.destroy());
-      console.info("[HeroScene] destroy executed");
     };
   }, [canvasRef, config, onPhaseChange, prefersReducedMotion, preset]);
 

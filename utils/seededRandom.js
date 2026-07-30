@@ -20,6 +20,7 @@ export function createSeededRandom(seed) {
   return {
     next,
     range: (min, max) => min + (max - min) * next(),
+    integer: (min, max) => Math.floor(min + (max - min + 1) * next()),
     chance: (probability) => next() < probability,
   };
 }

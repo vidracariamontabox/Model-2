@@ -13,14 +13,13 @@ export const HERO_SCENE_CONFIG = {
     desktop: 1024,
   },
   performance: {
-    maxDevicePixelRatio: 1.5,
+    maxDevicePixelRatio: {mobile: 1, tablet: 1.25, desktop: 1.5},
     maxDeltaTime: 0.05,
+    pauseWhenOffscreen: true,
+    pauseWhenDocumentHidden: true,
   },
   background: {
     base: "#000000",
-    metallic: "rgba(44, 44, 44, 0.24)",
-    depth: "rgba(18, 18, 18, 0.72)",
-    focalPoint: { x: 0.68, y: 0.24 },
   },
   camera: {
     position: { x: 0, y: 0, z: 0 },
@@ -29,76 +28,68 @@ export const HERO_SCENE_CONFIG = {
     fov: 42,
     near: 1,
     far: 4000,
+    profiles: {
+      mobile: {distance: 980, fov: 48},
+      tablet: {distance: 1000, fov: 45},
+      desktop: {distance: 1010, fov: 44},
+    },
   },
   field: {
     seed: "montabox-precision-field",
-    frameCounts: { mobile: 70, tablet: 140, desktop: 240 },
-    volume: {
-      x: { min: -760, max: 780 },
-      y: { min: -520, max: 460 },
-    },
-    layers: {
-      foreground: { ratio: 0.14, z: { min: 140, max: 320 }, sizeScale: 1.08 },
-      midground: { ratio: 0.56, z: { min: -260, max: 140 }, sizeScale: 1 },
-      background: { ratio: 0.3, z: { min: -700, max: -180 }, sizeScale: 0.8 },
-    },
-    size: {
-      width: { min: 70, max: 250 },
-      aspectRatio: { min: 0.48, max: 2.2 },
-    },
-    rotation: {
-      x: { min: -8, max: 8 },
-      y: { min: -10, max: 10 },
-      z: { min: -4, max: 4 },
-    },
-    material: { color: "#acaba9", opacity: 0.5, strokeWidth: 1 },
-    composition: {
-      focus: { x: 240, y: -20 },
-      focusWeight: { min: 0.2, max: 0.58 },
-      brandReserve: { xMax: -130, yMax: -170, avoidanceChance: 0.84 },
-      minimumDistance: 84,
-      depthSpacingScale: 0.38,
-      maxAttemptsPerFrame: 20,
-    },
-  },
-  motion: {
-    cameraDrift: {
-      duration: { mobile: 30, tablet: 26, desktop: 24 },
-      yawAmplitude: { mobile: 0.5, tablet: 0.75, desktop: 1.1 },
-      pitchAmplitude: { mobile: 0.3, tablet: 0.45, desktop: 0.65 },
-      positionAmplitude: {
-        mobile: { x: 3, y: 2, z: 1 },
-        tablet: { x: 5, y: 3, z: 2 },
-        desktop: { x: 8, y: 5, z: 3 },
-      },
-      pitchCycleMultiplier: 0.73,
-      positionCycleMultiplier: 0.41,
-    },
-    frames: {
-      kineticRatio: { mobile: 0.06, tablet: 0.09, desktop: 0.11 },
-      slowRotation: {
-        amplitude: { x: 0.34, y: 0.42, z: 0.2 },
-        speed: { min: 0.03, max: 0.08 },
-        phase: { min: 0, max: Math.PI * 2 },
-        axisPhaseOffset: { x: 0, y: 1.9, z: 3.8 },
+    wall: {
+      rows: { mobile: 8, tablet: 10, desktop: 12 },
+      columns: { mobile: 5, tablet: 8, desktop: 11 },
+      profiles: {
+        mobile: {
+          module: {width: 74, height: 50, widthVariation: 2.5, heightVariation: 2, depth: {min: -30, max: 30}},
+          gap: {x: 10, y: 10},
+        },
+        tablet: {
+          module: {width: 90, height: 60, widthVariation: 3, heightVariation: 2.5, depth: {min: -42, max: 42}},
+          gap: {x: 12, y: 12},
+        },
+        desktop: {
+          module: {width: 104, height: 62, widthVariation: 4, heightVariation: 3, depth: {min: -52, max: 52}},
+          gap: {x: 12, y: 12},
+        },
       },
     },
+    material: {
+      frontColor: "#75706f",
+      sideColor: "#121212",
+      topColor: "#acaba9",
+      lineColor: "#75706f",
+      lineWidth: 0.75,
+      maxContrast: 0.16,
+      metallicBand: {start: 0.46, end: 0.54},
+    },
   },
-  debug: {
-    enabled: true,
-    showScreenCenter: true,
-    showCameraOrigin: true,
-    showFrameBounds: true,
-    showFieldInfo: true,
+  lighting: {
+    direction: {x: -0.42, y: -0.58, z: 0.7},
+    intensity: 0.22,
+    shadowIntensity: 0.16,
+    metallicIntensity: 0.07,
+    maxContrast: 0.18,
   },
-  input: {
+  cameraMotion: {
     pointer: {
-      maxYaw: { mobile: 0, tablet: 0.7, desktop: 1.25 },
-      maxPitch: { mobile: 0, tablet: 0.45, desktop: 0.8 },
-      intensity: { mobile: 0, tablet: 0.58, desktop: 1 },
-      followSmoothing: 6,
-      returnSmoothing: 2.4,
+      horizontalAmplitude: {mobile: 0, tablet: 0.38, desktop: 0.6},
+      verticalAmplitude: {mobile: 0, tablet: 0.26, desktop: 0.42},
+      intensity: {mobile: 0, tablet: 0.62, desktop: 1},
+      followSmoothing: 2.2,
+      returnSmoothing: 0.95,
       deadZone: 0.04,
+      maxYaw: 0.72,
+      maxPitch: 0.5,
+    },
+    drift: {
+      speed: {mobile: 0.045, tablet: 0.052, desktop: 0.06},
+      pitchCycleMultiplier: 0.73,
+      intensity: {
+        mobile: {yaw: 0.035, pitch: 0.02},
+        tablet: {yaw: 0.05, pitch: 0.03},
+        desktop: {yaw: 0.07, pitch: 0.04},
+      },
     },
   },
   timing: {
