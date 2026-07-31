@@ -35,8 +35,8 @@ import * as THREE from "three";
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 const CUBE_SIZE = 1.0;
-const GAP       = 0.05;
-const STEP      = CUBE_SIZE + GAP; // = 1.05 world units
+const GAP = 0.05;
+const STEP = CUBE_SIZE + GAP; // = 1.05 world units
 
 // Deslocamento X/Y: 2-3mm = offset pequeno apenas para dar vida à grade
 // Interpretado como 2-3% do tamanho do cubo → ≈ 0.02-0.03 wu
@@ -55,45 +55,45 @@ function makeRng(seed) {
 }
 
 // ─── Geometrias compartilhadas ────────────────────────────────────────────────
-const BOX_GEO  = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
+const BOX_GEO = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
 const EDGE_GEO = new THREE.EdgesGeometry(BOX_GEO);
 
 // ─── Materiais: preto brilhoso (metallic black) ───────────────────────────────
 // MeshPhysicalMaterial = suporta metalness + roughness + reflections reais
 const MAT_DARK = new THREE.MeshPhysicalMaterial({
-  color:      "#1a1a1a",
-  metalness:  0.90,
-  roughness:  0.12,
+  color: "#1a1a1a",
+  metalness: 0.90,
+  roughness: 0.12,
   reflectivity: 1.0,
 });
 
 const MAT_MID = new THREE.MeshPhysicalMaterial({
-  color:      "#252525",
-  metalness:  0.85,
-  roughness:  0.18,
+  color: "#252525",
+  metalness: 0.85,
+  roughness: 0.18,
   reflectivity: 0.95,
 });
 
 const MAT_LIGHTER = new THREE.MeshPhysicalMaterial({
-  color:      "#333333",
-  metalness:  0.80,
-  roughness:  0.22,
+  color: "#333333",
+  metalness: 0.80,
+  roughness: 0.22,
   reflectivity: 0.85,
 });
 
 // ─── Materiais de borda ───────────────────────────────────────────────────────
 // 70% dos cubos: borda escura quase invisível
 const EDGE_MAT_DARK = new THREE.LineBasicMaterial({
-  color:       "#2a2a2a",
+  color: "#2a2a2a",
   transparent: true,
-  opacity:     0.4,
+  opacity: 0.4,
 });
 
 // 30% dos cubos: borda clara para diferenciá-los
 const EDGE_MAT_LIGHT = new THREE.LineBasicMaterial({
-  color:       "#aaaaaa",
+  color: "#aaaaaa",
   transparent: true,
-  opacity:     0.95,
+  opacity: 0.95,
 });
 
 // ─── Grade com cubos quase frontais ──────────────────────────────────────────
@@ -101,7 +101,7 @@ function CubeGrid() {
   const { viewport } = useThree();
 
   // +6 de margem para garantir que nenhuma borda apareça ao rolar
-  const cols = Math.ceil(viewport.width  / STEP) + 6;
+  const cols = Math.ceil(viewport.width / STEP) + 6;
   const rows = Math.ceil(viewport.height / STEP) + 6;
 
   // Log de contagem (apenas em dev)
@@ -110,10 +110,10 @@ function CubeGrid() {
   }
 
   const cubeData = useMemo(() => {
-    const rng     = makeRng(SEED);
+    const rng = makeRng(SEED);
     const offsetX = ((cols - 1) * STEP) / 2;
     const offsetY = ((rows - 1) * STEP) / 2;
-    const data    = [];
+    const data = [];
 
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
@@ -145,9 +145,9 @@ function CubeGrid() {
         // ── Material: preto brilhoso ──────────────────────────────────────
         const rm = rng();
         let mat;
-        if      (rm > 0.65) mat = MAT_DARK;     // 35% – mais escuro
+        if (rm > 0.65) mat = MAT_DARK;     // 35% – mais escuro
         else if (rm > 0.30) mat = MAT_MID;      // 35% – médio
-        else                mat = MAT_LIGHTER;  // 30% – levemente mais claro
+        else mat = MAT_LIGHTER;  // 30% – levemente mais claro
 
         // ── Borda: 30% clara, 70% escura ─────────────────────────────────
         const edgeMat = rng() < 0.30 ? EDGE_MAT_LIGHT : EDGE_MAT_DARK;
@@ -224,15 +224,15 @@ export default function Hero() {
           // FOV 45: equilíbrio entre ver cubos densos e perspectiva natural
           // Y=2.5: revela o topo dos cubos como na referência
           // Z=16: distância calibrada para cubos preencherem a tela
-          fov:      45,
-          position: [0, 2.5, 16],
-          near:     0.1,
-          far:      200,
+          fov: 45,
+          position: [0, 0.5, 16],
+          near: 0.1,
+          far: 200,
         }}
         gl={{
-          antialias:        true,
-          alpha:            false,
-          toneMapping:      THREE.ACESFilmicToneMapping,
+          antialias: true,
+          alpha: false,
+          toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.5,
           outputColorSpace: THREE.SRGBColorSpace,
         }}
