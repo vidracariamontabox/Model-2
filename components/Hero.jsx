@@ -30,14 +30,21 @@ function HeroModel({onReady, hasHoverPointer, prefersReducedMotion}) {
     scene.scale.setScalar(GRID_SCALE);
 
     scene.traverse((child) => {
-      if (child.isMesh) {
-        child.material = new THREE.MeshStandardMaterial({
-          color: "#d8d8d8",
-          metalness: 0.6,
-          roughness: 0.25,
-        });
-        cubes.push(child);
+      if (!child.isMesh) return;
+
+      const isCube = child.name === "Wall";
+
+      if (!isCube) {
+        child.visible = false;
+        return;
       }
+
+      child.material = new THREE.MeshStandardMaterial({
+        color: "#d8d8d8",
+        metalness: 0.6,
+        roughness: 0.25,
+      });
+      cubes.push(child);
     });
 
     cubesRef.current = cubes;
