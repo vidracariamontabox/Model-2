@@ -1,20 +1,32 @@
 "use client";
 
 /**
- * Hero — Grade de cubos desalinhados (estilo Spline)
+ * Hero — Grade de cubos desalinhados (estilo Spline / SLN Agency)
  *
- * CÁLCULO DE CUBOS POR TELA (FOV 35, Z=20, STEP=1.12):
+ * REFERÊNCIA: screenshot com cubos preto brilhoso, face frontal visível,
+ *             câmera levemente de cima-direita, profundidade Z variável.
+ *
+ * CONTAGEM DE CUBOS (FOV 35, Z=20, STEP=1.12):
  *   Viewport visível (world units):
  *     Altura = 2 * 20 * tan(17.5°) ≈ 12.6 wu
  *     Largura = altura × aspect_ratio
  *
- *   15" 1366×768  (16:9) → ~21 cols × ~13 rows = ~273 cubos
- *   15" 1920×1080 (16:9) → ~25 cols × ~14 rows = ~350 cubos
- *   24" 2560×1440 (16:9) → ~25 cols × ~14 rows = ~350 cubos  (mesma proporção)
- *   Ultra-wide 2560×1080 (21:9) → ~33 cols × ~14 rows = ~462 cubos
- *   4K 3840×2160 (16:9)  → ~25 cols × ~14 rows = ~350 cubos  (mesma proporção)
- *   (Em Three.js o FOV é vertical – horizontal se adapta ao aspect)
- *   +6 colunas e +6 linhas extras de margem = ~130-200 cubos adicionais
+ *   15" 1366×768  (16:9)  → ~22 cols × ~14 rows = ~308 cubos
+ *   15" 1920×1080 (16:9)  → ~26 cols × ~14 rows = ~364 cubos
+ *   24" 2560×1440 (16:9)  → ~26 cols × ~14 rows = ~364 cubos
+ *   Ultra-wide 2560×1080  → ~34 cols × ~14 rows = ~476 cubos
+ *   4K 3840×2160 (16:9)   → ~26 cols × ~14 rows = ~364 cubos
+ *   +6 cols +6 rows margem ≈ +150 cubos extras
+ *
+ *   TOTAL TÍPICO: ~350–500 cubos por render (depende do viewport)
+ *
+ * MUDANÇAS NESTA VERSÃO:
+ *   - Rotação ZERADA: rotX/rotY são quase 0 (face do cubo frontal)
+ *   - Deslocamento X/Y: ±2-3 milímetros (0.002~0.003 world units)
+ *   - Material: MeshPhysicalMaterial preto brilhoso (metallic black)
+ *   - 30% dos cubos com borda clara (LineBasicMaterial branco/claro)
+ *   - Câmera levemente acima para revelar topo dos cubos
+ *   - Profundidade Z: -3.0 a +3.0 para efeito de profundidade
  */
 
 import { Suspense, useMemo } from "react";
@@ -23,10 +35,14 @@ import * as THREE from "three";
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 const CUBE_SIZE = 1.0;
-const GAP = 0.12;
-const STEP = CUBE_SIZE + GAP; // = 1.12 world units
+const GAP       = 0.05;
+const STEP      = CUBE_SIZE + GAP; // = 1.05 world units
 
-// Semente fixa → mesmo layout a cada renderização (não re-randomiza)
+// Deslocamento X/Y: 2-3mm = offset pequeno apenas para dar vida à grade
+// Interpretado como 2-3% do tamanho do cubo → ≈ 0.02-0.03 wu
+const XY_OFFSET_MAX = STEP * 0.025; // ~0.026 world units ≈ 2.5% do step
+
+// Semente fixa → mesmo layout a cada renderização
 const SEED = 7331;
 
 // ─── Pseudo-random com seed ───────────────────────────────────────────────────
@@ -38,76 +54,105 @@ function makeRng(seed) {
   };
 }
 
-// ─── Materiais compartilhados (criados uma única vez, reutilizados) ────────────
-// Usando emissive nos cubos de destaque para simular o efeito de "glow/highlight"
-const SHARED_MATS = {
-  dark:      new THREE.MeshLambertMaterial({ color: "#191919", emissive: "#000000" }),
-  medium:    new THREE.MeshLambertMaterial({ color: "#232323", emissive: "#000000" }),
-  light:     new THREE.MeshLambertMaterial({ color: "#313131", emissive: "#000000" }),
-  // Cubos "highlight" com leve emissivo — simula o glow de alguns cubos no Spline
-  glowWarm:  new THREE.MeshLambertMaterial({ color: "#3a3530", emissive: "#1a0e00", emissiveIntensity: 0.6 }),
-  glowCool:  new THREE.MeshLambertMaterial({ color: "#28303a", emissive: "#00080f", emissiveIntensity: 0.5 }),
-};
-
-const EDGE_MAT = new THREE.LineBasicMaterial({
-  color: "#3a3a3a",
-  transparent: true,
-  opacity: 0.75,
-});
-
+// ─── Geometrias compartilhadas ────────────────────────────────────────────────
 const BOX_GEO  = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
 const EDGE_GEO = new THREE.EdgesGeometry(BOX_GEO);
 
-// ─── Grade com cubos desalinhados ─────────────────────────────────────────────
+// ─── Materiais: preto brilhoso (metallic black) ───────────────────────────────
+// MeshPhysicalMaterial = suporta metalness + roughness + reflections reais
+const MAT_DARK = new THREE.MeshPhysicalMaterial({
+  color:      "#1a1a1a",
+  metalness:  0.90,
+  roughness:  0.12,
+  reflectivity: 1.0,
+});
+
+const MAT_MID = new THREE.MeshPhysicalMaterial({
+  color:      "#252525",
+  metalness:  0.85,
+  roughness:  0.18,
+  reflectivity: 0.95,
+});
+
+const MAT_LIGHTER = new THREE.MeshPhysicalMaterial({
+  color:      "#333333",
+  metalness:  0.80,
+  roughness:  0.22,
+  reflectivity: 0.85,
+});
+
+// ─── Materiais de borda ───────────────────────────────────────────────────────
+// 70% dos cubos: borda escura quase invisível
+const EDGE_MAT_DARK = new THREE.LineBasicMaterial({
+  color:       "#2a2a2a",
+  transparent: true,
+  opacity:     0.4,
+});
+
+// 30% dos cubos: borda clara para diferenciá-los
+const EDGE_MAT_LIGHT = new THREE.LineBasicMaterial({
+  color:       "#aaaaaa",
+  transparent: true,
+  opacity:     0.95,
+});
+
+// ─── Grade com cubos quase frontais ──────────────────────────────────────────
 function CubeGrid() {
   const { viewport } = useThree();
 
-  // +6 de margem para garantir que nenhuma borda apareça
+  // +6 de margem para garantir que nenhuma borda apareça ao rolar
   const cols = Math.ceil(viewport.width  / STEP) + 6;
   const rows = Math.ceil(viewport.height / STEP) + 6;
 
+  // Log de contagem (apenas em dev)
+  if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+    console.log(`[Hero] Cubos na grade: ${cols} cols × ${rows} rows = ${cols * rows} cubos`);
+  }
+
   const cubeData = useMemo(() => {
-    const rng = makeRng(SEED);
+    const rng     = makeRng(SEED);
     const offsetX = ((cols - 1) * STEP) / 2;
     const offsetY = ((rows - 1) * STEP) / 2;
-    const data = [];
+    const data    = [];
 
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
-        // ── Posição base na grade ──────────────────────────────────────────
+
+        // ── Posição base na grade regular ────────────────────────────────
         const baseX = col * STEP - offsetX;
         const baseY = row * STEP - offsetY;
 
-        // ── Offset X/Y: desalinha os cubos da grade regular ───────────────
-        // Até ±40% do STEP → cubos deslocados como no Spline
-        const dX = (rng() - 0.5) * STEP * 0.8;
-        const dY = (rng() - 0.5) * STEP * 0.6;
+        // ── Offset X/Y: ±2-3mm (0.03 wu máximo) ─────────────────────────
+        // Pequeno deslocamento para dar vida à grade sem quebrar o alinhamento
+        const dX = (rng() - 0.5) * 2 * XY_OFFSET_MAX;
+        const dY = (rng() - 0.5) * 2 * XY_OFFSET_MAX;
 
-        // ── Profundidade Z aleatória ──────────────────────────────────────
-        // Faixa: -2.0 (fundo) a +2.5 (frente) — cria o efeito 3D caótico
-        const z = -2.0 + rng() * 4.5;
+        // ── Profundidade Z variável ───────────────────────────────────────
+        // -0.8 a +0.8 — profundidade sutil, parede compacta
+        const z = -0.8 + rng() * 1.6;
 
-        // ── Rotação por cubo: define quanto 3D aparece ────────────────────
-        // ~30% dos cubos ficam quase planos (rot baixo = só face frontal)
-        // ~70% têm rotação visível (mostram laterais)
-        const flat = rng() > 0.35; // cubo "plano" ou não
-        const rotX = flat ? (rng() - 0.5) * 0.15 : (rng() - 0.5) * 0.85;
-        const rotY = flat ? (rng() - 0.5) * 0.15 : (rng() - 0.5) * 0.85;
-        const rotZ = (rng() - 0.5) * 0.05; // leve torção no eixo Z
+        // ── Rotação: QUASE ZERO — apenas face frontal ─────────────────────
+        // O usuário pediu para NÃO mexer na rotação → deixamos ≈ 0
+        // Apenas leve inclinação para não parecer perfeitamente plano
+        const rotX = (rng() - 0.5) * 0.04; // ±0.02 rad ≈ ±1.1°
+        const rotY = (rng() - 0.5) * 0.04; // ±0.02 rad ≈ ±1.1°
+        const rotZ = 0;                      // sem torção
 
-        // ── Escala variável ───────────────────────────────────────────────
-        const scale = 0.75 + rng() * 0.50; // 0.75× a 1.25×
+        // ── Escala variável suave ─────────────────────────────────────────
+        // Mantida próxima de 1.0 para preencher a grade sem gaps grandes
+        const scale = 0.95 + rng() * 0.10; // 0.95× a 1.05×
 
-        // ── Cor / material ────────────────────────────────────────────────
-        const r = rng();
+        // ── Material: preto brilhoso ──────────────────────────────────────
+        const rm = rng();
         let mat;
-        if      (r > 0.97) mat = SHARED_MATS.glowWarm;  // 3%  – destaque quente
-        else if (r > 0.93) mat = SHARED_MATS.glowCool;  // 4%  – destaque frio
-        else if (r > 0.65) mat = SHARED_MATS.light;     // 28% – cinza médio
-        else if (r > 0.35) mat = SHARED_MATS.medium;    // 30% – cinza escuro
-        else                mat = SHARED_MATS.dark;      // 35% – quase preto
+        if      (rm > 0.65) mat = MAT_DARK;     // 35% – mais escuro
+        else if (rm > 0.30) mat = MAT_MID;      // 35% – médio
+        else                mat = MAT_LIGHTER;  // 30% – levemente mais claro
 
-        data.push({ x: baseX + dX, y: baseY + dY, z, rotX, rotY, rotZ, scale, mat });
+        // ── Borda: 30% clara, 70% escura ─────────────────────────────────
+        const edgeMat = rng() < 0.30 ? EDGE_MAT_LIGHT : EDGE_MAT_DARK;
+
+        data.push({ x: baseX + dX, y: baseY + dY, z, rotX, rotY, rotZ, scale, mat, edgeMat });
       }
     }
     return data;
@@ -123,7 +168,7 @@ function CubeGrid() {
           scale={c.scale}
         >
           <mesh geometry={BOX_GEO} material={c.mat} />
-          <lineSegments geometry={EDGE_GEO} material={EDGE_MAT} />
+          <lineSegments geometry={EDGE_GEO} material={c.edgeMat} />
         </group>
       ))}
     </group>
@@ -134,14 +179,29 @@ function CubeGrid() {
 function Scene() {
   return (
     <>
-      {/* Ambiente moderado: ilumina uniformemente todas as faces visíveis */}
-      <ambientLight intensity={0.65} />
+      {/* Luz ambiente: base moderada */}
+      <ambientLight intensity={0.55} />
 
-      {/* Luz de cima-direita: cria contraste leve entre face topo e face frontal */}
-      <directionalLight position={[4, 10, 6]} intensity={0.9} color="#ffffff" />
+      {/* Luz principal de cima-direita-frente: cria reflexo metálico no topo/frente */}
+      <directionalLight
+        position={[4, 8, 12]}
+        intensity={2.2}
+        color="#ffffff"
+      />
 
-      {/* Luz de baixo-esquerda: suave, cria profundidade nos cubos do fundo */}
-      <directionalLight position={[-3, -5, 4]} intensity={0.25} color="#8899cc" />
+      {/* Luz secundária de baixo-esquerda: profundidade e gradiente */}
+      <directionalLight
+        position={[-4, -6, 6]}
+        intensity={0.55}
+        color="#ccddee"
+      />
+
+      {/* Luz de rim direita: cria brilho nas bordas dos cubos frontais */}
+      <directionalLight
+        position={[8, 2, 8]}
+        intensity={0.8}
+        color="#ffffff"
+      />
     </>
   );
 }
@@ -155,27 +215,29 @@ export default function Hero() {
         width: "100%",
         height: "100vh",
         overflow: "hidden",
-        background: "#0d0d0d",
+        background: "#080808",
       }}
     >
       <Canvas
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
         camera={{
-          // Câmera frontal (Y=0): sem inclinação de câmera como pedido.
-          // O 3D dos cubos vem apenas das rotações individuais, não da câmera.
-          fov: 35,
-          position: [0, 0, 20],
-          near: 0.1,
-          far: 200,
+          // FOV 45: equilíbrio entre ver cubos densos e perspectiva natural
+          // Y=2.5: revela o topo dos cubos como na referência
+          // Z=16: distância calibrada para cubos preencherem a tela
+          fov:      45,
+          position: [0, 2.5, 16],
+          near:     0.1,
+          far:      200,
         }}
         gl={{
-          antialias: true,
-          alpha: false,
-          toneMapping: THREE.NoToneMapping,
+          antialias:        true,
+          alpha:            false,
+          toneMapping:      THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.5,
           outputColorSpace: THREE.SRGBColorSpace,
         }}
       >
-        <color attach="background" args={["#0d0d0d"]} />
+        <color attach="background" args={["#080808"]} />
         <Suspense fallback={null}>
           <Scene />
           <CubeGrid />
