@@ -1,167 +1,140 @@
 "use client";
 
-import {Suspense, useEffect, useRef, useState} from "react";
-import {AnimatePresence, motion} from "framer-motion";
-import {Canvas, useFrame, useThree} from "@react-three/fiber";
-import {PerspectiveCamera, useGLTF} from "@react-three/drei";
+import { Suspense, useMemo } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
-const GRID_SCALE = 1;
+// ─── Constantes ───────────────────────────────────────────────────────────────
+const CUBE_SIZE = 1.0;
+const GAP = 0.12;
+const STEP = CUBE_SIZE + GAP;
 
-function calcularDistanciaCamera(tamanhoModelo, fovGraus, aspect, margem = 1.3) {
-  const fovRad = (fovGraus * Math.PI) / 180;
-  const alturaNecessaria = tamanhoModelo.y * margem;
-  const larguraNecessaria = tamanhoModelo.x * margem;
+// ─── Grade dinâmica ───────────────────────────────────────────────────────────
+function CubeGrid() {
+  const { viewport } = useThree();
 
-  const distanciaParaAltura = alturaNecessaria / (2 * Math.tan(fovRad / 2));
-  const distanciaParaLargura = larguraNecessaria / (2 * Math.tan(fovRad / 2) * aspect);
+  const cols = Math.ceil(viewport.width / STEP) + 6;
+  const rows = Math.ceil(viewport.height / STEP) + 6;
 
-  return Math.max(distanciaParaAltura, distanciaParaLargura);
-}
-
-function HeroModel({onReady, hasHoverPointer, prefersReducedMotion}) {
-  const {scene} = useGLTF("/models/hero-grid.gltf");
-  const cubesRef = useRef([]);
-  const {pointer, clock, camera, size} = useThree();
-
-  useEffect(() => {
-    const cubes = [];
-
-    scene.scale.setScalar(GRID_SCALE);
-
-    scene.traverse((child) => {
-      if (!child.isMesh) return;
-
-      const isCube = child.name === "Wall";
-
-      if (!isCube) {
-        child.visible = false;
-        return;
+  const positions = useMemo(() => {
+    const offsetX = ((cols - 1) * STEP) / 2;
+    const offsetY = ((rows - 1) * STEP) / 2;
+    const pos = [];
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        pos.push([col * STEP - offsetX, row * STEP - offsetY, 0]);
       }
-
-      child.material = new THREE.MeshStandardMaterial({
-        color: "#d8d8d8",
-        metalness: 0.6,
-        roughness: 0.25,
-      });
-      cubes.push(child);
-    });
-
-    cubesRef.current = cubes;
-
-    scene.updateMatrixWorld(true);
-    const box = new THREE.Box3().setFromObject(scene);
-    const tamanhoModelo = new THREE.Vector3();
-    box.getSize(tamanhoModelo);
-
-    const aspect = size.width / Math.max(size.height, 1);
-    const distanciaCamera = calcularDistanciaCamera(tamanhoModelo, camera.fov, aspect, 1.3);
-
-    camera.position.set(0, 0, distanciaCamera);
-    camera.lookAt(0, 0, 0);
-    camera.updateProjectionMatrix();
-
-    onReady?.();
-  }, [scene, onReady, size.width, size.height, camera]);
-
-  useFrame(() => {
-    if (prefersReducedMotion) {
-      return;
     }
+    return pos;
+  }, [cols, rows]);
 
-    cubesRef.current.forEach((mesh) => {
-      let targetX = 0;
-      let targetY = 0;
+  // Usamos MeshPhongMaterial: reage perfeitamente às luzes direcionais
+  // sem precisar de environment map (ao contrário do MeshStandardMaterial metálico)
+  const faceMat = useMemo(
+    () =>
+      new THREE.MeshPhongMaterial({
+        color: new THREE.Color("#2a2a2a"),     // cinza escuro – base visível
+        specular: new THREE.Color("#888888"),  // reflexo especular claro
+        shininess: 80,                          // brilho concentrado
+        flatShading: false,
+      }),
+    []
+  );
 
-      if (hasHoverPointer) {
-        const cursorX = pointer.x;
-        const cursorY = pointer.y;
-        targetX = THREE.MathUtils.clamp(cursorY * 0.12 + mesh.position.y * 0.02, -0.15, 0.15);
-        targetY = THREE.MathUtils.clamp(cursorX * 0.12 - mesh.position.x * 0.02, -0.15, 0.15);
-      } else {
-        targetX = Math.sin(clock.elapsedTime * 0.4 + mesh.position.x * 0.3) * 0.15;
-        targetY = Math.cos(clock.elapsedTime * 0.4 + mesh.position.z * 0.3) * 0.15;
-      }
+  const edgeMat = useMemo(
+    () =>
+      new THREE.LineBasicMaterial({
+        color: new THREE.Color("#404040"),
+      }),
+    []
+  );
 
-      mesh.rotation.x = THREE.MathUtils.lerp(mesh.rotation.x, targetX, 0.08);
-      mesh.rotation.y = THREE.MathUtils.lerp(mesh.rotation.y, targetY, 0.08);
-    });
-  });
-
-  return <primitive object={scene} position={[0, -0.2, 0]} />;
-}
-
-export default function Hero() {
-  const [loaded, setLoaded] = useState(false);
-  const [hasHoverPointer, setHasHoverPointer] = useState(() => {
-    if (typeof window === "undefined") {
-      return true;
-    }
-
-    return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  });
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  });
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    setHasHoverPointer(hoverQuery.matches);
-    setPrefersReducedMotion(motionQuery.matches);
-  }, []);
+  const boxGeo = useMemo(
+    () => new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE),
+    []
+  );
+  const edgeGeo = useMemo(() => new THREE.EdgesGeometry(boxGeo), [boxGeo]);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-[#121212]">
-      <AnimatePresence>
-        {!loaded && (
-          <motion.div
-            exit={{opacity: 0}}
-            transition={{duration: 0.6}}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-[#121212]">
-            <motion.div
-              animate={{opacity: [0.3, 1, 0.3]}}
-              transition={{duration: 1.5, repeat: Infinity, ease: "easeInOut"}}
-              className="h-1 w-1 rounded-full bg-[#75706f]"
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <group>
+      {positions.map(([x, y, z], i) => (
+        <group key={i} position={[x, y, z]}>
+          <mesh geometry={boxGeo} material={faceMat} />
+          <lineSegments geometry={edgeGeo} material={edgeMat} />
+        </group>
+      ))}
+    </group>
+  );
+}
 
-      <Canvas className="relative z-0 h-screen w-full">
-        <color attach="background" args={["#121212"]} />
-        <ambientLight intensity={0.7} />
-        <directionalLight position={[5, 5, 5]} intensity={1.2} />
-        <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={45} />
+// ─── Cena ─────────────────────────────────────────────────────────────────────
+function Scene() {
+  return (
+    <>
+      {/* Luz ambiente: nível base muito baixo */}
+      <ambientLight intensity={0.08} />
+
+      {/* Luz FRONTAL: na posição da câmera, ilumina a face que o usuário vê */}
+      <pointLight
+        position={[0, 1.5, 22]}
+        intensity={120}
+        color="#cccccc"
+        distance={60}
+        decay={2}
+      />
+
+      {/* Luz SUPERIOR: vem de cima, escurece levemente a parte de baixo de cada cubo
+          criando o contraste 3D (topo do cubo claro vs base do cubo mais escura) */}
+      <directionalLight
+        position={[2, 12, 5]}
+        intensity={1.2}
+        color="#ffffff"
+      />
+
+      <CubeGrid />
+    </>
+  );
+}
+
+// ─── Hero ─────────────────────────────────────────────────────────────────────
+export default function Hero() {
+  return (
+    <section
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "100vh",
+        overflow: "hidden",
+        background: "#0d0d0d",
+      }}
+    >
+      <Canvas
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+        }}
+        camera={{
+          fov: 35,
+          position: [0, 1.5, 22],
+          near: 0.1,
+          far: 200,
+        }}
+        gl={{
+          antialias: true,
+          alpha: false,
+          // Sem tone mapping automático: garante que as cores que definimos
+          // apareçam exatamente como configuramos
+          toneMapping: THREE.NoToneMapping,
+          outputColorSpace: THREE.SRGBColorSpace,
+        }}
+      >
+        <color attach="background" args={["#0d0d0d"]} />
         <Suspense fallback={null}>
-          <HeroModel
-            onReady={() => setLoaded(true)}
-            hasHoverPointer={hasHoverPointer}
-            prefersReducedMotion={prefersReducedMotion}
-          />
+          <Scene />
         </Suspense>
       </Canvas>
-
-      <motion.div
-        initial={{opacity: 0}}
-        animate={{opacity: loaded ? 1 : 0}}
-        transition={{duration: 0.8, delay: 0.3}}
-        className="pointer-events-none absolute bottom-10 left-1/2 z-10 -translate-x-1/2">
-        <motion.div
-          animate={{y: [0, 8, 0]}}
-          transition={{duration: 1.8, repeat: Infinity, ease: "easeInOut"}}
-          className="h-10 w-px bg-[#75706f]/40"
-        />
-      </motion.div>
     </section>
   );
 }
