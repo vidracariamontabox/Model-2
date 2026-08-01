@@ -29,8 +29,8 @@
  *   - Profundidade Z: -3.0 a +3.0 para efeito de profundidade
  */
 
-import { Suspense, useMemo } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
+import {Suspense, useEffect, useMemo} from "react";
+import {Canvas, useThree} from "@react-three/fiber";
 import * as THREE from "three";
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
@@ -58,47 +58,41 @@ function makeRng(seed) {
 const BOX_GEO = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
 const EDGE_GEO = new THREE.EdgesGeometry(BOX_GEO);
 
-// ─── Materiais: preto brilhoso (metallic black) ───────────────────────────────
-// MeshPhysicalMaterial = suporta metalness + roughness + reflections reais
-const MAT_DARK = new THREE.MeshPhysicalMaterial({
-  color: "#1a1a1a",
-  metalness: 0.90,
-  roughness: 0.12,
-  reflectivity: 1.0,
+// ─── Materiais: cinza-azulado com reflexo metálico suave ────────────────────
+const MAT_DARK = new THREE.MeshStandardMaterial({
+  color: "#8fa3b8",
+  metalness: 0.7,
+  roughness: 0.3,
 });
 
-const MAT_MID = new THREE.MeshPhysicalMaterial({
-  color: "#252525",
-  metalness: 0.85,
-  roughness: 0.18,
-  reflectivity: 0.95,
+const MAT_MID = new THREE.MeshStandardMaterial({
+  color: "#8fa3b8",
+  metalness: 0.7,
+  roughness: 0.3,
 });
 
-const MAT_LIGHTER = new THREE.MeshPhysicalMaterial({
-  color: "#333333",
-  metalness: 0.80,
-  roughness: 0.22,
-  reflectivity: 0.85,
+const MAT_LIGHTER = new THREE.MeshStandardMaterial({
+  color: "#8fa3b8",
+  metalness: 0.7,
+  roughness: 0.3,
 });
 
 // ─── Materiais de borda ───────────────────────────────────────────────────────
-// 70% dos cubos: borda escura quase invisível
 const EDGE_MAT_DARK = new THREE.LineBasicMaterial({
-  color: "#2a2a2a",
+  color: "#1a1a1a",
   transparent: true,
-  opacity: 0.4,
+  opacity: 0.8,
 });
 
-// 30% dos cubos: borda clara para diferenciá-los
 const EDGE_MAT_LIGHT = new THREE.LineBasicMaterial({
-  color: "#aaaaaa",
+  color: "#4a5568",
   transparent: true,
   opacity: 0.95,
 });
 
 // ─── Grade com cubos quase frontais ──────────────────────────────────────────
 function CubeGrid() {
-  const { viewport } = useThree();
+  const {viewport} = useThree();
 
   // +6 de margem para garantir que nenhuma borda apareça ao rolar
   const cols = Math.ceil(viewport.width / STEP) + 6;
@@ -117,7 +111,6 @@ function CubeGrid() {
 
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
-
         // ── Posição base na grade regular ────────────────────────────────
         const baseX = col * STEP - offsetX;
         const baseY = row * STEP - offsetY;
@@ -136,23 +129,25 @@ function CubeGrid() {
         // Apenas leve inclinação para não parecer perfeitamente plano
         const rotX = (rng() - 0.5) * 0.04; // ±0.02 rad ≈ ±1.1°
         const rotY = (rng() - 0.5) * 0.04; // ±0.02 rad ≈ ±1.1°
-        const rotZ = 0;                      // sem torção
+        const rotZ = 0; // sem torção
 
         // ── Escala variável suave ─────────────────────────────────────────
         // Mantida próxima de 1.0 para preencher a grade sem gaps grandes
-        const scale = 0.95 + rng() * 0.10; // 0.95× a 1.05×
+        const scale = 0.95 + rng() * 0.1; // 0.95× a 1.05×
 
         // ── Material: preto brilhoso ──────────────────────────────────────
         const rm = rng();
         let mat;
-        if (rm > 0.65) mat = MAT_DARK;     // 35% – mais escuro
-        else if (rm > 0.30) mat = MAT_MID;      // 35% – médio
-        else mat = MAT_LIGHTER;  // 30% – levemente mais claro
+        if (rm > 0.65)
+          mat = MAT_DARK; // 35% – mais escuro
+        else if (rm > 0.3)
+          mat = MAT_MID; // 35% – médio
+        else mat = MAT_LIGHTER; // 30% – levemente mais claro
 
         // ── Borda: 30% clara, 70% escura ─────────────────────────────────
-        const edgeMat = rng() < 0.30 ? EDGE_MAT_LIGHT : EDGE_MAT_DARK;
+        const edgeMat = rng() < 0.3 ? EDGE_MAT_LIGHT : EDGE_MAT_DARK;
 
-        data.push({ x: baseX + dX, y: baseY + dY, z, rotX, rotY, rotZ, scale, mat, edgeMat });
+        data.push({x: baseX + dX, y: baseY + dY, z, rotX, rotY, rotZ, scale, mat, edgeMat});
       }
     }
     return data;
@@ -161,12 +156,7 @@ function CubeGrid() {
   return (
     <group>
       {cubeData.map((c, i) => (
-        <group
-          key={i}
-          position={[c.x, c.y, c.z]}
-          rotation={[c.rotX, c.rotY, c.rotZ]}
-          scale={c.scale}
-        >
+        <group key={i} position={[c.x, c.y, c.z]} rotation={[c.rotX, c.rotY, c.rotZ]} scale={c.scale}>
           <mesh geometry={BOX_GEO} material={c.mat} />
           <lineSegments geometry={EDGE_GEO} material={c.edgeMat} />
         </group>
@@ -177,31 +167,19 @@ function CubeGrid() {
 
 // ─── Cena ─────────────────────────────────────────────────────────────────────
 function Scene() {
+  const mainLightTarget = useMemo(() => new THREE.Object3D(), []);
+
+  useEffect(() => {
+    mainLightTarget.position.set(0, 0, 0);
+  }, [mainLightTarget]);
+
   return (
     <>
-      {/* Luz ambiente: base moderada */}
-      <ambientLight intensity={0.55} />
+      <ambientLight intensity={0.5} color="#8899bb" />
 
-      {/* Luz principal de cima-direita-frente: cria reflexo metálico no topo/frente */}
-      <directionalLight
-        position={[4, 8, 12]}
-        intensity={2.2}
-        color="#ffffff"
-      />
+      <directionalLight position={[8, 5, 10]} intensity={1.2} color="#ffffff" target={mainLightTarget} />
 
-      {/* Luz secundária de baixo-esquerda: profundidade e gradiente */}
-      <directionalLight
-        position={[-4, -6, 6]}
-        intensity={0.55}
-        color="#ccddee"
-      />
-
-      {/* Luz de rim direita: cria brilho nas bordas dos cubos frontais */}
-      <directionalLight
-        position={[8, 2, 8]}
-        intensity={0.8}
-        color="#ffffff"
-      />
+      <directionalLight position={[-6, 2, -8]} intensity={0.3} color="#aabbcc" />
     </>
   );
 }
@@ -216,10 +194,9 @@ export default function Hero() {
         height: "100vh",
         overflow: "hidden",
         background: "#080808",
-      }}
-    >
+      }}>
       <Canvas
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+        style={{position: "absolute", inset: 0, width: "100%", height: "100%"}}
         camera={{
           // FOV 45: equilíbrio entre ver cubos densos e perspectiva natural
           // Y=2.5: revela o topo dos cubos como na referência
@@ -235,8 +212,7 @@ export default function Hero() {
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.5,
           outputColorSpace: THREE.SRGBColorSpace,
-        }}
-      >
+        }}>
         <color attach="background" args={["#080808"]} />
         <Suspense fallback={null}>
           <Scene />
