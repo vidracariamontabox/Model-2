@@ -29,8 +29,8 @@
  *   - Profundidade Z: -3.0 a +3.0 para efeito de profundidade
  */
 
-import {Suspense, useEffect, useMemo} from "react";
-import {Canvas, useThree} from "@react-three/fiber";
+import {Suspense, useEffect, useMemo, useRef} from "react";
+import {Canvas, useFrame, useThree} from "@react-three/fiber";
 import * as THREE from "three";
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
@@ -93,6 +93,7 @@ const EDGE_MAT_LIGHT = new THREE.LineBasicMaterial({
 // ─── Grade com cubos quase frontais ──────────────────────────────────────────
 function CubeGrid() {
   const {viewport} = useThree();
+  const cubesRef = useRef([]);
 
   // +6 de margem para garantir que nenhuma borda apareça ao rolar
   const cols = Math.ceil(viewport.width / STEP) + 6;
@@ -102,6 +103,52 @@ function CubeGrid() {
   if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
     console.log(`[Hero] Cubos na grade: ${cols} cols × ${rows} rows = ${cols * rows} cubos`);
   }
+
+  useEffect(() => {
+    const shuffled = [...cubesRef.current].filter(Boolean).sort(() => Math.random() - 0.5);
+    const animCount = Math.floor(shuffled.length * 0.4);
+
+    cubesRef.current.forEach((child) => {
+      if (!child) return;
+      child.userData.originX = child.position.x;
+      child.userData.originY = child.position.y;
+      child.userData.originZ = child.position.z;
+      child.userData.animated = false;
+    });
+
+    const axes = ["x", "y", "z"];
+
+    shuffled.slice(0, animCount).forEach((child, i) => {
+      child.userData.animated = true;
+      child.userData.axis = axes[i % 3];
+      child.userData.phase = Math.random() * Math.PI * 2;
+      child.userData.speed = 0.3 + Math.random() * 0.4;
+      child.userData.amplitude = 0.3 + Math.random() * 0.2;
+
+      child.userData.originX = child.position.x;
+      child.userData.originY = child.position.y;
+      child.userData.originZ = child.position.z;
+    });
+  }, []);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+
+    cubesRef.current.forEach((child) => {
+      if (!child || !child.userData.animated) return;
+
+      const {axis, phase, speed, amplitude} = child.userData;
+      const delta = Math.sin(t * speed + phase) * amplitude;
+
+      if (axis === "x") {
+        child.position.x = child.userData.originX + delta;
+      } else if (axis === "y") {
+        child.position.y = child.userData.originY + delta;
+      } else {
+        child.position.z = child.userData.originZ + delta;
+      }
+    });
+  });
 
   const cubeData = useMemo(() => {
     const rng = makeRng(SEED);
@@ -156,7 +203,14 @@ function CubeGrid() {
   return (
     <group>
       {cubeData.map((c, i) => (
-        <group key={i} position={[c.x, c.y, c.z]} rotation={[c.rotX, c.rotY, c.rotZ]} scale={c.scale}>
+        <group
+          key={i}
+          ref={(node) => {
+            cubesRef.current[i] = node;
+          }}
+          position={[c.x, c.y, c.z]}
+          rotation={[c.rotX, c.rotY, c.rotZ]}
+          scale={c.scale}>
           <mesh geometry={BOX_GEO} material={c.mat} />
           <lineSegments geometry={EDGE_GEO} material={c.edgeMat} />
         </group>
@@ -166,6 +220,17 @@ function CubeGrid() {
 }
 
 // ─── Cena ─────────────────────────────────────────────────────────────────────
+function CameraRig() {
+  const {camera} = useThree();
+
+  useEffect(() => {
+    camera.lookAt(0, 0, 0);
+    camera.updateProjectionMatrix();
+  }, [camera]);
+
+  return null;
+}
+
 function Scene() {
   const mainLightTarget = useMemo(() => new THREE.Object3D(), []);
 
@@ -195,16 +260,14 @@ export default function Hero() {
         overflow: "hidden",
         background: "#080808",
       }}>
+      {/*
       <Canvas
         style={{position: "absolute", inset: 0, width: "100%", height: "100%"}}
         camera={{
-          // FOV 45: equilíbrio entre ver cubos densos e perspectiva natural
-          // Y=2.5: revela o topo dos cubos como na referência
-          // Z=16: distância calibrada para cubos preencherem a tela
-          fov: 45,
-          position: [0, 0.5, 16],
+          fov: 20,
+          position: [0, 0, 60],
           near: 0.1,
-          far: 200,
+          far: 500,
         }}
         gl={{
           antialias: true,
@@ -215,10 +278,44 @@ export default function Hero() {
         }}>
         <color attach="background" args={["#080808"]} />
         <Suspense fallback={null}>
+          <CameraRig />
           <Scene />
           <CubeGrid />
         </Suspense>
       </Canvas>
+      */}
+
+      <Canvas
+        orthographic
+        camera={{
+          position: [0, 0, 100],
+          zoom: 60,
+          near: 0.1,
+          far: 500,
+        }}
+        style={{position: "absolute", inset: 0, width: "100%", height: "100%"}}>
+        <color attach="background" args={["#080808"]} />
+        <Suspense fallback={null}>
+          <CameraRig />
+          <Scene />
+          <CubeGrid />
+        </Suspense>
+      </Canvas>
+
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 2,
+          pointerEvents: "none",
+          background: `
+            radial-gradient(ellipse 55% 60% at 50% 50%, rgba(0,0,0,0.75) 0%, transparent 100%),
+            radial-gradient(ellipse 40% 50% at 0% 15%, rgba(220,230,255,0.18) 0%, transparent 70%),
+            radial-gradient(ellipse 35% 60% at 100% 30%, rgba(220,230,255,0.14) 0%, transparent 70%),
+            radial-gradient(ellipse 40% 25% at 50% 100%, rgba(180,200,230,0.10) 0%, transparent 70%)
+          `,
+        }}
+      />
     </section>
   );
 }
