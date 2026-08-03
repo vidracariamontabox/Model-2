@@ -29,9 +29,10 @@
  *   - Profundidade Z: -3.0 a +3.0 para efeito de profundidade
  */
 
-import {Suspense, useEffect, useMemo, useRef} from "react";
+import {Suspense, useEffect, useMemo, useRef, useState} from "react";
 import {Canvas, useFrame, useThree} from "@react-three/fiber";
 import * as THREE from "three";
+import GlowCursor from "@/components/GlowCursor";
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 const CUBE_SIZE = 1.0;
@@ -251,8 +252,45 @@ function Scene() {
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 export default function Hero() {
+  const [mouse, setMouse] = useState({x: -999, y: -999});
+  const [glow, setGlow] = useState({x: -999, y: -999});
+  const glowTargetRef = useRef({x: -999, y: -999});
+
+  useEffect(() => {
+    let rafId;
+
+    const animate = () => {
+      setGlow((prev) => {
+        const target = glowTargetRef.current;
+        const nextX = prev.x + (target.x - prev.x) * 0.14;
+        const nextY = prev.y + (target.y - prev.y) * 0.14;
+        return {x: nextX, y: nextY};
+      });
+
+      rafId = requestAnimationFrame(animate);
+    };
+
+    rafId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
+
   return (
     <section
+      id="hero"
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const next = {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        };
+        setMouse(next);
+        glowTargetRef.current = next;
+      }}
+      onMouseLeave={() => {
+        const next = {x: -999, y: -999};
+        setMouse(next);
+        glowTargetRef.current = next;
+      }}
       style={{
         position: "relative",
         width: "100%",
@@ -289,17 +327,18 @@ export default function Hero() {
 
       <Canvas
         orthographic
+        gl={{alpha: true}}
         camera={{
           position: [0, 0, 100],
           zoom: 60,
           near: 0.1,
           far: 500,
         }}
-        style={{position: "absolute", inset: 0, width: "100%", height: "100%"}}>
-        <color attach="background" args={["#080808"]} />
+        style={{position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 1}}>
         <Suspense fallback={null}>
           <CameraRig />
           <Scene />
+          <GlowCursor mousePos={mouse} />
           <CubeGrid />
         </Suspense>
       </Canvas>
