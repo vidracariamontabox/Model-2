@@ -256,7 +256,9 @@ export default function Hero() {
       style={{
         position: "relative",
         width: "100%",
-        height: "100vh",
+        height: "calc(100dvh - 4.5rem)",
+        minHeight: "calc(100dvh - 4.5rem)",
+        maxHeight: "100dvh",
         overflow: "hidden",
         background: "#080808",
       }}>
@@ -301,6 +303,72 @@ export default function Hero() {
           <CubeGrid />
         </Suspense>
       </Canvas>
+
+      <div
+        style={{
+          position: "absolute",
+          marginTop: "5rem",
+          top: "clamp(2rem, 7vh, 4rem)",
+          left: "clamp(1.5rem, 3vw, 3rem)",
+          zIndex: 10,
+          pointerEvents: "none",
+          display: "flex",
+          flexDirection: "column",
+          gap: "2.75rem",
+          maxWidth: "min(42rem, 90vw)",
+        }}>
+        <h1
+          style={{
+            fontFamily: "var(--font-ivy-presto)",
+            fontWeight: 300,
+            fontSize: "clamp(3rem, 4.7vw + 1.4rem, 6.4rem)",
+            letterSpacing: "0.03em",
+            color: "#eaeaea",
+            lineHeight: 0.95,
+            margin: 0,
+          }}>
+          Seu projeto é nosso projeto
+        </h1>
+        <p
+          style={{
+            fontFamily: "var(--font-ivy-presto)",
+            fontWeight: "bold",
+            fontSize: "clamp(1.05rem, 1.5vw + 0.4rem, 1.1rem)",
+            letterSpacing: "0.08em",
+            color: "#b7b1ab",
+            margin: 0,
+            maxWidth: "30rem",
+          }}>
+          Criamos como se fosse para nossa casa !
+        </p>
+
+        <a
+          href="https://wa.me/5516981984000"
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            width: "fit-content",
+            padding: "0.8rem 1.15rem",
+            borderTopLeftRadius: 0,
+            borderTopRightRadius: "99px",
+            borderBottomLeftRadius: "99px",
+            borderBottomRightRadius: "99px",
+            background: "#000000",
+            color: "#f5f5f5",
+            fontFamily: "var(--font-neue-haas-grotesk)",
+            fontWeight: 200,
+            fontSize: "0.65rem",
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            textDecoration: "none",
+            marginTop: "0.35rem",
+            boxShadow: "0 0 0 1px rgba(255,255,255,0.12) inset",
+          }}>
+          <span>Solicite seu orçamento →</span>
+        </a>
+      </div>
 
       <div
         style={{
