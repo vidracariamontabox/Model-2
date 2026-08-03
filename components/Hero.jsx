@@ -60,26 +60,26 @@ const EDGE_GEO = new THREE.EdgesGeometry(BOX_GEO);
 
 // ─── Materiais: cinza-azulado com reflexo metálico suave ────────────────────
 const MAT_DARK = new THREE.MeshStandardMaterial({
-  color: "#8fa3b8",
+  color: "#000000",
   metalness: 0.7,
   roughness: 0.3,
 });
 
 const MAT_MID = new THREE.MeshStandardMaterial({
-  color: "#8fa3b8",
+  color: "#000000",
   metalness: 0.7,
   roughness: 0.3,
 });
 
 const MAT_LIGHTER = new THREE.MeshStandardMaterial({
-  color: "#8fa3b8",
+  color: "#000000",
   metalness: 0.7,
   roughness: 0.3,
 });
 
 // ─── Materiais de borda ───────────────────────────────────────────────────────
 const EDGE_MAT_DARK = new THREE.LineBasicMaterial({
-  color: "#1a1a1a",
+  color: "#464443",
   transparent: true,
   opacity: 0.8,
 });
@@ -350,13 +350,13 @@ export default function Hero() {
             display: "inline-flex",
             alignItems: "center",
             width: "fit-content",
-            padding: "0.8rem 1.15rem",
+            padding: "0.6rem 1.15rem",
             borderTopLeftRadius: 0,
             borderTopRightRadius: "99px",
             borderBottomLeftRadius: "99px",
             borderBottomRightRadius: "99px",
-            background: "#000000",
-            color: "#f5f5f5",
+            background: "#f5f5f5",
+            color: "#000000",
             fontFamily: "var(--font-neue-haas-grotesk)",
             fontWeight: 200,
             fontSize: "0.65rem",
@@ -377,10 +377,10 @@ export default function Hero() {
           zIndex: 2,
           pointerEvents: "none",
           background: `
-            radial-gradient(ellipse 55% 60% at 50% 50%, rgba(0,0,0,0.75) 0%, transparent 100%),
-            radial-gradient(ellipse 40% 50% at 0% 15%, rgba(220,230,255,0.18) 0%, transparent 70%),
-            radial-gradient(ellipse 35% 60% at 100% 30%, rgba(220,230,255,0.14) 0%, transparent 70%),
-            radial-gradient(ellipse 40% 25% at 50% 100%, rgba(180,200,230,0.10) 0%, transparent 70%)
+            radial-gradient(ellipse 55% 60% at 50% 50%, rgba(0,0,0,0.80) 0%, transparent 100%),
+            radial-gradient(ellipse 60% 80% at 0% 15%, rgba(220,230,255,0.20) 0%, transparent 70%),
+            radial-gradient(ellipse 60% 80% at 100% 25%, rgba(220,230,255,0.20) 0%, transparent 70%),
+            radial-gradient(ellipse 30% 40% at 50% 100%, rgba(180,200,230,0.30) 0%, transparent 70%)
           `,
         }}
       />
