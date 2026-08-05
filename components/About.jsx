@@ -123,8 +123,8 @@ export default function About({scrollYProgress}) {
   useEffect(() => {
     if (!scrollYProgress) return;
 
-    const startProgress = 0.28;
-    const endProgress = 0.9;
+    const startProgress = 0.05;
+    const endProgress = 0.55;
     const lastIndex = IMAGES.length - 1;
 
     return scrollYProgress.on("change", (value) => {
