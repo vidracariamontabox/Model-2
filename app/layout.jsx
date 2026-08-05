@@ -1,6 +1,7 @@
 import {Archivo} from "next/font/google";
 import localFont from "next/font/local";
 import SmoothScroll from "@/components/SmoothScroll";
+import Preloader from "@/components/Preloader";
 import "./globals.css";
 import "./Testimonials.css";
 import "./testimonials-ui.css";
@@ -41,6 +42,8 @@ export default function RootLayout({children}) {
       className={`${archivo.variable} ${familjen.variable} ${neueHaas.variable} ${ivyPrestoDisplay.variable}`}>
       <body className="bg-[#121212] text-[#eaeaea] antialiased font-neuehaas">
         <SmoothScroll>{children}</SmoothScroll>
+        <Preloader />
+        {children}
       </body>
     </html>
   );

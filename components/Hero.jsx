@@ -62,20 +62,20 @@ const EDGE_GEO = new THREE.EdgesGeometry(BOX_GEO);
 // ─── Materiais: cinza-azulado com reflexo metálico suave ────────────────────
 const MAT_DARK = new THREE.MeshStandardMaterial({
   color: "#000000",
-  metalness: 0.7,
-  roughness: 0.3,
+  metalness: 0.92,
+  roughness: 0.18,
 });
 
 const MAT_MID = new THREE.MeshStandardMaterial({
   color: "#000000",
-  metalness: 0.7,
-  roughness: 0.3,
+  metalness: 0.92,
+  roughness: 0.18,
 });
 
 const MAT_LIGHTER = new THREE.MeshStandardMaterial({
   color: "#000000",
-  metalness: 0.7,
-  roughness: 0.3,
+  metalness: 0.92,
+  roughness: 0.18,
 });
 
 // ─── Materiais de borda ───────────────────────────────────────────────────────
@@ -107,7 +107,7 @@ function CubeGrid() {
 
   useEffect(() => {
     const shuffled = [...cubesRef.current].filter(Boolean).sort(() => Math.random() - 0.5);
-    const animCount = Math.floor(shuffled.length * 0.4);
+    const animCount = Math.floor(shuffled.length * 0.2); // 20% dos cubos animados
 
     cubesRef.current.forEach((child) => {
       if (!child) return;
@@ -124,7 +124,7 @@ function CubeGrid() {
       child.userData.axis = axes[i % 3];
       child.userData.phase = Math.random() * Math.PI * 2;
       child.userData.speed = 0.3 + Math.random() * 0.4;
-      child.userData.amplitude = 0.3 + Math.random() * 0.2;
+      child.userData.amplitude = 0.2 + Math.random() * 0.2;
 
       child.userData.originX = child.position.x;
       child.userData.originY = child.position.y;
@@ -330,7 +330,7 @@ export default function Hero() {
         gl={{alpha: true}}
         camera={{
           position: [0, 0, 100],
-          zoom: 60,
+          zoom: 80,
           near: 0.1,
           far: 500,
         }}
@@ -418,7 +418,7 @@ export default function Hero() {
           background: `
             radial-gradient(ellipse 55% 60% at 50% 50%, rgba(0,0,0,0.80) 0%, transparent 100%),
             radial-gradient(ellipse 60% 80% at 0% 15%, rgba(220,230,255,0.20) 0%, transparent 70%),
-            radial-gradient(ellipse 60% 80% at 100% 25%, rgba(220,230,255,0.20) 0%, transparent 70%),
+            radial-gradient(ellipse 60% 90% at 100% 35%, rgba(220,230,255,0.30) 0%, transparent 70%),
             radial-gradient(ellipse 30% 40% at 50% 100%, rgba(180,200,230,0.30) 0%, transparent 70%)
           `,
         }}
