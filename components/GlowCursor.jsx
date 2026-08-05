@@ -1,11 +1,32 @@
 "use client";
 
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useMemo} from "react";
 import {useFrame} from "@react-three/fiber";
+import * as THREE from "three";
+
+// Gerar textura de gradiente radial
+function createGlowTexture() {
+  const size = 256;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+
+  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  gradient.addColorStop(0, "rgba(0, 128, 0, 1.0)");
+  gradient.addColorStop(0.4, "rgba(0, 128, 0, 0.9)");
+  gradient.addColorStop(1, "rgba(0, 128, 0, 0)");
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+
+  return new THREE.CanvasTexture(canvas);
+}
 
 export default function GlowCursor({mousePos}) {
   const meshRef = useRef(null);
   const targetRef = useRef({x: 0, y: 0});
+  const glowTexture = useMemo(() => createGlowTexture(), []);
 
   // Atualiza o alvo quando o mouse move
   useEffect(() => {
@@ -29,7 +50,6 @@ export default function GlowCursor({mousePos}) {
 
     mesh.visible = true;
 
-    // 0.08 = velocidade do atraso (menor = mais lento)
     mesh.position.x += (targetRef.current.x - mesh.position.x) * 0.08;
     mesh.position.y += (targetRef.current.y - mesh.position.y) * 0.08;
     mesh.position.z = -5;
@@ -37,8 +57,8 @@ export default function GlowCursor({mousePos}) {
 
   return (
     <mesh ref={meshRef} position={[0, 0, -5]} visible={false}>
-      <sphereGeometry args={[2.2, 24, 24]} />
-      <meshBasicMaterial color="green" transparent opacity={0.15} fog={false} />
+      <planeGeometry args={[8.4, 8.4]} />
+      <meshBasicMaterial map={glowTexture} transparent opacity={1} depthWrite={false} fog={false} />
     </mesh>
   );
 }
