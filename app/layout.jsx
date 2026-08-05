@@ -43,7 +43,6 @@ export default function RootLayout({children}) {
       <body className="bg-[#121212] text-[#eaeaea] antialiased font-neuehaas">
         <SmoothScroll>{children}</SmoothScroll>
         <Preloader />
-        {children}
       </body>
     </html>
   );
