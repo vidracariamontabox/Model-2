@@ -126,7 +126,7 @@ export default function FAQ({faqs}) {
       <div className="relative z-10 mx-auto max-w-3xl">
         <p className="font-archivo text-[0.7rem] tracking-[0.3em] uppercase text-[#acaba9]">FAQ</p>
         <BlurTextReveal
-          text="Perguntas frequentes"
+          text="Perguntas frequentes (revisar)"
           animationType="words"
           stagger={0.12}
           className="mt-2 font-archivo font-light text-2xl sm:text-3xl text-[#eaeaea]"

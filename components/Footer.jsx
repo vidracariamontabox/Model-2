@@ -198,8 +198,8 @@ export default function Footer() {
   return (
     <footer className="bg-[#0F0F11]/10 relative h-fit rounded-3xl overflow-hidden m-8">
       <div className="max-w-7xl mx-auto p-14 z-40 relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8 lg:gap-16 pb-12">
-          <div className="flex flex-col space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 lg:gap-16 pb-12">
+          <div className="flex flex-col space-y-4 max-w-xs">
             <div className="flex flex-col">
               <span className="text-white text-3xl font-black uppercase tracking-tight leading-none">Montabox</span>
               <span className="text-[#acaba9] text-sm font-light uppercase tracking-tight">
@@ -220,6 +220,19 @@ export default function Footer() {
                   {icon}
                 </a>
               ))}
+            </div>
+          </div>
+
+          <div className="text-[#d1d1d1]">
+            <h4 className="text-white text-lg uppercase font-semibold mb-4">Endereço</h4>
+            <p className="text-sm leading-6">
+              R. Virgílio Pedro Ribeiro, 70 - Planalto Itália, Jaboticabal - SP
+              <br />
+              14890-448
+            </p>
+            <div className="mt-6">
+              <h5 className="text-sm uppercase tracking-[0.24em] text-[#acaba9] mb-2">Horário</h5>
+              <p className="text-sm leading-6">Das 07:30 às 17:30 — segunda a sexta</p>
             </div>
           </div>
         </div>
