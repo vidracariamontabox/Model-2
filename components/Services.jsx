@@ -4,9 +4,9 @@ import {motion, useInView} from "framer-motion";
 import BlurTextReveal from "./ui/BlurTextReveal";
 
 const services = ["Fachada Pele de Vidro.", "Esquadrias de Alumínio.", "Painel Ripado."];
-const CURTAIN_COMPLETE_PROGRESS = 0.90;
+const CURTAIN_COMPLETE_PROGRESS = 0.9;
 // Tempo de leitura depois que a cortina termina antes de revelar o título de Serviços.
-const HEADER_REVEAL_DELAY = 1000;
+const HEADER_REVEAL_DELAY = 333;
 
 const containerVariants = {
   hidden: {},
