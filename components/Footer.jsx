@@ -48,6 +48,34 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
+    <footer className="relative bg-[#000000] text-[#eaeaea] pt-24 pb-12 px-8 sm:px-12 lg:px-20 overflow-hidden border-t border-white/5">
+      {/* Background Accent */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Top Section: CTA / Brand Intro */}
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-12 mb-24">
+          <div className="max-w-md">
+            <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black leading-[0.9] uppercase tracking-tighter mb-6">
+              Elevando o <span className="text-white/40">Padrão</span> do seu Projeto.
+            </h2>
+            <p className="text-[#75706f] text-sm font-light leading-relaxed max-w-xs uppercase tracking-tight">
+              Soluções exclusivas em vidros e esquadrias de alto desempenho para arquitetura contemporânea.
+            </p>
+          </div>
+          
+          <div className="flex flex-col gap-8">
+             <div className="flex flex-col gap-2">
+                <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f]">Onde estamos</span>
+                <address className="not-italic text-sm font-light text-[#acaba9] max-w-[200px] leading-relaxed">
+                  Ribeirão Preto, SP <br />
+                  Brasil
+                </address>
+             </div>
+             <div className="flex flex-col gap-2">
+                <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f]">Contato</span>
+                <a href="mailto:contato@montabox.com.br" className="text-sm font-light text-[#acaba9] hover:text-white transition-colors">
+                  contato@montabox.com.br
     <footer className="bg-[#0F0F11]/10 relative h-fit rounded-3xl overflow-hidden m-8">
       <div className="max-w-7xl mx-auto p-14 z-40 relative">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 lg:gap-16 pb-12">
@@ -72,8 +100,7 @@ export default function Footer() {
                 >
                   {icon}
                 </a>
-              ))}
-            </div>
+             </div>
           </div>
 
           <div className="text-[#d1d1d1]">
