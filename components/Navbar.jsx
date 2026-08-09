@@ -3,12 +3,6 @@
 import {useEffect, useState} from "react";
 import {motion} from "framer-motion";
 
-const NAV_LINKS = [
-  {label: "Sobre", href: "#sobre"},
-  {label: "Depoimentos", href: "#depoimentos"},
-  {label: "FAQ", href: "#faq"},
-];
-
 /* ─── Variants ────────────────────────────────────────────────────────── */
 const navVariants = {
   hidden: {opacity: 0, y: -10},
@@ -54,7 +48,7 @@ export default function Navbar() {
       initial="hidden"
       animate="visible"
       className={[
-        "relative top-0 left-0 w-full z-50",
+        "fixed top-0 left-0 w-full z-50",
         "flex items-center justify-between",
         "px-8 sm:px-12 py-5",
         "transition-[background,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
@@ -70,23 +64,11 @@ export default function Navbar() {
         Montabox
       </motion.a>
 
-      {/* Nav links */}
-      <motion.div variants={navVariants} className="hidden sm:flex items-center gap-9">
-        {NAV_LINKS.map(({label, href}) => (
-          <motion.a
-            key={href}
-            variants={itemVariants}
-            href={href}
-            className="text-[0.72rem] font-light tracking-widest uppercase text-[#acaba9] hover:text-[#eaeaea] transition-colors duration-300">
-            {label}
-          </motion.a>
-        ))}
-      </motion.div>
-
       {/* CTA */}
       <motion.a
         variants={itemVariants}
-        href="#contato"
+        href="https://wa.me/5516981984000"
+        target="_blank"
         whileHover={{scale: 1.02}}
         whileTap={{scale: 0.98}}
         className={[
