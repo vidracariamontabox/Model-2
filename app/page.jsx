@@ -7,6 +7,7 @@ import Services from "@/components/Services";
 import HorizontalTransition from "@/components/HorizontalTransition";
 import {faqs} from "@/data/faq";
 import Footer from "@/components/Footer";
+import CTA from "@/components/CTA";
 
 export default function Page() {
   return (
@@ -16,6 +17,7 @@ export default function Page() {
       <HorizontalTransition leftSection={<About />} rightSection={<Services />} />
       <Testimonials />
       <FAQ faqs={faqs} />
+      <CTA />
       <Footer />
     </main>
   );
