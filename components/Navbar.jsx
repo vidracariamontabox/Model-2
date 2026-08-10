@@ -1,6 +1,5 @@
 "use client";
 
-import {useEffect, useState} from "react";
 import {motion} from "framer-motion";
 
 const navVariants = {
@@ -32,27 +31,16 @@ const itemVariants = {
 };
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll, {passive: true});
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
     <motion.nav
       variants={navVariants}
       initial="hidden"
       animate="visible"
       className={[
-        "fixed top-0 left-0 w-full z-50",
+        "absolute top-0 left-0 w-full z-50",
         "flex items-center justify-between",
         "px-8 sm:px-12 py-5",
-        "transition-[background,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-        isScrolled
-          ? "backdrop-blur-md bg-[#121212]/65 border-b border-white/5"
-          : "bg-transparent border-b border-transparent",
+        "backdrop-blur-md bg-[#121212]/65 border-b border-white/5",
       ].join(" ")}>
       <motion.a
         variants={itemVariants}

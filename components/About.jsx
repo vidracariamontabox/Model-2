@@ -14,7 +14,7 @@ const STATS = [
 ];
 
 const IMAGES = [
-  {src: "/images/obra-1-xiquimica.webp", alt: "Oxíquimica Agrociência - Jaboticabal"},
+  {src: "/images/obra-1-oxquimica.webp", alt: "Oxíquimica Agrociência - Jaboticabal"},
   {src: "/images/obra-2-porta-ripado.webp", alt: "Porta Ripado - Condomínio"},
   {src: "/images/obra-3-centro-emprestarial.webp", alt: "Centro empresarial e Hotel ìbis - Marília"},
   {src: "/images/obra-4-favaro.webp", alt: "Fávaro Clínica Médica - Franca"},

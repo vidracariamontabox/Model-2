@@ -2,7 +2,6 @@
 
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import Image from "next/image";
-import {ArrowRight, Github} from "lucide-react";
 
 function cn(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -63,9 +62,10 @@ const PARTNER_LOGOS = [
   {src: "/images/Logo-2-favaro.webp", alt: "Favaro"},
   {src: "/images/Logo-3-grupoandremaria.webp", alt: "Grupo Andre Maria"},
   {src: "/images/Logo-4-ibis.webp", alt: "Ibis"},
-  {src: "/images/Logo-5-artemper.webp", alt: "Artemper"},
-  {src: "/images/Logo-5-oxiquimica.webp", alt: "Oxiquimica"},
-  {src: "/images/Logo-6-tenesse.webp", alt: "Tenesse"},
+  {src: "/images/cta-1-artemper.webp", alt: "Artemper"},
+  {src: "/images/oxiquimica.svg", alt: "Oxiquimica"},
+  {src: "/images/cta-2-tenesse.webp", alt: "Tenesse"},
+  {src: "/images/cta-3-athenas.webp", alt: "Athenas"},
 ];
 
 function createPixel(ctx, canvas, x, y, color, baseSpeed, delay) {
@@ -219,7 +219,12 @@ function PixelCanvas({colors, gap = 5, speed = 30}) {
 export default function CTA({
   word1 = "Design",
   word2 = "Exclusivo.",
-  description = "Transformamos espaços com vidros e esquadrias de alto padrão. Cada detalhe é pensado para proporcionar uma experiência única.",
+  description = (
+    <span className="font-bold tracking-[0.09em] text-[#fff] w-full max-w-[1900px]">
+      Transformamos espaços com vidros e esquadrias de alto padrão. <br />
+      Cada detalhe é pensado para proporcionar uma experiência única.
+    </span>
+  ),
   primaryCta = "Solicitar Orçamento",
   primaryCtaMobile = "Orçamento",
   secondaryCta = "Ver Portfólio",
@@ -241,7 +246,7 @@ export default function CTA({
   }, []);
 
   return (
-    <section className="relative w-full min-h-[60vh] bg-[#121212] flex flex-col justify-center py-20 px-6 sm:px-12 overflow-hidden select-none isolate">
+    <section className="relative w-full min-h-[60vh] bg-[#000000] flex flex-col justify-center py-20 px-6 sm:px-12 overflow-hidden select-none isolate">
       <style>{`
         @keyframes marquee {
           0% { transform: translateX(0%); }
@@ -279,7 +284,7 @@ export default function CTA({
       </div>
 
       <div className="flex flex-col items-center justify-center text-center z-10 order-2 px-1 w-full pointer-events-none mb-12">
-        <p className="text-sm sm:text-lg font-light text-[#acaba9] max-w-[95%] sm:max-w-md md:max-w-xl px-1 leading-relaxed">
+        <p className="w-full max-w-[95%] px-1 text-sm font-light leading-relaxed text-[#acaba9] sm:text-lg md:max-w-6xl">
           {description}
         </p>
       </div>
@@ -293,10 +298,28 @@ export default function CTA({
         <a
           href={whatsappUrl}
           target="_blank"
-          className="relative inline-flex h-10 md:h-12 items-center justify-center gap-1.5 md:gap-2 rounded-xl bg-white px-4 md:px-8 text-xs md:text-sm font-semibold text-black shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),0_2px_4px_rgba(0,0,0,0.15),0_12px_24px_rgba(0,0,0,0.15)] transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-          <span className="inline md:hidden">{primaryCtaMobile}</span>
-          <span className="hidden md:inline">{primaryCta}</span>
-          <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
+          rel="noreferrer"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            width: "fit-content",
+            padding: "0.6rem 1.15rem",
+            borderTopLeftRadius: 0,
+            borderTopRightRadius: "99px",
+            borderBottomLeftRadius: "99px",
+            borderBottomRightRadius: "99px",
+            background: "#f5f5f5",
+            color: "#000000",
+            fontFamily: "var(--font-neue-haas-grotesk)",
+            fontWeight: 200,
+            fontSize: "0.65rem",
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            textDecoration: "none",
+            marginTop: "0.35rem",
+            boxShadow: "0 0 0 1px rgba(255,255,255,0.12) inset",
+          }}>
+          <span>{primaryCta} →</span>
         </a>
       </div>
 
@@ -306,12 +329,12 @@ export default function CTA({
           isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8",
         )}
         style={{transitionDelay: "600ms"}}>
-        <span className="text-[10px] uppercase tracking-wider text-[#75706f] font-medium select-none">
+        <span className="text-[10px] uppercase tracking-wider text-[#d1d1d1] font-medium select-none">
           Excelência em cada detalhe
         </span>
         <div className="relative w-full max-w-5xl overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)]">
-          <div className="flex w-max gap-16 py-3 animate-marquee">
-            <div className="flex gap-16 items-center">
+          <div className="flex w-max py-3 animate-marquee">
+            <div className="flex gap-16 pr-16 items-center">
               {PARTNER_LOGOS.map((logo) => (
                 <Image
                   key={logo.src}
@@ -319,11 +342,11 @@ export default function CTA({
                   alt={logo.alt}
                   width={250}
                   height={80}
-                  className="h-[24px] w-auto select-none object-contain opacity-60 transition-opacity duration-300 hover:opacity-100 sm:h-[32px]"
+                  className="h-[24px] w-auto select-none object-contain opacity-80 transition-opacity duration-300 hover:opacity-100 sm:h-[32px]"
                 />
               ))}
             </div>
-            <div className="flex gap-16 items-center" aria-hidden="true">
+            <div className="flex gap-16 pr-16 items-center" aria-hidden="true">
               {PARTNER_LOGOS.map((logo) => (
                 <Image
                   key={`copy-${logo.src}`}
@@ -331,7 +354,7 @@ export default function CTA({
                   alt=""
                   width={250}
                   height={80}
-                  className="h-[24px] w-auto select-none object-contain opacity-60 transition-opacity duration-300 hover:opacity-100 sm:h-[32px]"
+                  className="h-[24px] w-auto select-none object-contain opacity-80 transition-opacity duration-300 hover:opacity-100 sm:h-[32px]"
                 />
               ))}
             </div>

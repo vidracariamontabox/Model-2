@@ -90,24 +90,6 @@ const contactLinks = [
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  
-  const contactLinks = [
-    {
-      icon: <FacebookIcon className="h-5 w-5" />,
-      label: "Facebook",
-      href: "https://www.facebook.com/profile.php?id=100083338509379",
-    },
-    {
-      icon: <InstagramIcon className="h-5 w-5" />,
-      label: "Instagram",
-      href: "https://www.instagram.com/montabox_vidros/",
-    },
-    {
-      icon: <PinterestIcon className="h-5 w-5" />,
-      label: "Pinterest",
-      href: "https://br.pinterest.com/montabox_vidros/",
-    },
-  ];
 
   return (
     <footer className="relative m-8 overflow-hidden rounded-3xl border-t border-white/5 bg-[#0F0F11]/10">

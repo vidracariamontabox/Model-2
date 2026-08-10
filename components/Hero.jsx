@@ -1,6 +1,5 @@
 "use client";
 
-
 import {Suspense, useEffect, useMemo, useRef, useState} from "react";
 import {Canvas, useFrame, useThree} from "@react-three/fiber";
 import * as THREE from "three";
@@ -132,10 +131,8 @@ function CubeGrid() {
 
         const rm = rng();
         let mat;
-        if (rm > 0.65)
-          mat = MAT_DARK;
-        else if (rm > 0.3)
-          mat = MAT_MID;
+        if (rm > 0.65) mat = MAT_DARK;
+        else if (rm > 0.3) mat = MAT_MID;
         else mat = MAT_LIGHTER;
 
         const edgeMat = rng() < 0.3 ? EDGE_MAT_LIGHT : EDGE_MAT_DARK;
@@ -238,8 +235,8 @@ export default function Hero() {
         position: "relative",
         width: "100%",
         height: "calc(100dvh - 4.5rem)",
-        minHeight: "calc(100dvh - 4.5rem)",
-        maxHeight: "100dvh",
+        minHeight: "100dvh",
+        maxHeight: "120dvh",
         overflow: "hidden",
         background: "#080808",
       }}>
