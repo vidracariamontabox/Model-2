@@ -3,7 +3,6 @@
 import {useEffect, useState} from "react";
 import {motion} from "framer-motion";
 
-/* ─── Variants ────────────────────────────────────────────────────────── */
 const navVariants = {
   hidden: {opacity: 0, y: -10},
   visible: {
@@ -32,7 +31,6 @@ const itemVariants = {
   },
 };
 
-/* ─── Component ───────────────────────────────────────────────────────── */
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -56,7 +54,6 @@ export default function Navbar() {
           ? "backdrop-blur-md bg-[#121212]/65 border-b border-white/5"
           : "bg-transparent border-b border-transparent",
       ].join(" ")}>
-      {/* Brand */}
       <motion.a
         variants={itemVariants}
         href="#"
@@ -64,7 +61,6 @@ export default function Navbar() {
         Montabox
       </motion.a>
 
-      {/* CTA */}
       <motion.a
         variants={itemVariants}
         href="https://wa.me/5516981984000"

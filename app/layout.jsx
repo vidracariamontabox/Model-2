@@ -5,9 +5,6 @@ import Preloader from "@/components/Preloader";
 import "./globals.css";
 import "./Testimonials.css";
 import "./testimonials-ui.css";
-import "swiper/css";
-import "swiper/css/effect-fade";
-import "swiper/css/navigation";
 
 const archivo = Archivo({
   subsets: ["latin"],

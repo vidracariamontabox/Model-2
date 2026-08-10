@@ -3,9 +3,7 @@
 import {useRef, useState, useEffect} from "react";
 import {motion, useInView, AnimatePresence} from "framer-motion";
 import BlurTextReveal from "./ui/BlurTextReveal";
-// import {motion, useInView, useScroll, useTransform, AnimatePresence} from "framer-motion";
 
-/* ─── Copy ──────────────────────────────────────────────────────────── */
 const TITLE_LINE_1 = "Montabox";
 const TITLE_LINE_2 = "Vidraçaria e Serralheria de Alumínio.";
 const BODY_LEFT = `Especializada em projetos grandes, residenciais e comerciais, entregamos soluções que unem estética refinada e engenharia de alta performance.`;
@@ -15,17 +13,17 @@ const STATS = [
   {value: "100%", label: "Fabricação e instalação própria"},
 ];
 
-/* Placeholders — substitua pelos caminhos reais depois */
 const IMAGES = [
-  {src: "/images/obra-1.jpeg", alt: "Oxíquimica"},
-  {src: "/images/obra-2.jpg", alt: "Porta Ripado - residência"},
-  {src: "/images/obra-3.jpg", alt: "Centro empresarial e Hotel ìbis"},
-  {src: "/images/obra-4.jpg", alt: "Clínica médica"},
-  {src: "/images/obra-5.jpg", alt: "Condomínio residencial"},
-  {src: "/images/obra-6.jpg", alt: "Residencia completa"},
+  {src: "/images/obra-1-xiquimica.webp", alt: "Oxíquimica Agrociência - Jaboticabal"},
+  {src: "/images/obra-2-porta-ripado.webp", alt: "Porta Ripado - Condomínio"},
+  {src: "/images/obra-3-centro-emprestarial.webp", alt: "Centro empresarial e Hotel ìbis - Marília"},
+  {src: "/images/obra-4-favaro.webp", alt: "Fávaro Clínica Médica - Franca"},
+  {src: "/images/obra-5-casa-condominio.webp", alt: "Casa em Condomínio"},
+  {src: "/images/obra-6-casa-condominio.webp", alt: "Casa em Condomínio"},
+  {src: "/images/obra-7-magalu.webp", alt: "Magazine Luiza Labs - Franca"},
+  {src: "/images/obra-8-athenas.webp", alt: "Athenas Consultoria Agrícola - Jaboticabal"},
 ];
 
-/* ─── Variants ──────────────────────────────────────────────────────── */
 const sectionVariants = {
   hidden: {},
   visible: {
@@ -47,7 +45,6 @@ const statVariants = {
   visible: {transition: {staggerChildren: 0.1}},
 };
 
-/* ─── Animated Title ────────────────────────────────────────────────── */
 function AnimatedTitle({line1, line2}) {
   return (
     <BlurTextReveal
@@ -65,7 +62,6 @@ function AnimatedTitle({line1, line2}) {
   );
 }
 
-/* ─── HoverExpand Gallery ───────────────────────────────────────────── */
 function HoverExpandGallery({activeIndex}) {
   const safeActiveIndex = Number.isFinite(activeIndex) ? activeIndex : 0;
 
@@ -80,7 +76,6 @@ function HoverExpandGallery({activeIndex}) {
             height: "100%",
           }}
           transition={{duration: 0.65, ease: [0.22, 1, 0.36, 1]}}>
-          {/* Overlay gradiente no ativo */}
           <AnimatePresence>
             {safeActiveIndex === index && (
               <motion.div
@@ -92,7 +87,6 @@ function HoverExpandGallery({activeIndex}) {
             )}
           </AnimatePresence>
 
-          {/* Label no ativo */}
           <AnimatePresence>
             {safeActiveIndex === index && (
               <motion.div
@@ -106,7 +100,6 @@ function HoverExpandGallery({activeIndex}) {
             )}
           </AnimatePresence>
 
-          {/* Imagem */}
           <img src={image.src} alt={image.alt} className="w-full h-full object-cover" />
         </motion.div>
       ))}
@@ -114,7 +107,6 @@ function HoverExpandGallery({activeIndex}) {
   );
 }
 
-/* ─── Component Principal ───────────────────────────────────────────── */
 export default function About({scrollYProgress}) {
   const sectionRef = useRef(null);
   const inView = useInView(sectionRef, {once: true, margin: "-80px 0px"});
@@ -148,7 +140,6 @@ export default function About({scrollYProgress}) {
       id="sobre"
       ref={sectionRef}
       className="relative bg-[#000000] overflow-hidden py-24 sm:py-28 lg:py-20 px-8 sm:px-12 lg:px-20 min-h-screen">
-      {/* Gradiente decorativo */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -162,9 +153,7 @@ export default function About({scrollYProgress}) {
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
         className="relative z-10 max-w-7xl mx-auto">
-        {/* ── Layout: 30% texto | 70% galeria ── */}
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-0">
-          {/* ── Coluna esquerda — textos (30%) ── */}
           <div className="lg:w-[30%] lg:pr-10 flex flex-col justify-start pt-0">
             <motion.p
               variants={fadeUp}
@@ -186,7 +175,6 @@ export default function About({scrollYProgress}) {
 
             <motion.div variants={fadeUp} custom={0.46} className="mt-10 mb-10 h-px bg-[#75706f]/20 w-full" />
 
-            {/* Stats */}
             <motion.div variants={statVariants} className="grid grid-cols-1 gap-4">
               {STATS.map(({value, label}, i) => (
                 <motion.div key={label} variants={fadeUp} custom={0.52 + i * 0.1} className="flex flex-col gap-1">
@@ -199,7 +187,6 @@ export default function About({scrollYProgress}) {
             </motion.div>
           </div>
 
-          {/* ── Coluna direita — galeria HoverExpand (70%) ── */}
           <motion.div
             variants={fadeUp}
             custom={0.3}

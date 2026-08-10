@@ -2,6 +2,9 @@
 import {useCallback, useRef, useState} from "react";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {Autoplay, EffectFade, Navigation} from "swiper/modules";
+import "swiper/css";
+import "swiper/css/effect-fade";
+import "swiper/css/navigation";
 
 import BlurTextReveal from "../ui/BlurTextReveal";
 import FadeInOnScroll from "../ui/FadeInOnScroll";
@@ -18,9 +21,7 @@ export default function Testimonials({customClass = "", swiperOptions = {}, show
     setActiveIndex(swiper.realIndex);
   }, []);
 
-  // Navegação por título (ainda funciona)
   const handleCompanyClick = useCallback((companyIndex) => {
-    // Encontra o primeiro depoimento daquele grupo
     let targetIndex = 0;
     for (let i = 0; i < TestimonialsData.length; i++) {
       if (TestimonialsData[i].companyName === TestimonialsData[companyIndex].companyName) {

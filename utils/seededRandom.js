@@ -1,4 +1,3 @@
-// Deterministic pseudo-random generator used to reproduce procedural scene compositions.
 function hashSeed(seed) {
   return Array.from(String(seed)).reduce((hash, character) => {
     const nextHash = (hash << 5) - hash + character.charCodeAt(0);

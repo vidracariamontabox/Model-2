@@ -1,4 +1,3 @@
-// Shared runtime defaults for every Hero scene preset and device profile.
 export const HERO_SCENE_CONFIG = {
   palette: {
     background: "#121212",

@@ -11,8 +11,6 @@ export default function SmoothScroll({children}) {
       smoothWheel: true,
     });
 
-    // Sincroniza o scroll do Lenis com o scroll nativo
-    // para que o Framer Motion useScroll funcione corretamente
     lenis.on("scroll", ({scroll, limit}) => {
       window.scrollY = scroll;
       document.documentElement.scrollTop = scroll;

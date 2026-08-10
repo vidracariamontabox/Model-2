@@ -5,7 +5,6 @@ import BlurTextReveal from "./ui/BlurTextReveal";
 
 const services = ["Fachada Pele de Vidro.", "Esquadrias de Alumínio.", "Painel Ripado."];
 const CURTAIN_COMPLETE_PROGRESS = 0.9;
-// Tempo de leitura depois que a cortina termina antes de revelar o título de Serviços.
 const HEADER_REVEAL_DELAY = 0;
 
 const containerVariants = {
@@ -27,7 +26,6 @@ const itemVariants = {
   },
 };
 
-/* ─── Handwritten "Alto Padrão" — SVG path real, traço de caneta ───── */
 function HandwrittenAltoPadrao() {
   return (
     <svg
@@ -98,7 +96,6 @@ export default function Services({transitionProgress}) {
       id="servicos"
       className="max-h-screen bg-[#121212] flex flex-col justify-center px-6 py-24 md:px-16 lg:px-24">
       <div className="max-w-7xl mx-auto w-full">
-        {/* Eyebrow */}
         <motion.div
           initial={{opacity: 0, y: 12}}
           whileInView={{opacity: 1, y: 0}}
@@ -113,14 +110,11 @@ export default function Services({transitionProgress}) {
             Nossos.<span className="text-[#acaba9]">Serviços</span>
           </BlurTextReveal>
 
-          {/* Linha vertical separadora ~2cm */}
           <span className="block w-px h-[2cm] bg-[#75706f]/30" />
 
-          {/* "ALTO PADRÃO" escrito à mão */}
           <CursiveAltoPadrao play={isHeaderReady} />
         </motion.div>
 
-        {/* Lista estilo Trionn */}
         <motion.div
           ref={ref}
           variants={containerVariants}
@@ -140,7 +134,6 @@ export default function Services({transitionProgress}) {
                 stagger={0.012}
                 className="text-[clamp(2.8rem,7vw,7rem)] font-black tracking-tight leading-[1.0] text-[#eaeaea] group-hover:text-[#acaba9] transition-colors duration-300 select-none"></BlurTextReveal>
 
-              {/* Linha under hover */}
               <motion.div
                 initial={{scaleX: 0}}
                 whileHover={{scaleX: 1}}
@@ -151,7 +144,6 @@ export default function Services({transitionProgress}) {
           ))}
         </motion.div>
 
-        {/* CTA */}
         <motion.div
           initial={{opacity: 0, y: 16}}
           whileInView={{opacity: 1, y: 0}}

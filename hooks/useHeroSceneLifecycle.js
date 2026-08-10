@@ -11,7 +11,6 @@ import InputController from "@/lib/hero/InputController";
 import ViewportController from "@/lib/hero/ViewportController";
 import usePrefersReducedMotion from "./usePrefersReducedMotion";
 
-// Central lifecycle owner for the Hero canvas and its imperative scene resources.
 export default function useHeroSceneLifecycle({canvasRef, config, preset, onPhaseChange}) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const [isFallback, setIsFallback] = useState(false);
