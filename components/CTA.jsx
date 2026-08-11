@@ -342,7 +342,7 @@ export default function CTA({
                   alt={logo.alt}
                   width={250}
                   height={80}
-                  className="h-[24px] w-auto select-none object-contain opacity-80 transition-opacity duration-300 hover:opacity-100 sm:h-[32px]"
+                  className="h-[29px] w-auto select-none object-contain sm:h-[38px]"
                 />
               ))}
             </div>
@@ -354,7 +354,7 @@ export default function CTA({
                   alt=""
                   width={250}
                   height={80}
-                  className="h-[24px] w-auto select-none object-contain opacity-80 transition-opacity duration-300 hover:opacity-100 sm:h-[32px]"
+                  className="h-[29px] w-auto select-none object-contain sm:h-[38px]"
                 />
               ))}
             </div>
