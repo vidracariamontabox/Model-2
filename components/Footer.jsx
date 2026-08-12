@@ -90,18 +90,31 @@ export default function Footer() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Top Section: CTA / Brand Intro */}
+        {/* Top Section: Navigation & Info */}
         <div className="flex flex-col lg:flex-row justify-between items-start gap-12 mb-24">
-          <div className="max-w-md">
-            <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black leading-[0.9] uppercase tracking-tighter mb-6">
-              Elevando o <span className="text-white/40">Padrão</span> do seu Projeto.
-            </h2>
-            <p className="text-[#75706f] text-sm font-light leading-relaxed max-w-xs uppercase tracking-tight">
-              Soluções exclusivas em vidros e esquadrias de alto desempenho para arquitetura contemporânea.
-            </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-12 w-full lg:w-auto">
+            <div className="flex flex-col gap-4">
+              <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f] mb-2">Navegação</span>
+              <FooterLink href="#sobre">Sobre</FooterLink>
+              <FooterLink href="#servicos">Serviços</FooterLink>
+              <FooterLink href="#portfolio">Portfólio</FooterLink>
+            </div>
+            
+            <div className="flex flex-col gap-4">
+              <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f] mb-2">Social</span>
+              {contactLinks.map(({ label, href }) => (
+                <FooterLink key={label} href={href}>{label}</FooterLink>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f] mb-2">Legal</span>
+              <FooterLink href="#">Privacidade</FooterLink>
+              <FooterLink href="#">Termos</FooterLink>
+            </div>
           </div>
           
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col sm:flex-row gap-12 lg:gap-24">
              <div className="flex flex-col gap-2">
                 <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f]">Onde estamos</span>
                 <address className="not-italic text-sm font-light text-[#acaba9] max-w-[250px] leading-relaxed">
@@ -116,39 +129,6 @@ export default function Footer() {
                   Segunda a Sexta — 07:30 às 17:30
                 </p>
              </div>
-          </div>
-        </div>
-
-        {/* Middle Section: Navigation & Socials */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 py-12 border-y border-white/5">
-          <div className="flex flex-col gap-4">
-            <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f] mb-2">Navegação</span>
-            <FooterLink href="#sobre">Sobre</FooterLink>
-            <FooterLink href="#servicos">Serviços</FooterLink>
-            <FooterLink href="#portfolio">Portfólio</FooterLink>
-          </div>
-          
-          <div className="flex flex-col gap-4">
-            <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f] mb-2">Social</span>
-            {contactLinks.map(({ label, href }) => (
-              <FooterLink key={label} href={label}>{label}</FooterLink>
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f] mb-2">Legal</span>
-            <FooterLink href="#">Privacidade</FooterLink>
-            <FooterLink href="#">Termos</FooterLink>
-          </div>
-
-          <div className="flex flex-col items-start md:items-end gap-6">
-            <a 
-              href="https://wa.me/5516981984000" 
-              className="group relative inline-flex items-center gap-3 px-6 py-3 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all duration-500"
-            >
-              <WhatsAppIcon className="w-4 h-4" />
-              <span className="text-[0.7rem] uppercase tracking-[0.2em] font-medium">Falar com Especialista</span>
-            </a>
           </div>
         </div>
 
