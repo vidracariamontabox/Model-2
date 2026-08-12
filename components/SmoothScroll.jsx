@@ -1,30 +1,48 @@
 "use client";
-import {useEffect} from "react";
-import Lenis from "lenis";
-import {useMotionValue} from "framer-motion";
 
-export default function SmoothScroll({children}) {
+import { useEffect } from "react";
+
+export default function SmoothScroll({ children }) {
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.4,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
+    // Smooth scroll nativo via CSS — equivalente ao Lenis duration 1.4
+    // com easing exponencial suave
+    const html = document.documentElement;
+    html.style.scrollBehavior = "smooth";
 
-    lenis.on("scroll", ({scroll, limit}) => {
-      window.scrollY = scroll;
-      document.documentElement.scrollTop = scroll;
-    });
+    // Intercepta o evento de wheel para aplicar scroll suave
+    // com a mesma física que o Lenis usava (easing exponencial)
+    let scrollTarget = window.scrollY;
+    let currentScroll = window.scrollY;
+    let rafId = null;
+    const ease = 0.09; // equivalente ao duration 1.4 do Lenis
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
+    const onWheel = (e) => {
+      e.preventDefault();
+      scrollTarget += e.deltaY;
+      scrollTarget = Math.max(
+        0,
+        Math.min(scrollTarget, document.body.scrollHeight - window.innerHeight)
+      );
+    };
 
-    requestAnimationFrame(raf);
+    const animate = () => {
+      const diff = scrollTarget - currentScroll;
+      if (Math.abs(diff) < 0.5) {
+        currentScroll = scrollTarget;
+      } else {
+        currentScroll += diff * ease;
+      }
+      window.scrollTo(0, currentScroll);
+      rafId = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    rafId = requestAnimationFrame(animate);
 
     return () => {
-      lenis.destroy();
+      window.removeEventListener("wheel", onWheel);
+      cancelAnimationFrame(rafId);
+      html.style.scrollBehavior = "";
     };
   }, []);
 
