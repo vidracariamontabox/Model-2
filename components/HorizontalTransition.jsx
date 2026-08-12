@@ -8,12 +8,6 @@ import {motion, useScroll, useTransform} from "framer-motion";
  * Services fica fixo embaixo (sticky).
  * About fica em cima e se fecha da direita para esquerda
  * via clip-path, revelando Services atrás.
- *
- * Uso em page.jsx:
- *   <RevealTransition
- *     topSection={<About />}
- *     bottomSection={<Services />}
- *   />
  */
 export default function HorizontalTransition({leftSection, rightSection}) {
   const containerRef = useRef(null);
@@ -21,22 +15,20 @@ export default function HorizontalTransition({leftSection, rightSection}) {
   const {scrollYProgress} = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
-    layoutEffect: false,
   });
 
-  // Cortina: quanto maior esse intervalo, mais lenta fica a abertura/fechamento.
-  // A faixa final mantém a cortina fechada por um tempo, dando respiro para ler "Nossos Serviços".
+  // Cortina: agora começa em 0.65 para dar tempo da galeria About (que termina em 0.55) respirar.
   const clipPath = useTransform(
     scrollYProgress,
-    [0.60, 0.90, 0.95, 1.0],
-    ["inset(0% 0% 0% 0%)", "inset(0% 100% 0% 0%)", "inset(0% 100% 0% 0%)", "inset(0% 100% 0% 0%)"]
+    [0.65, 0.95],
+    ["inset(0% 0% 0% 0%)", "inset(0% 100% 0% 0%)"]
   );
 
   // Linha fixa na borda direita
-  const lineScale = useTransform(scrollYProgress, [0.90, 0.98], [0, 1]);
-  const lineOpacity = useTransform(scrollYProgress, [0.88, 0.92, 0.98, 1], [0, 1, 1, 0]);
-  const plusRotate = useTransform(scrollYProgress, [0.90, 1], [0, 360]);
-  const plusY = useTransform(scrollYProgress, [0.90, 0.98], ["0%", "100%"]);
+  const lineScale = useTransform(scrollYProgress, [0.85, 0.98], [0, 1]);
+  const lineOpacity = useTransform(scrollYProgress, [0.80, 0.85, 0.98, 1], [0, 1, 1, 0]);
+  const plusRotate = useTransform(scrollYProgress, [0.85, 1], [0, 360]);
+  const plusY = useTransform(scrollYProgress, [0.85, 0.98], ["0%", "100%"]);
 
   const leftSectionWithScroll = isValidElement(leftSection)
     ? cloneElement(leftSection, {scrollYProgress})
@@ -46,7 +38,7 @@ export default function HorizontalTransition({leftSection, rightSection}) {
     : rightSection;
 
   return (
-    <div ref={containerRef} className="relative h-[380vh]">
+    <div ref={containerRef} className="relative h-[400vh]">
       {/* Sticky container */}
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Services — fixo atrás, sempre visível */}
