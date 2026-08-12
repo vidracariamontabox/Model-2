@@ -1,4 +1,3 @@
-// Reusable 3D rotation helpers for the canvas scene; no React code belongs here.
 export function degreesToRadians(degrees) {
   return (degrees * Math.PI) / 180;
 }

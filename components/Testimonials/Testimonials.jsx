@@ -1,6 +1,10 @@
 "use client";
-import {useCallback, useState, useEffect} from "react";
-import {motion, AnimatePresence} from "framer-motion";
+import {useCallback, useRef, useState} from "react";
+import {Swiper, SwiperSlide} from "swiper/react";
+import {Autoplay, EffectFade, Navigation} from "swiper/modules";
+import "swiper/css";
+import "swiper/css/effect-fade";
+import "swiper/css/navigation";
 
 import BlurTextReveal from "../ui/BlurTextReveal";
 import FadeInOnScroll from "../ui/FadeInOnScroll";
@@ -24,12 +28,13 @@ export default function Testimonials({customClass = "", showBottomLine = false})
     });
   }, []);
 
-  // Navegação por título da empresa
-  const handleCompanyClick = useCallback((companyName) => {
-    const targetIndex = TestimonialsData.findIndex((item) => item.companyName === companyName);
-    if (targetIndex !== -1) {
-      setDirection(targetIndex > activeIndex ? 1 : -1);
-      setActiveIndex(targetIndex);
+  const handleCompanyClick = useCallback((companyIndex) => {
+    let targetIndex = 0;
+    for (let i = 0; i < TestimonialsData.length; i++) {
+      if (TestimonialsData[i].companyName === TestimonialsData[companyIndex].companyName) {
+        targetIndex = i;
+        break;
+      }
     }
   }, [activeIndex]);
 

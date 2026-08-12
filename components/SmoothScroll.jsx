@@ -14,7 +14,7 @@ export default function SmoothScroll({ children }) {
   const smoothY = useSpring(scrollY, {
     stiffness: 45,
     damping: 18,
-    restDelta: 0.001
+    restDelta: 0.001,
   });
 
   // 3. Transforma o valor suave em uma translação negativa
@@ -29,12 +29,12 @@ export default function SmoothScroll({ children }) {
 
   useEffect(() => {
     updatePageHeight();
-    
+
     const resizeObserver = new ResizeObserver(() => updatePageHeight());
     if (scrollRef.current) resizeObserver.observe(scrollRef.current);
-    
+
     window.addEventListener("resize", updatePageHeight);
-    
+
     return () => {
       resizeObserver.disconnect();
       window.removeEventListener("resize", updatePageHeight);

@@ -55,34 +55,6 @@ const FooterLink = ({ href, children }) => (
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  
-  const contactLinks = [
-    {
-      icon: <FacebookIcon className="h-5 w-5" />,
-      label: "Facebook",
-      href: "https://www.facebook.com/profile.php?id=100083338509379",
-    },
-    {
-      icon: <InstagramIcon className="h-5 w-5" />,
-      label: "Instagram",
-      href: "https://www.instagram.com/montabox_vidros/",
-    },
-    {
-      icon: <PinterestIcon className="h-5 w-5" />,
-      label: "Pinterest",
-      href: "https://br.pinterest.com/montabox_vidros/",
-    },
-    {
-      icon: <WhatsAppIcon className="h-5 w-5" />,
-      label: "WhatsApp",
-      href: "https://wa.me/5516981984000",
-    },
-    {
-      icon: <MapsIcon className="h-5 w-5" />,
-      label: "Google Maps",
-      href: "https://share.google/e7G9PhQQ1gHud9Q6f",
-    },
-  ];
 
   return (
     <footer className="relative bg-[#000000] text-[#eaeaea] pt-24 pb-12 px-8 sm:px-12 lg:px-20 overflow-hidden border-t border-white/5">
@@ -132,15 +104,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Section: Large Brand Typography */}
-        <div className="relative mt-20 select-none pointer-events-none">
-          <h1 className="text-[15vw] font-black text-center leading-none uppercase tracking-[-0.05em] text-white/[0.02] transition-colors duration-700 hover:text-white/[0.05]">
-            Montabox
-          </h1>
-        </div>
-
-        {/* Footer Note */}
-        <div className="mt-12 flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-white/5">
+        <div className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-white/5 pt-8 md:flex-row">
           <div className="flex items-center gap-4">
             <span className="text-[0.6rem] uppercase tracking-[0.2em] text-[#75706f]">
               © {currentYear} Montabox

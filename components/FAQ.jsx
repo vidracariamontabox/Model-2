@@ -88,7 +88,6 @@ export default function FAQ({faqs}) {
 
   const toggle = (id) => setOpenId((prev) => (prev === id ? -1 : id));
 
-  // Schema.org FAQPage — ajuda o Google a exibir rich snippets de pergunta/resposta
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -103,7 +102,6 @@ export default function FAQ({faqs}) {
     <section id="faq" className="relative w-full overflow-hidden bg-[#2c2c2c] px-6 sm:px-10 py-24">
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}} />
 
-      {/* Blobs de fundo — profundidade e movimento lento, diferencia da seção de testimonials */}
       <motion.div
         className="pointer-events-none absolute -top-44 -left-28 w-[480px] h-[480px] rounded-full"
         style={{background: "rgba(172,171,169,0.14)", filter: "blur(70px)"}}

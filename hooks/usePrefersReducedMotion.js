@@ -2,7 +2,6 @@
 
 import {useEffect, useState} from "react";
 
-// Exposes the browser motion preference to visual systems without duplicating media-query logic.
 export default function usePrefersReducedMotion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
