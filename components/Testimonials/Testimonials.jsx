@@ -1,7 +1,6 @@
 "use client";
-import {useCallback, useRef, useState} from "react";
-import {Swiper, SwiperSlide} from "swiper/react";
-import {Autoplay, EffectFade, Navigation} from "swiper/modules";
+import {useCallback, useState, useEffect} from "react";
+import {motion, AnimatePresence} from "framer-motion";
 
 import BlurTextReveal from "../ui/BlurTextReveal";
 import FadeInOnScroll from "../ui/FadeInOnScroll";
@@ -10,26 +9,54 @@ import DividerPlus from "../ui/DividerPlus";
 import TestimonialCard from "./TestimonialCard";
 import {TestimonialsData} from "../../data/TestimonialsData";
 
-export default function Testimonials({customClass = "", swiperOptions = {}, showBottomLine = false}) {
-  const swiperRef = useRef(null);
+export default function Testimonials({customClass = "", showBottomLine = false}) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
 
-  const handleSlideChange = useCallback((swiper) => {
-    setActiveIndex(swiper.realIndex);
+  // Navegação manual
+  const paginate = useCallback((newDirection) => {
+    setDirection(newDirection);
+    setActiveIndex((prevIndex) => {
+      let nextIndex = prevIndex + newDirection;
+      if (nextIndex < 0) nextIndex = TestimonialsData.length - 1;
+      if (nextIndex >= TestimonialsData.length) nextIndex = 0;
+      return nextIndex;
+    });
   }, []);
 
-  // Navegação por título (ainda funciona)
-  const handleCompanyClick = useCallback((companyIndex) => {
-    // Encontra o primeiro depoimento daquele grupo
-    let targetIndex = 0;
-    for (let i = 0; i < TestimonialsData.length; i++) {
-      if (TestimonialsData[i].companyName === TestimonialsData[companyIndex].companyName) {
-        targetIndex = i;
-        break;
-      }
+  // Navegação por título da empresa
+  const handleCompanyClick = useCallback((companyName) => {
+    const targetIndex = TestimonialsData.findIndex((item) => item.companyName === companyName);
+    if (targetIndex !== -1) {
+      setDirection(targetIndex > activeIndex ? 1 : -1);
+      setActiveIndex(targetIndex);
     }
-    swiperRef.current?.slideToLoop(targetIndex);
-  }, []);
+  }, [activeIndex]);
+
+  // Autoplay simulado
+  useEffect(() => {
+    const timer = setInterval(() => {
+      paginate(1);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [paginate]);
+
+  const variants = {
+    enter: (direction) => ({
+      x: direction > 0 ? 100 : -100,
+      opacity: 0
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction) => ({
+      zIndex: 0,
+      x: direction < 0 ? 100 : -100,
+      opacity: 0
+    })
+  };
 
   return (
     <section id="testimonials" className={`testimonials-section ${customClass}`.trim()}>
@@ -65,7 +92,7 @@ export default function Testimonials({customClass = "", swiperOptions = {}, show
         <div className="testimonials-section__main">
           <div className="testimonials-section__left">
             <div className="testimonial-company-list">
-              {[...new Set(TestimonialsData.map((item) => item.companyName))].map((companyName, index) => {
+              {[...new Set(TestimonialsData.map((item) => item.companyName))].map((companyName) => {
                 const isActive = TestimonialsData[activeIndex]?.companyName === companyName;
                 return (
                   <button
@@ -73,7 +100,7 @@ export default function Testimonials({customClass = "", swiperOptions = {}, show
                     type="button"
                     aria-current={isActive ? "true" : undefined}
                     className={`testimonial-company-button ${isActive ? "is-active" : ""}`}
-                    onClick={() => handleCompanyClick(index)}>
+                    onClick={() => handleCompanyClick(companyName)}>
                     <span className="title">{companyName}</span>
                     <span className={`icon ${isActive ? "is-visible" : ""}`} aria-hidden="true">
                       →
@@ -86,44 +113,50 @@ export default function Testimonials({customClass = "", swiperOptions = {}, show
             <div className="testimonial-nav">
               <button
                 type="button"
-                className="custom-arrow left js-testimonials-prev"
+                className="custom-arrow left"
+                onClick={() => paginate(-1)}
                 aria-label="Previous testimonial">
                 <span className="arrow-icon">←</span>
               </button>
-              <button type="button" className="custom-arrow right js-testimonials-next" aria-label="Next testimonial">
+              <button 
+                type="button" 
+                className="custom-arrow right"
+                onClick={() => paginate(1)}
+                aria-label="Next testimonial">
                 <span className="arrow-icon">→</span>
               </button>
             </div>
           </div>
 
           <div className="testimonials-section__swiperWrap">
-            <Swiper
-              modules={[Autoplay, EffectFade, Navigation]}
-              effect="fade"
-              fadeEffect={{crossFade: true}}
-              speed={600}
-              autoplay={{
-                delay: 5000,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true,
-              }}
-              loop
-              navigation={{
-                prevEl: ".js-testimonials-prev",
-                nextEl: ".js-testimonials-next",
-              }}
-              onSwiper={(swiper) => {
-                swiperRef.current = swiper;
-              }}
-              onSlideChange={handleSlideChange}
-              className="testimonials-swiper swiper-row"
-              {...swiperOptions}>
-              {TestimonialsData.map((item, index) => (
-                <SwiperSlide key={index} className="testimonial-slide">
-                  <TestimonialCard item={item} />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            <div className="testimonials-swiper-container relative overflow-hidden min-h-[300px]">
+              <AnimatePresence initial={false} custom={direction}>
+                <motion.div
+                  key={activeIndex}
+                  custom={direction}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{
+                    x: { type: "spring", stiffness: 300, damping: 30 },
+                    opacity: { duration: 0.2 }
+                  }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={1}
+                  onDragEnd={(e, { offset, velocity }) => {
+                    const swipe = Math.abs(offset.x) > 50;
+                    if (swipe) {
+                      paginate(offset.x > 0 ? -1 : 1);
+                    }
+                  }}
+                  className="absolute w-full"
+                >
+                  <TestimonialCard item={TestimonialsData[activeIndex]} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
             <div className="testimonials-section__cta">
               <WordShiftButton text="Traga o seu projeto →" target="_blank" href="https://wa.me/5516981984000" />
