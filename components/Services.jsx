@@ -94,7 +94,7 @@ export default function Services({transitionProgress}) {
   return (
     <section
       id="servicos"
-      className="max-h-screen bg-[#121212] flex flex-col justify-center px-6 py-24 md:px-16 lg:px-24">
+      className="h-full min-h-screen bg-[#121212] flex flex-col justify-center px-6 py-24 md:px-16 lg:px-24">
       <div className="max-w-7xl mx-auto w-full">
         <motion.div
           initial={{opacity: 0, y: 12}}

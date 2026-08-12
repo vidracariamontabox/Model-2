@@ -109,8 +109,14 @@ function HoverExpandGallery({activeIndex}) {
 
 export default function About({scrollYProgress}) {
   const sectionRef = useRef(null);
-  const inView = useInView(sectionRef, {once: true, margin: "-80px 0px"});
+  // useInView pode não disparar dentro de overflow-hidden sticky;
+  // usamos scrollYProgress como fallback: qualquer scroll > 0 significa visível
+  const inViewNative = useInView(sectionRef, {once: true, margin: "0px"});
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const hasScrolledRef = useRef(false);
   const [activeScrollIndex, setActiveScrollIndex] = useState(0);
+
+  const inView = inViewNative || hasScrolled;
 
   useEffect(() => {
     if (!scrollYProgress) return;
@@ -120,6 +126,12 @@ export default function About({scrollYProgress}) {
     const lastIndex = IMAGES.length - 1;
 
     return scrollYProgress.on("change", (value) => {
+      // Qualquer scroll dentro do HorizontalTransition = seção visível
+      if (value > 0 && !hasScrolledRef.current) {
+        hasScrolledRef.current = true;
+        setHasScrolled(true);
+      }
+
       if (value <= startProgress) {
         setActiveScrollIndex(0);
         return;
@@ -139,7 +151,7 @@ export default function About({scrollYProgress}) {
     <section
       id="sobre"
       ref={sectionRef}
-      className="relative bg-[#000000] overflow-hidden py-24 sm:py-28 lg:py-20 px-8 sm:px-12 lg:px-20 min-h-screen">
+      className="relative bg-[#000000] overflow-hidden py-24 sm:py-28 lg:py-20 px-8 sm:px-12 lg:px-20 h-full min-h-screen">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
