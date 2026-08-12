@@ -1,24 +1,11 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { useEffect } from "react";
 
 export default function SmoothScroll({ children }) {
-  const scrollRef = useRef(null);
-  const [pageHeight, setPageHeight] = useState(0);
-
-  // 1. Captura o scroll real do navegador
-  const { scrollY } = useScroll();
-
-  // 2. Cria uma mola (spring) para suavizar o valor do scroll
-  const smoothY = useSpring(scrollY, {
-    stiffness: 45,
-    damping: 18,
-    restDelta: 0.001
-  });
-
-  // 3. Transforma o valor suave em uma translação negativa
-  const y = useTransform(smoothY, (value) => -value);
+  useEffect(() => {
+    const html = document.documentElement;
+    html.style.scrollBehavior = "smooth";
 
   // 4. Atualiza a altura do "corpo virtual"
   const updatePageHeight = useCallback(() => {
@@ -36,8 +23,7 @@ export default function SmoothScroll({ children }) {
     window.addEventListener("resize", updatePageHeight);
     
     return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", updatePageHeight);
+      html.style.scrollBehavior = "";
     };
   }, [updatePageHeight]);
 

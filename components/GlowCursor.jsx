@@ -4,7 +4,6 @@ import {useEffect, useRef, useMemo} from "react";
 import {useFrame} from "@react-three/fiber";
 import * as THREE from "three";
 
-// Gerar textura de gradiente radial
 function createGlowTexture() {
   const size = 256;
   const canvas = document.createElement("canvas");
@@ -28,7 +27,6 @@ export default function GlowCursor({mousePos}) {
   const targetRef = useRef({x: 0, y: 0});
   const glowTexture = useMemo(() => createGlowTexture(), []);
 
-  // Atualiza o alvo quando o mouse move
   useEffect(() => {
     if (mousePos.x === -999) return;
     const zoomLevel = 50;
@@ -38,7 +36,6 @@ export default function GlowCursor({mousePos}) {
     };
   }, [mousePos]);
 
-  // Lerp suave a cada frame (atraso)
   useFrame(() => {
     const mesh = meshRef.current;
     if (!mesh) return;

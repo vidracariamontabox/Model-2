@@ -1,52 +1,18 @@
 "use client";
 
-/**
- * Hero — Grade de cubos desalinhados (estilo Spline / SLN Agency)
- *
- * REFERÊNCIA: screenshot com cubos preto brilhoso, face frontal visível,
- *             câmera levemente de cima-direita, profundidade Z variável.
- *
- * CONTAGEM DE CUBOS (FOV 35, Z=20, STEP=1.12):
- *   Viewport visível (world units):
- *     Altura = 2 * 20 * tan(17.5°) ≈ 12.6 wu
- *     Largura = altura × aspect_ratio
- *
- *   15" 1366×768  (16:9)  → ~22 cols × ~14 rows = ~308 cubos
- *   15" 1920×1080 (16:9)  → ~26 cols × ~14 rows = ~364 cubos
- *   24" 2560×1440 (16:9)  → ~26 cols × ~14 rows = ~364 cubos
- *   Ultra-wide 2560×1080  → ~34 cols × ~14 rows = ~476 cubos
- *   4K 3840×2160 (16:9)   → ~26 cols × ~14 rows = ~364 cubos
- *   +6 cols +6 rows margem ≈ +150 cubos extras
- *
- *   TOTAL TÍPICO: ~350–500 cubos por render (depende do viewport)
- *
- * MUDANÇAS NESTA VERSÃO:
- *   - Rotação ZERADA: rotX/rotY são quase 0 (face do cubo frontal)
- *   - Deslocamento X/Y: ±2-3 milímetros (0.002~0.003 world units)
- *   - Material: MeshPhysicalMaterial preto brilhoso (metallic black)
- *   - 30% dos cubos com borda clara (LineBasicMaterial branco/claro)
- *   - Câmera levemente acima para revelar topo dos cubos
- *   - Profundidade Z: -3.0 a +3.0 para efeito de profundidade
- */
-
 import {Suspense, useEffect, useMemo, useRef, useState} from "react";
 import {Canvas, useFrame, useThree} from "@react-three/fiber";
 import * as THREE from "three";
 import GlowCursor from "@/components/GlowCursor";
 
-// ─── Constantes ───────────────────────────────────────────────────────────────
 const CUBE_SIZE = 1.0;
 const GAP = 0.05;
-const STEP = CUBE_SIZE + GAP; // = 1.05 world units
+const STEP = CUBE_SIZE + GAP;
 
-// Deslocamento X/Y: 2-3mm = offset pequeno apenas para dar vida à grade
-// Interpretado como 2-3% do tamanho do cubo → ≈ 0.02-0.03 wu
-const XY_OFFSET_MAX = STEP * 0.025; // ~0.026 world units ≈ 2.5% do step
+const XY_OFFSET_MAX = STEP * 0.025;
 
-// Semente fixa → mesmo layout a cada renderização
 const SEED = 7331;
 
-// ─── Pseudo-random com seed ───────────────────────────────────────────────────
 function makeRng(seed) {
   let s = seed;
   return () => {
@@ -55,11 +21,9 @@ function makeRng(seed) {
   };
 }
 
-// ─── Geometrias compartilhadas ────────────────────────────────────────────────
 const BOX_GEO = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
 const EDGE_GEO = new THREE.EdgesGeometry(BOX_GEO);
 
-// ─── Materiais: cinza-azulado com reflexo metálico suave ────────────────────
 const MAT_DARK = new THREE.MeshStandardMaterial({
   color: "#000000",
   metalness: 0.92,
@@ -78,7 +42,6 @@ const MAT_LIGHTER = new THREE.MeshStandardMaterial({
   roughness: 0.18,
 });
 
-// ─── Materiais de borda ───────────────────────────────────────────────────────
 const EDGE_MAT_DARK = new THREE.LineBasicMaterial({
   color: "#464443",
   transparent: true,
@@ -91,23 +54,16 @@ const EDGE_MAT_LIGHT = new THREE.LineBasicMaterial({
   opacity: 0.95,
 });
 
-// ─── Grade com cubos quase frontais ──────────────────────────────────────────
 function CubeGrid() {
   const {viewport} = useThree();
   const cubesRef = useRef([]);
 
-  // +6 de margem para garantir que nenhuma borda apareça ao rolar
   const cols = Math.ceil(viewport.width / STEP) + 6;
   const rows = Math.ceil(viewport.height / STEP) + 6;
 
-  // Log de contagem (apenas em dev)
-  if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
-    console.log(`[Hero] Cubos na grade: ${cols} cols × ${rows} rows = ${cols * rows} cubos`);
-  }
-
   useEffect(() => {
     const shuffled = [...cubesRef.current].filter(Boolean).sort(() => Math.random() - 0.5);
-    const animCount = Math.floor(shuffled.length * 0.2); // 20% dos cubos animados
+    const animCount = Math.floor(shuffled.length * 0.2);
 
     cubesRef.current.forEach((child) => {
       if (!child) return;
@@ -159,40 +115,26 @@ function CubeGrid() {
 
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
-        // ── Posição base na grade regular ────────────────────────────────
         const baseX = col * STEP - offsetX;
         const baseY = row * STEP - offsetY;
 
-        // ── Offset X/Y: ±2-3mm (0.03 wu máximo) ─────────────────────────
-        // Pequeno deslocamento para dar vida à grade sem quebrar o alinhamento
         const dX = (rng() - 0.5) * 2 * XY_OFFSET_MAX;
         const dY = (rng() - 0.5) * 2 * XY_OFFSET_MAX;
 
-        // ── Profundidade Z variável ───────────────────────────────────────
-        // -0.8 a +0.8 — profundidade sutil, parede compacta
         const z = -0.8 + rng() * 1.6;
 
-        // ── Rotação: QUASE ZERO — apenas face frontal ─────────────────────
-        // O usuário pediu para NÃO mexer na rotação → deixamos ≈ 0
-        // Apenas leve inclinação para não parecer perfeitamente plano
-        const rotX = (rng() - 0.5) * 0.04; // ±0.02 rad ≈ ±1.1°
-        const rotY = (rng() - 0.5) * 0.04; // ±0.02 rad ≈ ±1.1°
-        const rotZ = 0; // sem torção
+        const rotX = (rng() - 0.5) * 0.04;
+        const rotY = (rng() - 0.5) * 0.04;
+        const rotZ = 0;
 
-        // ── Escala variável suave ─────────────────────────────────────────
-        // Mantida próxima de 1.0 para preencher a grade sem gaps grandes
-        const scale = 0.95 + rng() * 0.1; // 0.95× a 1.05×
+        const scale = 0.95 + rng() * 0.1;
 
-        // ── Material: preto brilhoso ──────────────────────────────────────
         const rm = rng();
         let mat;
-        if (rm > 0.65)
-          mat = MAT_DARK; // 35% – mais escuro
-        else if (rm > 0.3)
-          mat = MAT_MID; // 35% – médio
-        else mat = MAT_LIGHTER; // 30% – levemente mais claro
+        if (rm > 0.65) mat = MAT_DARK;
+        else if (rm > 0.3) mat = MAT_MID;
+        else mat = MAT_LIGHTER;
 
-        // ── Borda: 30% clara, 70% escura ─────────────────────────────────
         const edgeMat = rng() < 0.3 ? EDGE_MAT_LIGHT : EDGE_MAT_DARK;
 
         data.push({x: baseX + dX, y: baseY + dY, z, rotX, rotY, rotZ, scale, mat, edgeMat});
@@ -220,7 +162,6 @@ function CubeGrid() {
   );
 }
 
-// ─── Cena ─────────────────────────────────────────────────────────────────────
 function CameraRig() {
   const {camera} = useThree();
 
@@ -250,7 +191,6 @@ function Scene() {
   );
 }
 
-// ─── Hero ─────────────────────────────────────────────────────────────────────
 export default function Hero() {
   const [mouse, setMouse] = useState({x: -999, y: -999});
   const [glow, setGlow] = useState({x: -999, y: -999});
@@ -295,36 +235,11 @@ export default function Hero() {
         position: "relative",
         width: "100%",
         height: "calc(100dvh - 4.5rem)",
-        minHeight: "calc(100dvh - 4.5rem)",
-        maxHeight: "100dvh",
+        minHeight: "100dvh",
+        maxHeight: "120dvh",
         overflow: "hidden",
         background: "#080808",
       }}>
-      {/*
-      <Canvas
-        style={{position: "absolute", inset: 0, width: "100%", height: "100%"}}
-        camera={{
-          fov: 20,
-          position: [0, 0, 60],
-          near: 0.1,
-          far: 500,
-        }}
-        gl={{
-          antialias: true,
-          alpha: false,
-          toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.5,
-          outputColorSpace: THREE.SRGBColorSpace,
-        }}>
-        <color attach="background" args={["#080808"]} />
-        <Suspense fallback={null}>
-          <CameraRig />
-          <Scene />
-          <CubeGrid />
-        </Suspense>
-      </Canvas>
-      */}
-
       <Canvas
         orthographic
         gl={{alpha: true}}
@@ -359,7 +274,7 @@ export default function Hero() {
         <h1
           style={{
             fontFamily: "var(--font-ivy-presto)",
-            fontWeight: 300,
+            fontWeight: 600,
             fontSize: "clamp(3rem, 4.7vw + 1.4rem, 6.4rem)",
             letterSpacing: "0.03em",
             color: "#eaeaea",

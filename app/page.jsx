@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
-import Testimonials from "@/components/Testimonials/Testimonials";
+import LazyTestimonials from "@/components/Testimonials/LazyTestimonials";
 import FAQ from "@/components/FAQ";
 import Services from "@/components/Services";
 import HorizontalTransition from "@/components/HorizontalTransition";
@@ -15,7 +15,7 @@ export default function Page() {
       <Navbar />
       <Hero />
       <HorizontalTransition leftSection={<About />} rightSection={<Services />} />
-      <Testimonials />
+      <LazyTestimonials />
       <FAQ faqs={faqs} />
       <CTA />
       <Footer />

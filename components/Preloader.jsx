@@ -15,14 +15,12 @@ export default function Preloader() {
     const MIN_TIME = 1800; // tempo mínimo (Hero + About)
     const start = performance.now();
 
-    // Simula progresso suave até 90% enquanto carrega
     const tick = () => {
       if (!isMounted) return;
 
       const elapsed = performance.now() - start;
       const target = Math.min(90, (elapsed / MIN_TIME) * 90);
 
-      // Lerp suave
       progressRef.current += (target - progressRef.current) * 0.08;
       setProgress(Math.floor(progressRef.current));
 
@@ -36,14 +34,12 @@ export default function Preloader() {
     const finish = () => {
       if (!isMounted) return;
 
-      // Completa até 100%
       gsap.to(progressRef, {
         current: 100,
         duration: 0.45,
         ease: "power2.out",
         onUpdate: () => setProgress(Math.floor(progressRef.current)),
         onComplete: () => {
-          // Fade out
           gsap.to(overlayRef.current, {
             opacity: 0,
             duration: 0.7,
@@ -56,7 +52,6 @@ export default function Preloader() {
       });
     };
 
-    // Espera o load real + tempo mínimo
     const onLoad = () => {
       const elapsed = performance.now() - start;
       const remaining = Math.max(0, MIN_TIME - elapsed);
@@ -87,7 +82,6 @@ export default function Preloader() {
         backgroundColor: "#e8e6e3", // cinza gelo
         fontFamily: "var(--font-neue-haas-grotesk), system-ui, sans-serif",
       }}>
-      {/* Letra M grande */}
       <div
         style={{
           fontFamily: "var(--font-neuehaas), serif",
@@ -102,7 +96,6 @@ export default function Preloader() {
         M
       </div>
 
-      {/* Texto + porcentagem */}
       <div
         style={{
           display: "flex",
@@ -119,7 +112,6 @@ export default function Preloader() {
         <span style={{fontVariantNumeric: "tabular-nums", minWidth: "3.2ch"}}>{progress}%</span>
       </div>
 
-      {/* Barra de progresso pequena */}
       <div
         style={{
           width: "120px",
