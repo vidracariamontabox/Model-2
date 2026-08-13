@@ -58,7 +58,7 @@ export default function Footer() {
     {label: "Instagram", href: "https://www.instagram.com/montabox_vidros/"},
     {label: "Pinterest", href: "https://br.pinterest.com/montabox_vidros/"},
     {label: "WhatsApp", href: "https://wa.me/5516981984000"},
-    {label: "Google Maps", href: "https://share.google/e7G9PhQQ1gHud9Q6f"},
+    {label: "Google Maps", href: "https://share.google/nipfit0PTHfSTGEQ7"},
   ];
 
   const currentYear = new Date().getFullYear();

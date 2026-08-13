@@ -1,5 +1,5 @@
 "use client";
-import {useCallback, useRef, useState} from "react";
+import {useCallback, useState, useEffect} from "react";
 import BlurTextReveal from "../ui/BlurTextReveal";
 import FadeInOnScroll from "../ui/FadeInOnScroll";
 import WordShiftButton from "../ui/WordShiftButton";
@@ -22,15 +22,18 @@ export default function Testimonials({customClass = "", showBottomLine = false})
     });
   }, []);
 
-  const handleCompanyClick = useCallback((companyIndex) => {
-    let targetIndex = 0;
-    for (let i = 0; i < TestimonialsData.length; i++) {
-      if (TestimonialsData[i].companyName === TestimonialsData[companyIndex].companyName) {
-        targetIndex = i;
-        break;
+  const handleCompanyClick = useCallback(
+    (companyIndex) => {
+      let targetIndex = 0;
+      for (let i = 0; i < TestimonialsData.length; i++) {
+        if (TestimonialsData[i].companyName === TestimonialsData[companyIndex].companyName) {
+          targetIndex = i;
+          break;
+        }
       }
-    }
-  }, [activeIndex]);
+    },
+    [activeIndex],
+  );
 
   // Autoplay simulado
   useEffect(() => {
@@ -43,18 +46,18 @@ export default function Testimonials({customClass = "", showBottomLine = false})
   const variants = {
     enter: (direction) => ({
       x: direction > 0 ? 100 : -100,
-      opacity: 0
+      opacity: 0,
     }),
     center: {
       zIndex: 1,
       x: 0,
-      opacity: 1
+      opacity: 1,
     },
     exit: (direction) => ({
       zIndex: 0,
       x: direction < 0 ? 100 : -100,
-      opacity: 0
-    })
+      opacity: 0,
+    }),
   };
 
   return (
@@ -117,8 +120,8 @@ export default function Testimonials({customClass = "", showBottomLine = false})
                 aria-label="Previous testimonial">
                 <span className="arrow-icon">←</span>
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="custom-arrow right"
                 onClick={() => paginate(1)}
                 aria-label="Next testimonial">
@@ -138,20 +141,19 @@ export default function Testimonials({customClass = "", showBottomLine = false})
                   animate="center"
                   exit="exit"
                   transition={{
-                    x: { type: "spring", stiffness: 300, damping: 30 },
-                    opacity: { duration: 0.2 }
+                    x: {type: "spring", stiffness: 300, damping: 30},
+                    opacity: {duration: 0.2},
                   }}
                   drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
+                  dragConstraints={{left: 0, right: 0}}
                   dragElastic={1}
-                  onDragEnd={(e, { offset, velocity }) => {
+                  onDragEnd={(e, {offset, velocity}) => {
                     const swipe = Math.abs(offset.x) > 50;
                     if (swipe) {
                       paginate(offset.x > 0 ? -1 : 1);
                     }
                   }}
-                  className="absolute w-full"
-                >
+                  className="absolute w-full">
                   <TestimonialCard item={TestimonialsData[activeIndex]} />
                 </motion.div>
               </AnimatePresence>

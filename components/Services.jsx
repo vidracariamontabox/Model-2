@@ -1,10 +1,10 @@
 "use client";
 import {useEffect, useRef, useState} from "react";
-import {motion, useInView} from "framer-motion";
+import {motion} from "framer-motion";
 import BlurTextReveal from "./ui/BlurTextReveal";
 
 const services = ["Fachada Pele de Vidro.", "Esquadrias de Alumínio.", "Painel Ripado."];
-const CURTAIN_COMPLETE_PROGRESS = 0.9;
+const CURTAIN_COMPLETE_PROGRESS = 0.45;
 const HEADER_REVEAL_DELAY = 0;
 
 const containerVariants = {
@@ -63,8 +63,6 @@ function CursiveAltoPadrao({play}) {
 }
 
 export default function Services({transitionProgress}) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, {once: true, margin: "-10%"});
   const [isHeaderReady, setIsHeaderReady] = useState(() => !transitionProgress);
   const headerDelayRef = useRef(null);
 
@@ -116,10 +114,9 @@ export default function Services({transitionProgress}) {
         </motion.div>
 
         <motion.div
-          ref={ref}
           variants={containerVariants}
           initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          animate={isHeaderReady ? "visible" : "hidden"}
           className="flex flex-col items-center text-center">
           {services.map((service, index) => (
             <motion.div

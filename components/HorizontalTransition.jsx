@@ -13,7 +13,7 @@ export default function HorizontalTransition({leftSection, rightSection}) {
 
   const clipPath = useTransform(
     scrollYProgress,
-    [0.60, 0.90, 0.95, 1.0],
+    [0, 0.45, 0.85, 1],
     ["inset(0% 0% 0% 0%)", "inset(0% 100% 0% 0%)", "inset(0% 100% 0% 0%)", "inset(0% 100% 0% 0%)"]
   );
 
@@ -30,7 +30,7 @@ export default function HorizontalTransition({leftSection, rightSection}) {
     : rightSection;
 
   return (
-    <div ref={containerRef} className="relative h-[380vh]">
+    <div ref={containerRef} className="relative h-[300vh]">
       <div className="sticky top-0 h-screen overflow-hidden">
         <div className="absolute inset-0 w-full h-full">{rightSectionWithScroll}</div>
 
