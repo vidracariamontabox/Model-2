@@ -1,6 +1,3 @@
-// FAQ — Montabox Comércio de Vidros
-// Conteúdo também usado para gerar o schema.org FAQPage (SEO)
-
 export const faqs = [
   {
     id: 0,

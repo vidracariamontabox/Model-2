@@ -2,7 +2,6 @@
 
 import {motion} from "framer-motion";
 
-/* ─── Variants ────────────────────────────────────────────────────────── */
 const navVariants = {
   hidden: {opacity: 0, y: -10},
   visible: {
@@ -31,7 +30,6 @@ const itemVariants = {
   },
 };
 
-/* ─── Component ───────────────────────────────────────────────────────── */
 export default function Navbar() {
   return (
     <motion.nav
@@ -42,9 +40,8 @@ export default function Navbar() {
         "absolute top-0 left-0 w-full z-50",
         "flex items-center justify-between",
         "px-8 sm:px-12 py-5",
-        "bg-[#121212]/65 backdrop-blur-md border-b border-white/5",
+        "backdrop-blur-md bg-[#121212]/65 border-b border-white/5",
       ].join(" ")}>
-      {/* Brand */}
       <motion.a
         variants={itemVariants}
         href="#"
@@ -52,7 +49,6 @@ export default function Navbar() {
         Montabox
       </motion.a>
 
-      {/* CTA */}
       <motion.a
         variants={itemVariants}
         href="https://wa.me/5516981984000"
