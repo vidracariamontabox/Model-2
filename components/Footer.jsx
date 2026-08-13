@@ -42,18 +42,25 @@ function MapsIcon(props) {
   );
 }
 
-const FooterLink = ({ href, children }) => (
+const FooterLink = ({href, children}) => (
   <a
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="text-[#acaba9] hover:text-white transition-colors duration-300 text-[0.8rem] uppercase tracking-widest font-light"
-  >
+    className="text-[#acaba9] hover:text-white transition-colors duration-300 text-[0.8rem] uppercase tracking-widest font-light">
     {children}
   </a>
 );
 
 export default function Footer() {
+  const contactLinks = [
+    {label: "Facebook", href: "https://www.facebook.com/profile.php?id=100083338509379"},
+    {label: "Instagram", href: "https://www.instagram.com/montabox_vidros/"},
+    {label: "Pinterest", href: "https://br.pinterest.com/montabox_vidros/"},
+    {label: "WhatsApp", href: "https://wa.me/5516981984000"},
+    {label: "Google Maps", href: "https://share.google/e7G9PhQQ1gHud9Q6f"},
+  ];
+
   const currentYear = new Date().getFullYear();
 
   return (
@@ -71,11 +78,13 @@ export default function Footer() {
               <FooterLink href="#servicos">Serviços</FooterLink>
               <FooterLink href="#portfolio">Portfólio</FooterLink>
             </div>
-            
+
             <div className="flex flex-col gap-4">
               <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f] mb-2">Social</span>
-              {contactLinks.map(({ label, href }) => (
-                <FooterLink key={label} href={href}>{label}</FooterLink>
+              {contactLinks.map(({label, href}) => (
+                <FooterLink key={label} href={href}>
+                  {label}
+                </FooterLink>
               ))}
             </div>
 
@@ -85,44 +94,37 @@ export default function Footer() {
               <FooterLink href="#">Termos</FooterLink>
             </div>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-12 lg:gap-24">
-             <div className="flex flex-col gap-2">
-                <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f]">Onde estamos</span>
-                <address className="not-italic text-sm font-light text-[#acaba9] max-w-[250px] leading-relaxed">
-                  R. Virgílio Pedro Ribeiro, 70 <br />
-                  Planalto Itália, Jaboticabal - SP <br />
-                  CEP: 14890-448
-                </address>
-             </div>
-             <div className="flex flex-col gap-2">
-                <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f]">Horário</span>
-                <p className="text-sm font-light text-[#acaba9]">
-                  Segunda a Sexta — 07:30 às 17:30
-                </p>
-             </div>
+            <div className="flex flex-col gap-2">
+              <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f]">Onde estamos</span>
+              <address className="not-italic text-sm font-light text-[#acaba9] max-w-[250px] leading-relaxed">
+                R. Virgílio Pedro Ribeiro, 70 <br />
+                Planalto Itália, Jaboticabal - SP <br />
+                CEP: 14890-448
+              </address>
+            </div>
+            <div className="flex flex-col gap-2">
+              <span className="text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f]">Horário</span>
+              <p className="text-sm font-light text-[#acaba9]">Segunda a Sexta — 07:30 às 17:30</p>
+            </div>
           </div>
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-white/5 pt-8 md:flex-row">
           <div className="flex items-center gap-4">
-            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-[#75706f]">
-              © {currentYear} Montabox
-            </span>
+            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-[#75706f]">© {currentYear} Montabox</span>
             <span className="w-1 h-1 rounded-full bg-white/10" />
-            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-[#75706f]">
-              Vidraçaria e Serralheria
-            </span>
+            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-[#75706f]">Vidraçaria e Serralheria</span>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="text-[0.6rem] uppercase tracking-[0.2em] text-[#75706f]">Design by</span>
-            <a 
-              href="https://www.instagram.com/bms_trafego/" 
-              target="_blank" 
+            <a
+              href="https://www.instagram.com/bms_trafego/"
+              target="_blank"
               rel="noopener noreferrer"
-              className="text-[0.6rem] uppercase tracking-[0.2em] text-[#acaba9] hover:text-white transition-colors font-black"
-            >
+              className="text-[0.6rem] uppercase tracking-[0.2em] text-[#acaba9] hover:text-white transition-colors font-black">
               BMS
             </a>
           </div>
