@@ -1,5 +1,6 @@
 "use client";
 import {useCallback, useState, useEffect} from "react";
+import {motion, AnimatePresence} from "framer-motion";
 import BlurTextReveal from "../ui/BlurTextReveal";
 import FadeInOnScroll from "../ui/FadeInOnScroll";
 import WordShiftButton from "../ui/WordShiftButton";

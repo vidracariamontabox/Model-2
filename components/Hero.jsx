@@ -261,7 +261,7 @@ export default function Hero() {
       <div
         style={{
           position: "absolute",
-          marginTop: "5rem",
+          marginTop: "9rem",
           top: "clamp(2rem, 7vh, 4rem)",
           left: "clamp(1.5rem, 3vw, 3rem)",
           zIndex: 10,

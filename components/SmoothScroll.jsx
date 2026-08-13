@@ -1,47 +1,46 @@
 "use client";
 
-import { useEffect } from "react";
+import {useEffect} from "react";
 
 /**
- * SmoothScroll simplificado.
- * 
- * Em vez de mover o conteúdo via transform (que quebra elementos sticky e o useScroll do Framer Motion),
- * usamos a suavização nativa do navegador via CSS e mantemos a estrutura original do DOM.
+ * SmoothScroll — Scroll suave via interpolação nativa
+ *
+ * Implementação limpa sem Framer Motion useScroll
+ * (que causa conflitos com sticky elements e HorizontalTransition)
+ *
+ * Usa requestAnimationFrame para animar o scroll de forma suave
+ * com easing exponencial equivalente ao Lenis original.
  */
-export default function SmoothScroll({ children }) {
-  const scrollRef = useRef(null);
-  const [pageHeight, setPageHeight] = useState(0);
-
-  // 1. Captura o scroll real do navegador
-  const { scrollY } = useScroll();
-
-  // 2. Cria uma mola (spring) para suavizar o valor do scroll
-  const smoothY = useSpring(scrollY, {
-    stiffness: 45,
-    damping: 18,
-    restDelta: 0.001,
-  });
-
-  // 3. Transforma o valor suave em uma translação negativa
-  const y = useTransform(smoothY, (value) => -value);
-
-  // 4. Atualiza a altura do "corpo virtual"
-  const updatePageHeight = useCallback(() => {
-    if (scrollRef.current) {
-      setPageHeight(scrollRef.current.scrollHeight);
-    }
-  }, []);
-
+export default function SmoothScroll({children}) {
   useEffect(() => {
-    updatePageHeight();
+    let scrollTarget = window.scrollY;
+    let currentScroll = window.scrollY;
+    let rafId = null;
+    const ease = 0.09; // Suavidade equivalente ao Lenis duration 1.4
 
-    const resizeObserver = new ResizeObserver(() => updatePageHeight());
-    if (scrollRef.current) resizeObserver.observe(scrollRef.current);
+    const onWheel = (e) => {
+      e.preventDefault();
+      scrollTarget += e.deltaY;
+      scrollTarget = Math.max(0, Math.min(scrollTarget, document.body.scrollHeight - window.innerHeight));
+    };
 
-    window.addEventListener("resize", updatePageHeight);
+    const animate = () => {
+      const diff = scrollTarget - currentScroll;
+      if (Math.abs(diff) < 0.5) {
+        currentScroll = scrollTarget;
+      } else {
+        currentScroll += diff * ease;
+      }
+      window.scrollTo(0, currentScroll);
+      rafId = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener("wheel", onWheel, {passive: false});
+    rafId = requestAnimationFrame(animate);
 
     return () => {
-      html.style.scrollBehavior = "";
+      window.removeEventListener("wheel", onWheel);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
 
