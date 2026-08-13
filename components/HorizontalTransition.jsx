@@ -8,7 +8,6 @@ export default function HorizontalTransition({leftSection, rightSection}) {
   const {scrollYProgress} = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
-    layoutEffect: false,
   });
 
   const clipPath = useTransform(

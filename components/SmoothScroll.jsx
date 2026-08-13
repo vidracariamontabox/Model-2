@@ -1,8 +1,13 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { useEffect } from "react";
 
+/**
+ * SmoothScroll simplificado.
+ * 
+ * Em vez de mover o conteúdo via transform (que quebra elementos sticky e o useScroll do Framer Motion),
+ * usamos a suavização nativa do navegador via CSS e mantemos a estrutura original do DOM.
+ */
 export default function SmoothScroll({ children }) {
   const scrollRef = useRef(null);
   const [pageHeight, setPageHeight] = useState(0);
@@ -36,21 +41,9 @@ export default function SmoothScroll({ children }) {
     window.addEventListener("resize", updatePageHeight);
 
     return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", updatePageHeight);
+      html.style.scrollBehavior = "";
     };
-  }, [updatePageHeight]);
+  }, []);
 
-  return (
-    <>
-      <div style={{ height: pageHeight }} className="w-full pointer-events-none" />
-      <motion.div
-        ref={scrollRef}
-        style={{ y }}
-        className="fixed top-0 left-0 w-full overflow-hidden will-change-transform"
-      >
-        {children}
-      </motion.div>
-    </>
-  );
+  return <>{children}</>;
 }
