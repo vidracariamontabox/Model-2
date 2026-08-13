@@ -1,11 +1,5 @@
 "use client";
 import {useCallback, useRef, useState} from "react";
-import {Swiper, SwiperSlide} from "swiper/react";
-import {Autoplay, EffectFade, Navigation} from "swiper/modules";
-import "swiper/css";
-import "swiper/css/effect-fade";
-import "swiper/css/navigation";
-
 import BlurTextReveal from "../ui/BlurTextReveal";
 import FadeInOnScroll from "../ui/FadeInOnScroll";
 import WordShiftButton from "../ui/WordShiftButton";
