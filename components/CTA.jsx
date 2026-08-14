@@ -129,7 +129,7 @@ function PixelCanvas({colors, gap = 5, speed = 30}) {
   const wrapRef = useRef(null);
   const pixelsRef = useRef([]);
   const animationRef = useRef(0);
-  const lastFrameRef = useRef(performance.now());
+  const lastFrameRef = useRef(0);
   const reducedMotionRef = useRef(false);
 
   const init = useCallback(() => {
@@ -194,6 +194,7 @@ function PixelCanvas({colors, gap = 5, speed = 30}) {
   }, []);
 
   useEffect(() => {
+    lastFrameRef.current = performance.now();
     reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     init();
 
