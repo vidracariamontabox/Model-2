@@ -13,15 +13,20 @@ const STATS = [
   {value: "100%", label: "Fabricação e instalação própria"},
 ];
 
+/* Imagens — nomes atualizados conforme o repositório */
 const IMAGES = [
-  {src: "/images/obra-1-oxquimica.webp", alt: "Oxíquimica Agrociência - Jaboticabal"},
-  {src: "/images/obra-2-porta-ripado.webp", alt: "Porta Ripado - Condomínio"},
-  {src: "/images/obra-3-centro-emprestarial.webp", alt: "Centro empresarial e Hotel ìbis - Marília"},
-  {src: "/images/obra-4-favaro.webp", alt: "Fávaro Clínica Médica - Franca"},
-  {src: "/images/obra-5-casa-condominio.webp", alt: "Casa em Condomínio"},
-  {src: "/images/obra-6-casa-condominio.webp", alt: "Casa em Condomínio"},
-  {src: "/images/obra-7-magalu.webp", alt: "Magazine Luiza Labs - Franca"},
-  {src: "/images/obra-8-athenas.webp", alt: "Athenas Consultoria Agrícola - Jaboticabal"},
+  {src: "/images/obra-1-oxquimica.webp", alt: "Oxíquimica"},
+  {src: "/images/obra-2-porta-ripado.webp", alt: "Porta Ripado - residência"},
+  {src: "/images/obra-3-centro-emprestarial.webp", alt: "Centro empresarial e Hotel ìbis"},
+  {src: "/images/obra-4-favaro.webp", alt: "Clínica médica"},
+  {src: "/images/obra-5-casa-condominio.webp", alt: "Condomínio residencial"},
+  {src: "/images/obra-6-casa-condominio.webp", alt: "Residencia completa"},
+  {src: "/images/obra-7-magalu.webp", alt: "Magalu"},
+  {src: "/images/obra-8-athenas.webp", alt: "Athenas"},
+  {src: "/images/Logo-1-biofarm.webp", alt: "Biofarm"},
+  {src: "/images/Logo-2-favaro.webp", alt: "Favaro"},
+  {src: "/images/Logo-3-grupoandremaria.webp", alt: "Grupo Andremaria"},
+  {src: "/images/Logo-4-ibis.webp", alt: "Ibis"},
 ];
 
 const sectionVariants = {
@@ -62,7 +67,8 @@ function AnimatedTitle({line1, line2}) {
   );
 }
 
-function HoverExpandGallery({activeIndex}) {
+/* ─── HoverExpand Gallery ───────────────────────────────────────────── */
+function HoverExpandGallery({activeIndex, loadedIndices}) {
   const safeActiveIndex = Number.isFinite(activeIndex) ? activeIndex : 0;
 
   return (
@@ -70,37 +76,51 @@ function HoverExpandGallery({activeIndex}) {
       {IMAGES.map((image, index) => (
         <motion.div
           key={index}
-          className="relative cursor-default overflow-hidden rounded-xl"
+          className="relative cursor-default overflow-hidden rounded-xl bg-[#1a1a1a]"
           animate={{
             width: safeActiveIndex === index ? "24rem" : "5rem",
             height: "100%",
           }}
           transition={{duration: 0.65, ease: [0.22, 1, 0.36, 1]}}>
-          <AnimatePresence>
-            {safeActiveIndex === index && (
-              <motion.div
+          {/* Somente renderiza a imagem se o index estiver na lista de carregados */}
+          {loadedIndices.has(index) && (
+            <>
+              {/* Overlay gradiente no ativo */}
+              <AnimatePresence>
+                {safeActiveIndex === index && (
+                  <motion.div
+                    initial={{opacity: 0}}
+                    animate={{opacity: 1}}
+                    exit={{opacity: 0}}
+                    className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"
+                  />
+                )}
+              </AnimatePresence>
+
+              {/* Label no ativo */}
+              <AnimatePresence>
+                {safeActiveIndex === index && (
+                  <motion.div
+                    initial={{opacity: 0, y: 8}}
+                    animate={{opacity: 1, y: 0}}
+                    exit={{opacity: 0, y: 8}}
+                    transition={{type: "spring", stiffness: 260, damping: 26}}
+                    className="absolute bottom-4 left-4 z-20">
+                    <p className="text-[0.65rem] font-light tracking-[0.18em] uppercase text-[#acaba9]">{image.alt}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Imagem */}
+              <motion.img
                 initial={{opacity: 0}}
                 animate={{opacity: 1}}
-                exit={{opacity: 0}}
-                className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"
+                src={image.src}
+                alt={image.alt}
+                className="w-full h-full object-cover"
               />
-            )}
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {safeActiveIndex === index && (
-              <motion.div
-                initial={{opacity: 0, y: 8}}
-                animate={{opacity: 1, y: 0}}
-                exit={{opacity: 0, y: 8}}
-                transition={{type: "spring", stiffness: 260, damping: 26}}
-                className="absolute bottom-4 left-4 z-20">
-                <p className="text-[0.65rem] font-light tracking-[0.18em] uppercase text-[#acaba9]">{image.alt}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <img src={image.src} alt={image.alt} className="w-full h-full object-cover" />
+            </>
+          )}
         </motion.div>
       ))}
     </div>
@@ -116,6 +136,9 @@ export default function About({scrollYProgress}) {
   const hasScrolledRef = useRef(false);
   const [activeScrollIndex, setActiveScrollIndex] = useState(0);
 
+  // Estratégia de carregamento progressivo: inicia com os 3 primeiros
+  const [loadedIndices, setLoadedIndices] = useState(new Set([0, 1, 2]));
+
   const inView = inViewNative || hasScrolled;
 
   useEffect(() => {
@@ -125,26 +148,33 @@ export default function About({scrollYProgress}) {
     const endProgress = 0.55;
     const lastIndex = IMAGES.length - 1;
 
-    return scrollYProgress.on("change", (value) => {
-      // Qualquer scroll dentro do HorizontalTransition = seção visível
-      if (value > 0 && !hasScrolledRef.current) {
-        hasScrolledRef.current = true;
-        setHasScrolled(true);
-      }
-
+    const unsubscribe = scrollYProgress.on("change", (value) => {
+      let index = 0;
       if (value <= startProgress) {
-        setActiveScrollIndex(0);
-        return;
+        index = 0;
+      } else if (value >= endProgress) {
+        index = lastIndex;
+      } else {
+        const normalized = (value - startProgress) / (endProgress - startProgress);
+        index = Math.round(normalized * lastIndex);
       }
 
-      if (value >= endProgress) {
-        setActiveScrollIndex(lastIndex);
-        return;
-      }
+      setActiveScrollIndex(index);
 
-      const normalized = (value - startProgress) / (endProgress - startProgress);
-      setActiveScrollIndex(Math.round(normalized * lastIndex));
+      // Lógica de Janela de Carregamento:
+      // Ao visualizar o index atual, garante que o index + 3 seja carregado
+      const nextToLoad = index + 3;
+      if (nextToLoad < IMAGES.length) {
+        setLoadedIndices((prev) => {
+          if (prev.has(nextToLoad)) return prev;
+          const nextSet = new Set(prev);
+          nextSet.add(nextToLoad);
+          return nextSet;
+        });
+      }
     });
+
+    return () => unsubscribe();
   }, [scrollYProgress]);
 
   return (
@@ -203,7 +233,7 @@ export default function About({scrollYProgress}) {
             variants={fadeUp}
             custom={0.3}
             className="lg:w-[70%] flex items-stretch h-[380px] sm:h-[420px] lg:h-[clamp(480px,46vh,480px)] lg:self-start">
-            <HoverExpandGallery activeIndex={activeScrollIndex} />
+            <HoverExpandGallery activeIndex={activeScrollIndex} loadedIndices={loadedIndices} />
           </motion.div>
         </div>
       </motion.div>

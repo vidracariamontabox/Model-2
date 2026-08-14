@@ -12,7 +12,7 @@ export const HERO_SCENE_CONFIG = {
     desktop: 1024,
   },
   performance: {
-    maxDevicePixelRatio: {mobile: 1, tablet: 1.25, desktop: 1.5},
+    maxDevicePixelRatio: { mobile: 1, tablet: 1.25, desktop: 1.5 },
     maxDeltaTime: 0.05,
     pauseWhenOffscreen: true,
     pauseWhenDocumentHidden: true,
@@ -28,9 +28,9 @@ export const HERO_SCENE_CONFIG = {
     near: 1,
     far: 4000,
     profiles: {
-      mobile: {distance: 980, fov: 48},
-      tablet: {distance: 1000, fov: 45},
-      desktop: {distance: 1010, fov: 44},
+      mobile: { distance: 980, fov: 48 },
+      tablet: { distance: 1000, fov: 45 },
+      desktop: { distance: 1010, fov: 44 },
     },
   },
   field: {
@@ -40,16 +40,16 @@ export const HERO_SCENE_CONFIG = {
       columns: { mobile: 5, tablet: 8, desktop: 11 },
       profiles: {
         mobile: {
-          module: {width: 74, height: 50, widthVariation: 2.5, heightVariation: 2, depth: {min: -30, max: 30}},
-          gap: {x: 10, y: 10},
+          module: { width: 74, height: 50, widthVariation: 2.5, heightVariation: 2, depth: { min: -30, max: 30 } },
+          gap: { x: 10, y: 10 },
         },
         tablet: {
-          module: {width: 90, height: 60, widthVariation: 3, heightVariation: 2.5, depth: {min: -42, max: 42}},
-          gap: {x: 12, y: 12},
+          module: { width: 90, height: 60, widthVariation: 3, heightVariation: 2.5, depth: { min: -42, max: 42 } },
+          gap: { x: 12, y: 12 },
         },
         desktop: {
-          module: {width: 104, height: 62, widthVariation: 4, heightVariation: 3, depth: {min: -52, max: 52}},
-          gap: {x: 12, y: 12},
+          module: { width: 104, height: 62, widthVariation: 4, heightVariation: 3, depth: { min: -52, max: 52 } },
+          gap: { x: 12, y: 12 },
         },
       },
     },
@@ -60,11 +60,11 @@ export const HERO_SCENE_CONFIG = {
       lineColor: "#75706f",
       lineWidth: 0.75,
       maxContrast: 0.16,
-      metallicBand: {start: 0.46, end: 0.54},
+      metallicBand: { start: 0.46, end: 0.54 },
     },
   },
   lighting: {
-    direction: {x: -0.42, y: -0.58, z: 0.7},
+    direction: { x: -0.42, y: -0.58, z: 0.7 },
     intensity: 0.22,
     shadowIntensity: 0.16,
     metallicIntensity: 0.07,
@@ -72,9 +72,9 @@ export const HERO_SCENE_CONFIG = {
   },
   cameraMotion: {
     pointer: {
-      horizontalAmplitude: {mobile: 0, tablet: 0.38, desktop: 0.6},
-      verticalAmplitude: {mobile: 0, tablet: 0.26, desktop: 0.42},
-      intensity: {mobile: 0, tablet: 0.62, desktop: 1},
+      horizontalAmplitude: { mobile: 0, tablet: 0.38, desktop: 0.6 },
+      verticalAmplitude: { mobile: 0, tablet: 0.26, desktop: 0.42 },
+      intensity: { mobile: 0, tablet: 0.62, desktop: 1 },
       followSmoothing: 2.2,
       returnSmoothing: 0.95,
       deadZone: 0.04,
@@ -82,12 +82,12 @@ export const HERO_SCENE_CONFIG = {
       maxPitch: 0.5,
     },
     drift: {
-      speed: {mobile: 0.045, tablet: 0.052, desktop: 0.06},
+      speed: { mobile: 0.045, tablet: 0.052, desktop: 0.06 },
       pitchCycleMultiplier: 0.73,
       intensity: {
-        mobile: {yaw: 0.035, pitch: 0.02},
-        tablet: {yaw: 0.05, pitch: 0.03},
-        desktop: {yaw: 0.07, pitch: 0.04},
+        mobile: { yaw: 0.035, pitch: 0.02 },
+        tablet: { yaw: 0.05, pitch: 0.03 },
+        desktop: { yaw: 0.07, pitch: 0.04 },
       },
     },
   },

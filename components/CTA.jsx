@@ -1,7 +1,6 @@
 "use client";
 
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import Image from "next/image";
 
 function cn(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -297,27 +296,20 @@ export default function CTA({
         <a
           href={whatsappUrl}
           target="_blank"
-          rel="noreferrer"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            width: "fit-content",
-            padding: "0.6rem 1.15rem",
-            borderTopLeftRadius: 0,
-            borderTopRightRadius: "99px",
-            borderBottomLeftRadius: "99px",
-            borderBottomRightRadius: "99px",
-            background: "#f5f5f5",
-            color: "#000000",
-            fontFamily: "var(--font-neue-haas-grotesk)",
-            fontWeight: 200,
-            fontSize: "0.65rem",
-            letterSpacing: "0.16em",
-            textTransform: "uppercase",
-            textDecoration: "none",
-            boxShadow: "0 0 0 1px rgba(255,255,255,0.12) inset",
-          }}>
-          <span>{primaryCta} →</span>
+          className="relative inline-flex h-10 md:h-12 items-center justify-center gap-1.5 md:gap-2 rounded-xl bg-white px-4 md:px-8 text-xs md:text-sm font-semibold text-black shadow-[inset_0_1px_1px_rgba(255,255,255,0.3),0_2px_4px_rgba(0,0,0,0.15),0_12px_24px_rgba(0,0,0,0.15)] transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+          <span className="inline md:hidden">{primaryCtaMobile}</span>
+          <span className="hidden md:inline">{primaryCta}</span>
+          <svg
+            className="w-3.5 h-3.5 md:w-4 md:h-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
         </a>
       </div>
 

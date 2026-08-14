@@ -16,6 +16,6 @@ export function applyDeadZone(value, deadZone) {
   return (value - Math.sign(value) * deadZone) / (1 - deadZone);
 }
 
-const math = {degreesToRadians, clamp, damp, applyDeadZone};
+const math = { degreesToRadians, clamp, damp, applyDeadZone };
 
 export default math;

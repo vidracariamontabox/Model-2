@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import CameraController from "@/lib/hero/CameraController";
 import FrameAnimator from "@/lib/hero/FrameAnimator";
 import FrameFieldFactory from "@/lib/hero/FrameFieldFactory";
@@ -11,7 +11,7 @@ import InputController from "@/lib/hero/InputController";
 import ViewportController from "@/lib/hero/ViewportController";
 import usePrefersReducedMotion from "./usePrefersReducedMotion";
 
-export default function useHeroSceneLifecycle({canvasRef, config, preset, onPhaseChange}) {
+export default function useHeroSceneLifecycle({ canvasRef, config, preset, onPhaseChange }) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const [isFallback, setIsFallback] = useState(false);
 
@@ -34,12 +34,12 @@ export default function useHeroSceneLifecycle({canvasRef, config, preset, onPhas
 
     reportPhase("constructing");
 
-    const registry = new FrameTypeRegistry({config, preset});
-    const factory = new FrameFieldFactory({config, preset, registry});
-    const camera = new CameraController({config});
-    const animator = new FrameAnimator({config});
-    const input = new InputController({canvas, config});
-    const renderer = new FrameFieldRenderer({canvas, context, config, preset, camera});
+    const registry = new FrameTypeRegistry({ config, preset });
+    const factory = new FrameFieldFactory({ config, preset, registry });
+    const camera = new CameraController({ config });
+    const animator = new FrameAnimator({ config });
+    const input = new InputController({ canvas, config });
+    const renderer = new FrameFieldRenderer({ canvas, context, config, preset, camera });
     const viewport = new ViewportController({
       canvas,
       config,
@@ -59,7 +59,7 @@ export default function useHeroSceneLifecycle({canvasRef, config, preset, onPhas
         }
       },
     });
-    const timeline = new HeroTimelineController({config});
+    const timeline = new HeroTimelineController({ config });
     const resources = [registry, factory, camera, animator, input, renderer, viewport];
 
     registry.init();
@@ -70,14 +70,14 @@ export default function useHeroSceneLifecycle({canvasRef, config, preset, onPhas
     renderer.init();
     viewport.init();
     reportPhase("sceneReady");
-    timeline.init({onComplete: () => reportPhase("introFinished")});
+    timeline.init({ onComplete: () => reportPhase("introFinished") });
 
     let animationFrameId = null;
     let lastTimestamp = null;
     let isLoopActive = true;
     let isHeroVisible = true;
     const shouldRunLoop = () => {
-      const {performance} = config;
+      const { performance } = config;
 
       return isLoopActive
         && (!performance.pauseWhenOffscreen || isHeroVisible)
@@ -132,7 +132,7 @@ export default function useHeroSceneLifecycle({canvasRef, config, preset, onPhas
       ? new IntersectionObserver(([entry]) => {
         isHeroVisible = entry.isIntersecting;
         handleDocumentVisibility();
-      }, {threshold: 0})
+      }, { threshold: 0 })
       : null;
 
     visibilityObserver?.observe(canvas);
@@ -158,5 +158,5 @@ export default function useHeroSceneLifecycle({canvasRef, config, preset, onPhas
     };
   }, [canvasRef, config, onPhaseChange, prefersReducedMotion, preset]);
 
-  return {isFallback};
+  return { isFallback };
 }
