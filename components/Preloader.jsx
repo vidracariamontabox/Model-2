@@ -1,22 +1,22 @@
 "use client";
 
 import {useEffect, useState, useRef} from "react";
-import {gsap} from "gsap";
+import {motion, AnimatePresence} from "framer-motion";
 
 export default function Preloader() {
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState(false);
-  const overlayRef = useRef(null);
+  const [isExiting, setIsExiting] = useState(false);
   const progressRef = useRef(0);
   const rafRef = useRef(null);
 
   useEffect(() => {
     let isMounted = true;
-    const MIN_TIME = 1800; // tempo mínimo (Hero + About)
+    const MIN_TIME = 1800; 
     const start = performance.now();
 
     const tick = () => {
-      if (!isMounted) return;
+      if (!isMounted || isExiting) return;
 
       const elapsed = performance.now() - start;
       const target = Math.min(90, (elapsed / MIN_TIME) * 90);
@@ -33,29 +33,29 @@ export default function Preloader() {
 
     const finish = () => {
       if (!isMounted) return;
-
-      gsap.to(progressRef, {
-        current: 100,
-        duration: 0.45,
-        ease: "power2.out",
-        onUpdate: () => setProgress(Math.floor(progressRef.current)),
-        onComplete: () => {
-          gsap.to(overlayRef.current, {
-            opacity: 0,
-            duration: 0.7,
-            ease: "power2.inOut",
-            onComplete: () => {
-              if (isMounted) setDone(true);
-            },
-          });
-        },
-      });
+      
+      // Simula a finalização suave do progresso
+      let current = progressRef.current;
+      const step = () => {
+        if (!isMounted) return;
+        current += (100 - current) * 0.15;
+        setProgress(Math.floor(current));
+        
+        if (current < 99.5) {
+          requestAnimationFrame(step);
+        } else {
+          setProgress(100);
+          setTimeout(() => {
+            if (isMounted) setIsExiting(true);
+          }, 200);
+        }
+      };
+      requestAnimationFrame(step);
     };
 
     const onLoad = () => {
       const elapsed = performance.now() - start;
       const remaining = Math.max(0, MIN_TIME - elapsed);
-
       setTimeout(finish, remaining);
     };
 
@@ -70,66 +70,69 @@ export default function Preloader() {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener("load", onLoad);
     };
-  }, []);
+  }, [isExiting]);
 
   if (done) return null;
 
   return (
-    <div
-      ref={overlayRef}
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
-      style={{
-        backgroundColor: "#e8e6e3", // cinza gelo
-        fontFamily: "var(--font-neue-haas-grotesk), system-ui, sans-serif",
-      }}>
-      <div
-        style={{
-          fontFamily: "var(--font-neuehaas), serif",
-          fontSize: "clamp(8rem, 22vw, 16rem)",
-          fontWeight: 300,
-          color: "#1a1a1a",
-          lineHeight: 0.85,
-          letterSpacing: "-0.02em",
-          marginBottom: "2.5rem",
-          userSelect: "none",
-        }}>
-        M
-      </div>
+    <AnimatePresence onExitComplete={() => setDone(true)}>
+      {!isExiting && (
+        <motion.div
+          initial={{opacity: 1}}
+          exit={{opacity: 0}}
+          transition={{duration: 0.7, ease: "easeInOut"}}
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#e8e6e3]"
+        >
+          <div
+            style={{
+              fontFamily: "var(--font-neuehaas), serif",
+              fontSize: "clamp(8rem, 22vw, 16rem)",
+              fontWeight: 300,
+              color: "#1a1a1a",
+              lineHeight: 0.85,
+              letterSpacing: "-0.02em",
+              marginBottom: "2.5rem",
+              userSelect: "none",
+            }}>
+            M
+          </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "baseline",
-          gap: "0.75rem",
-          marginBottom: "1.25rem",
-          color: "#3a3a3a",
-          fontSize: "0.85rem",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          fontWeight: 400,
-        }}>
-        <span>Carregando</span>
-        <span style={{fontVariantNumeric: "tabular-nums", minWidth: "3.2ch"}}>{progress}%</span>
-      </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "baseline",
+              gap: "0.75rem",
+              marginBottom: "1.25rem",
+              color: "#3a3a3a",
+              fontSize: "0.85rem",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              fontWeight: 400,
+            }}>
+            <span>Carregando</span>
+            <span style={{fontVariantNumeric: "tabular-nums", minWidth: "3.2ch"}}>{progress}%</span>
+          </div>
 
-      <div
-        style={{
-          width: "120px",
-          height: "2px",
-          backgroundColor: "rgba(0,0,0,0.12)",
-          borderRadius: "99px",
-          overflow: "hidden",
-        }}>
-        <div
-          style={{
-            height: "100%",
-            width: `${progress}%`,
-            backgroundColor: "#1a1a1a",
-            borderRadius: "99px",
-            transition: "width 0.1s linear",
-          }}
-        />
-      </div>
-    </div>
+          <div
+            style={{
+              width: "120px",
+              height: "2px",
+              backgroundColor: "rgba(0,0,0,0.12)",
+              borderRadius: "99px",
+              overflow: "hidden",
+            }}>
+            <motion.div
+              style={{
+                height: "100%",
+                width: `${progress}%`,
+                backgroundColor: "#1a1a1a",
+                borderRadius: "99px",
+              }}
+              transition={{type: "spring", stiffness: 300, damping: 30}}
+            />
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

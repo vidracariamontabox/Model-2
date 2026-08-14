@@ -1,10 +1,6 @@
 "use client";
-import {Children, cloneElement, forwardRef, isValidElement, useEffect, useImperativeHandle, useRef} from "react";
-import {gsap} from "gsap";
-import {ScrollTrigger} from "gsap/ScrollTrigger";
-import {useGSAP} from "@gsap/react";
-
-gsap.registerPlugin(ScrollTrigger);
+import {Children, cloneElement, forwardRef, isValidElement, useRef} from "react";
+import {motion, useInView} from "framer-motion";
 
 const BlurTextReveal = forwardRef(function BlurTextReveal(
   {
@@ -15,8 +11,8 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
     className = "",
     animationType = "chars",
     stagger = 0.05,
-    duration = 1.2,
-    ease = "power2.out",
+    duration = 0.8,
+    ease = [0.22, 1, 0.36, 1],
     start = "top 90%",
     once = true,
     play,
@@ -25,78 +21,64 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
   ref,
 ) {
   const rootRef = useRef(null);
-  const timelineRef = useRef(null);
+  const isInView = useInView(rootRef, {once, margin: "-10% 0px -10% 0px"});
 
   const content = children || text || html;
 
-  useGSAP(
-    () => {
-      const root = rootRef.current;
-      if (!root) return;
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: stagger,
+      },
+    },
+  };
 
-      const items = root.querySelectorAll(animationType === "words" ? ".blur-word" : ".blur-char");
-
-      if (!items.length) return;
-
-      gsap.set(items, {
-        opacity: 0,
-        y: 25,
-        filter: "blur(12px)",
-        willChange: "transform, filter, opacity",
-      });
-
-      const animation = {
-        opacity: 1,
-        y: 0,
-        filter: "blur(0px)",
+  const itemVariants = {
+    hidden: {
+      opacity: 0,
+      y: 25,
+      filter: "blur(12px)",
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: {
         duration,
         ease,
-        stagger: {
-          each: stagger,
-          from: "random", // deixa mais orgânico como no original
-        },
-      };
-
-      if (play !== undefined) {
-        if (!play) return;
-        timelineRef.current = gsap.to(items, animation);
-        return;
-      }
-
-      timelineRef.current = gsap.to(items, {
-        ...animation,
-        scrollTrigger: {
-          trigger: root,
-          start,
-          once,
-          toggleActions: "play none none reverse",
-        },
-      });
+      },
     },
-    {scope: rootRef, dependencies: [animationType, stagger, duration, ease, start, once, play]},
-  );
+  };
 
-  useEffect(() => {
-    return () => {
-      timelineRef.current?.scrollTrigger?.kill();
-      timelineRef.current?.kill();
-    };
-  }, []);
+  // Se play for controlado externamente, usamos ele, senão usamos o inView
+  const animateState = play !== undefined ? (play ? "visible" : "hidden") : (isInView ? "visible" : "hidden");
 
   return (
     <Tag ref={rootRef} className={`blur-text-reveal ${className}`.trim()} {...props}>
-      {html ? <span dangerouslySetInnerHTML={{__html: html}} /> : <SplitText content={content} type={animationType} />}
+      <motion.span
+        variants={containerVariants}
+        initial="hidden"
+        animate={animateState}
+        className="inline-block"
+      >
+        {html ? (
+          <span dangerouslySetInnerHTML={{__html: html}} />
+        ) : (
+          <SplitText content={content} type={animationType} variants={itemVariants} />
+        )}
+      </motion.span>
     </Tag>
   );
 });
 
-function SplitText({content, type}) {
+function SplitText({content, type, variants}) {
   if (Array.isArray(content)) {
-    return Children.map(content, (child) => <SplitText content={child} type={type} />);
+    return Children.map(content, (child) => <SplitText content={child} type={type} variants={variants} />);
   }
 
   if (isValidElement(content)) {
-    return cloneElement(content, undefined, <SplitText content={content.props.children} type={type} />);
+    return cloneElement(content, undefined, <SplitText content={content.props.children} type={type} variants={variants} />);
   }
 
   if (typeof content !== "string") return content;
@@ -106,17 +88,17 @@ function SplitText({content, type}) {
       /\s+/.test(part) ? (
         part
       ) : (
-        <span key={i} className="blur-word inline-block">
+        <motion.span key={i} variants={variants} className="blur-word inline-block">
           {part}
-        </span>
+        </motion.span>
       ),
     );
   }
 
   return content.split("").map((char, i) => (
-    <span key={i} className="blur-char inline-block">
+    <motion.span key={i} variants={variants} className="blur-char inline-block">
       {char === " " ? "\u00A0" : char}
-    </span>
+    </motion.span>
   ));
 }
 
