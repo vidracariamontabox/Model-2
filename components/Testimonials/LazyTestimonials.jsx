@@ -1,16 +1,22 @@
 "use client";
 
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 
 const Testimonials = dynamic(
   () => import("./Testimonials"),
-  {ssr: false},
+  { ssr: false },
 );
 
 export default function LazyTestimonials() {
   const triggerRef = useRef(null);
   const [shouldLoad, setShouldLoad] = useState(false);
+
+  // Pré-busca o chunk JS cedo, em background — isso NÃO monta nada
+  // na tela, só garante que o código já está baixado quando precisar.
+  useEffect(() => {
+    import("./Testimonials");
+  }, []);
 
   useEffect(() => {
     const trigger = triggerRef.current;
@@ -19,15 +25,17 @@ export default function LazyTestimonials() {
       return undefined;
     }
 
-    // rootMargin de 1800px: carrega o Testimonials enquanto o usuário
-    // ainda está no meio do HorizontalTransition (About+Services = 380vh),
-    // assim o chunk JS já está pronto quando chegar aqui — sem pulo.
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-
-      setShouldLoad(true);
-      observer.disconnect();
-    }, {rootMargin: "1800px 0px"});
+    // rootMargin pequeno agora: só MONTA o componente de verdade
+    // quando estiver perto de entrar na tela. Isso evita o salto de
+    // altura no meio da sequência de scroll do HorizontalTransition.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setShouldLoad(true);
+        observer.disconnect();
+      },
+      { rootMargin: "200px 0px" }
+    );
 
     observer.observe(trigger);
     return () => observer.disconnect();
@@ -35,9 +43,10 @@ export default function LazyTestimonials() {
 
   return (
     <div ref={triggerRef}>
-      {shouldLoad ? <Testimonials /> : (
-        // Placeholder com altura mínima para evitar layout shift
-        <div style={{minHeight: "600px"}} aria-hidden="true" />
+      {shouldLoad ? (
+        <Testimonials />
+      ) : (
+        <div style={{ minHeight: "600px" }} aria-hidden="true" />
       )}
     </div>
   );
