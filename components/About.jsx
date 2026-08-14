@@ -1,7 +1,7 @@
 "use client";
 
 import {useRef, useState, useEffect} from "react";
-import {motion, useInView, AnimatePresence} from "framer-motion";
+import {motion, useInView, AnimatePresence, useSpring} from "framer-motion";
 import Image from "next/image";
 import BlurTextReveal from "./ui/BlurTextReveal";
 
@@ -54,12 +54,13 @@ const statVariants = {
 };
 
 /* ─── Animated Title ────────────────────────────────────────────────── */
-function AnimatedTitle({line1, line2}) {
+function AnimatedTitle({line1, line2, play}) {
   return (
     <div className="flex flex-col">
       <BlurTextReveal
         aria-label={line1}
         text={line1}
+        play={play}
         animationType="chars"
         stagger={0.03}
         className="block overflow-hidden text-[clamp(1.8rem,4vw,3rem)] uppercase font-black tracking-tight leading-[1.02] text-[#eaeaea]"
@@ -67,6 +68,7 @@ function AnimatedTitle({line1, line2}) {
       <BlurTextReveal
         aria-label={line2}
         text={line2}
+        play={play}
         animationType="words"
         stagger={0.1}
         delay={0.2}
@@ -144,14 +146,21 @@ export default function About({scrollYProgress}) {
   const [activeScrollIndex, setActiveScrollIndex] = useState(0);
   const [loadedIndices, setLoadedIndices] = useState(new Set([0, 1, 2]));
 
+  // Usamos useSpring para suavizar a entrada do scroll e dar o efeito de "leveza"
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 50,
+    damping: 20,
+    restDelta: 0.001
+  });
+
   useEffect(() => {
-    if (!scrollYProgress) return;
+    if (!smoothProgress) return;
 
     const startProgress = 0.05;
     const endProgress = 0.55;
     const lastIndex = IMAGES.length - 1;
 
-    const unsubscribe = scrollYProgress.on("change", (value) => {
+    const unsubscribe = smoothProgress.on("change", (value) => {
       let index = 0;
       if (value <= startProgress) {
         index = 0;
@@ -159,11 +168,15 @@ export default function About({scrollYProgress}) {
         index = lastIndex;
       } else {
         const normalized = (value - startProgress) / (endProgress - startProgress);
-        index = Math.round(normalized * lastIndex);
+        // Implementamos um buffer: a foto só muda quando o scroll passa de um certo limite
+        // Usamos Math.floor com um pequeno ajuste para criar zonas de permanência
+        index = Math.floor(normalized * (lastIndex + 0.8));
+        index = Math.min(index, lastIndex);
       }
 
       setActiveScrollIndex(index);
 
+      // Pré-carregamento progressivo
       const nextToLoad = index + 3;
       if (nextToLoad < IMAGES.length) {
         setLoadedIndices(prev => {
@@ -176,7 +189,7 @@ export default function About({scrollYProgress}) {
     });
 
     return () => unsubscribe();
-  }, [scrollYProgress]);
+  }, [smoothProgress]);
 
   return (
     <section
@@ -205,7 +218,7 @@ export default function About({scrollYProgress}) {
               Quem somos
             </motion.p>
 
-            <AnimatedTitle line1={TITLE_LINE_1} line2={TITLE_LINE_2} />
+            <AnimatedTitle line1={TITLE_LINE_1} line2={TITLE_LINE_2} play={inView} />
 
             <motion.div variants={fadeUp} custom={0.18} className="mt-8 mb-8 h-px bg-[#75706f]/20 w-full" />
 

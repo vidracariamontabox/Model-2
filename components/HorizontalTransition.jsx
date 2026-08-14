@@ -12,7 +12,7 @@ export default function HorizontalTransition({leftSection, rightSection}) {
 
   // Abertura da cortina: 
   // O About termina as fotos em 0.55. A cortina começa a abrir em 0.60 e termina em 0.90.
-  // Isso funciona igualmente na subida (o About volta a aparecer em 0.90 e fecha em 0.60).
+  // Aumentamos a altura total para dar mais respiro e tempo de leitura.
   const clipPath = useTransform(
     scrollYProgress,
     [0.60, 0.90],
@@ -32,7 +32,7 @@ export default function HorizontalTransition({leftSection, rightSection}) {
     : rightSection;
 
   return (
-    <div ref={containerRef} className="relative h-[380vh]">
+    <div ref={containerRef} className="relative h-[400vh]">
       <div className="sticky top-0 h-screen overflow-hidden">
         <div className="absolute inset-0 w-full h-full">{rightSectionWithScroll}</div>
 

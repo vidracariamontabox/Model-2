@@ -1,10 +1,11 @@
 "use client";
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 import {motion} from "framer-motion";
 import BlurTextReveal from "./ui/BlurTextReveal";
 
 const services = ["Fachada Pele de Vidro.", "Esquadrias de Alumínio.", "Painel Ripado."];
 const CURTAIN_COMPLETE_PROGRESS = 0.85;
+const READING_DELAY = 800; // Tempo de leitura em ms
 
 function CursiveAltoPadrao({play}) {
   return (
@@ -21,6 +22,8 @@ function CursiveAltoPadrao({play}) {
 
 export default function Services({transitionProgress}) {
   const [isHeaderReady, setIsHeaderReady] = useState(false);
+  const timerRef = useRef(null);
+  const lastDirection = useRef("down");
 
   useEffect(() => {
     if (!transitionProgress) {
@@ -29,17 +32,35 @@ export default function Services({transitionProgress}) {
     }
 
     const unsubscribe = transitionProgress.on("change", (value) => {
-      // O título só aparece se a cortina estiver aberta o suficiente
-      // E desaparece instantaneamente se o usuário subir (retroceder)
+      const prevValue = transitionProgress.getPrevious();
+      const direction = value > prevValue ? "down" : "up";
+
+      // Se a cortina está aberta o suficiente
       if (value >= CURTAIN_COMPLETE_PROGRESS) {
-        setIsHeaderReady(true);
+        // Se mudamos de direção ou se acabamos de atingir o ponto de abertura
+        if (!isHeaderReady && !timerRef.current) {
+          timerRef.current = setTimeout(() => {
+            setIsHeaderReady(true);
+            timerRef.current = null;
+          }, READING_DELAY);
+        }
       } else {
+        // Se a cortina está fechando, resetamos o estado imediatamente
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
+        }
         setIsHeaderReady(false);
       }
+      
+      lastDirection.current = direction;
     });
 
-    return () => unsubscribe();
-  }, [transitionProgress]);
+    return () => {
+      unsubscribe();
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [transitionProgress, isHeaderReady]);
 
   return (
     <section
@@ -49,7 +70,7 @@ export default function Services({transitionProgress}) {
         <motion.div
           initial={{opacity: 0, y: 12}}
           animate={isHeaderReady ? {opacity: 1, y: 0} : {opacity: 0, y: 12}}
-          transition={{duration: 0.5, ease: "easeOut"}}
+          transition={{duration: 0.6, ease: [0.16, 1, 0.3, 1]}}
           className="mb-20 flex items-center justify-center gap-6">
           <BlurTextReveal
             animationType="chars"
@@ -68,8 +89,10 @@ export default function Services({transitionProgress}) {
           {services.map((service, index) => (
             <motion.div
               key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isHeaderReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
               whileHover={{x: 6}}
-              transition={{type: "spring", stiffness: 400, damping: 30}}
               className="group relative overflow-hidden cursor-default">
               <span className="text-[clamp(2.8rem,7vw,7rem)] font-black tracking-tight leading-[1.0] text-[#eaeaea] group-hover:text-[#acaba9] transition-colors duration-300 select-none">
                 {service}
@@ -85,7 +108,12 @@ export default function Services({transitionProgress}) {
           ))}
         </div>
 
-        <div className="mt-20 flex items-center justify-center">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={isHeaderReady ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="mt-20 flex items-center justify-center"
+        >
           <a
             href="https://wa.me/5516981984000"
             target="_blank"
@@ -94,7 +122,7 @@ export default function Services({transitionProgress}) {
             <span>Ver mais projetos</span>
             <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
           </a>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
