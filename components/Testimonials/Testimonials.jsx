@@ -2,11 +2,10 @@
 import {useCallback, useState, useEffect} from "react";
 import {motion, AnimatePresence} from "framer-motion";
 import BlurTextReveal from "../ui/BlurTextReveal";
-import FadeInOnScroll from "../ui/FadeInOnScroll";
-import WordShiftButton from "../ui/WordShiftButton";
 import DividerPlus from "../ui/DividerPlus";
 import TestimonialCard from "./TestimonialCard";
 import {TestimonialsData} from "../../data/TestimonialsData";
+import WordShiftButton from "../ui/WordShiftButton";
 
 export default function Testimonials({customClass = "", showBottomLine = false}) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -34,11 +33,11 @@ export default function Testimonials({customClass = "", showBottomLine = false})
     [activeIndex],
   );
 
-  // Autoplay simulado
+  // Autoplay desacelerado para 8 segundos (estava em 5s)
   useEffect(() => {
     const timer = setInterval(() => {
       paginate(1);
-    }, 5000);
+    }, 8000);
     return () => clearInterval(timer);
   }, [paginate]);
 
@@ -66,6 +65,7 @@ export default function Testimonials({customClass = "", showBottomLine = false})
     <section id="testimonials" className={`testimonials-section ${customClass}`.trim()}>
       <div className="testimonials-section__container">
         <div className="testimonials-section__header">
+          {/* Apenas o título principal tem o efeito de revelação */}
           <BlurTextReveal
             as="h2"
             text="História.dos.clientes"
@@ -75,12 +75,11 @@ export default function Testimonials({customClass = "", showBottomLine = false})
           />
 
           <div className="testimonials-section__introWrap">
-            <FadeInOnScroll delay={0.3}>
-              <p className="testimonials-section__intro">
-                Pequenos ou grandes projetos.
-                <br /> A qualidade é a mesma.
-              </p>
-            </FadeInOnScroll>
+            {/* Frase estática, sem efeito de animação */}
+            <p className="testimonials-section__intro">
+              Pequenos ou grandes projetos.
+              <br /> A qualidade é a mesma.
+            </p>
           </div>
         </div>
 

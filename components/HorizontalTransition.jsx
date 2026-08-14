@@ -10,16 +10,19 @@ export default function HorizontalTransition({leftSection, rightSection}) {
     offset: ["start start", "end end"],
   });
 
+  // Abertura da cortina: 
+  // O About termina as fotos em 0.55. A cortina começa a abrir em 0.60 e termina em 0.90.
+  // Isso funciona igualmente na subida (o About volta a aparecer em 0.90 e fecha em 0.60).
   const clipPath = useTransform(
     scrollYProgress,
-    [0.60, 0.90, 0.95, 1.0],
-    ["inset(0% 0% 0% 0%)", "inset(0% 100% 0% 0%)", "inset(0% 100% 0% 0%)", "inset(0% 100% 0% 0%)"]
+    [0.60, 0.90],
+    ["inset(0% 0% 0% 0%)", "inset(0% 100% 0% 0%)"]
   );
 
-  const lineScale = useTransform(scrollYProgress, [0.90, 0.98], [0, 1]);
-  const lineOpacity = useTransform(scrollYProgress, [0.88, 0.92, 0.98, 1], [0, 1, 1, 0]);
-  const plusRotate = useTransform(scrollYProgress, [0.90, 1], [0, 360]);
-  const plusY = useTransform(scrollYProgress, [0.90, 0.98], ["0%", "100%"]);
+  const lineScale = useTransform(scrollYProgress, [0.85, 0.95], [0, 1]);
+  const lineOpacity = useTransform(scrollYProgress, [0.80, 0.85, 0.95, 1], [0, 1, 1, 0]);
+  const plusRotate = useTransform(scrollYProgress, [0.85, 1], [0, 360]);
+  const plusY = useTransform(scrollYProgress, [0.85, 0.95], ["0%", "100%"]);
 
   const leftSectionWithScroll = isValidElement(leftSection)
     ? cloneElement(leftSection, {scrollYProgress})

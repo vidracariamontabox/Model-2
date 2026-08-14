@@ -15,7 +15,7 @@ const STATS = [
   {value: "100%", label: "Fabricação e instalação própria"},
 ];
 
-/* Imagens — nomes atualizados conforme o repositório */
+/* Imagens — Apenas as que começam com obra- */
 const IMAGES = [
   {src: "/images/obra-1-oxquimica.webp", alt: "Oxíquimica"},
   {src: "/images/obra-2-porta-ripado.webp", alt: "Porta Ripado - residência"},
@@ -25,10 +25,6 @@ const IMAGES = [
   {src: "/images/obra-6-casa-condominio.webp", alt: "Residencia completa"},
   {src: "/images/obra-7-magalu.webp", alt: "Magalu"},
   {src: "/images/obra-8-athenas.webp", alt: "Athenas"},
-  {src: "/images/Logo-1-biofarm.webp", alt: "Biofarm"},
-  {src: "/images/Logo-2-favaro.webp", alt: "Favaro"},
-  {src: "/images/Logo-3-grupoandremaria.webp", alt: "Grupo Andremaria"},
-  {src: "/images/Logo-4-ibis.webp", alt: "Ibis"},
 ];
 
 /* ─── Variants ──────────────────────────────────────────────────────── */
@@ -96,7 +92,7 @@ function HoverExpandGallery({activeIndex, loadedIndices}) {
           }}
           transition={{
             duration: 0.8, 
-            ease: [0.16, 1, 0.3, 1] // power3.out para suavidade premium
+            ease: [0.16, 1, 0.3, 1] 
           }}>
           
           {loadedIndices.has(index) && (
