@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowRight } from "lucide-react";
 
 /* -----------------------------------------------------------------------------
  * UTILS
@@ -261,7 +260,10 @@ export default function CTA({
         >
           <span className="inline md:hidden">{primaryCtaMobile}</span>
           <span className="hidden md:inline">{primaryCta}</span>
-          <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
+          <svg className="w-3.5 h-3.5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
         </a>
       </div>
 
