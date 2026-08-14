@@ -8,8 +8,8 @@ import GlowCursor from "@/components/GlowCursor";
 // ─── Constantes ───────────────────────────────────────────────────────────────
 const CUBE_SIZE = 1.0;
 const GAP = 0.05;
-const STEP = CUBE_SIZE + GAP; 
-const XY_OFFSET_MAX = STEP * 0.025; 
+const STEP = CUBE_SIZE + GAP;
+const XY_OFFSET_MAX = STEP * 0.025;
 const SEED = 7331;
 
 // ─── Pseudo-random com seed ───────────────────────────────────────────────────
@@ -30,22 +30,22 @@ function CubeGrid() {
   const rows = Math.ceil(viewport.height / STEP) + 6;
 
   // Geometrias e Materiais Memoizados para evitar criação no servidor
-  const { geometries, materials } = useMemo(() => {
-    if (typeof window === "undefined") return { geometries: null, materials: null };
+  const {geometries, materials} = useMemo(() => {
+    if (typeof window === "undefined") return {geometries: null, materials: null};
 
     const boxGeo = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
     const edgeGeo = new THREE.EdgesGeometry(boxGeo);
 
-    const matDark = new THREE.MeshStandardMaterial({ color: "#000000", metalness: 0.92, roughness: 0.18 });
-    const matMid = new THREE.MeshStandardMaterial({ color: "#000000", metalness: 0.92, roughness: 0.18 });
-    const matLighter = new THREE.MeshStandardMaterial({ color: "#000000", metalness: 0.92, roughness: 0.18 });
+    const matDark = new THREE.MeshStandardMaterial({color: "#000000", metalness: 0.92, roughness: 0.18});
+    const matMid = new THREE.MeshStandardMaterial({color: "#000000", metalness: 0.92, roughness: 0.18});
+    const matLighter = new THREE.MeshStandardMaterial({color: "#000000", metalness: 0.92, roughness: 0.18});
 
-    const edgeMatDark = new THREE.LineBasicMaterial({ color: "#464443", transparent: true, opacity: 0.8 });
-    const edgeMatLight = new THREE.LineBasicMaterial({ color: "#4a5568", transparent: true, opacity: 0.95 });
+    const edgeMatDark = new THREE.LineBasicMaterial({color: "#464443", transparent: true, opacity: 0.8});
+    const edgeMatLight = new THREE.LineBasicMaterial({color: "#4a5568", transparent: true, opacity: 0.95});
 
     return {
-      geometries: { box: boxGeo, edge: edgeGeo },
-      materials: { dark: matDark, mid: matMid, lighter: matLighter, edgeDark: edgeMatDark, edgeLight: edgeMatLight }
+      geometries: {box: boxGeo, edge: edgeGeo},
+      materials: {dark: matDark, mid: matMid, lighter: matLighter, edgeDark: edgeMatDark, edgeLight: edgeMatLight},
     };
   }, []);
 
@@ -122,7 +122,9 @@ function CubeGrid() {
       {cubeData.map((c, i) => (
         <group
           key={i}
-          ref={(node) => { cubesRef.current[i] = node; }}
+          ref={(node) => {
+            cubesRef.current[i] = node;
+          }}
           position={[c.x, c.y, c.z]}
           rotation={[c.rotX, c.rotY, c.rotZ]}
           scale={c.scale}>
@@ -191,7 +193,7 @@ export default function Hero() {
       id="hero"
       onMouseMove={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();
-        const next = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        const next = {x: e.clientX - rect.left, y: e.clientY - rect.top};
         setMouse(next);
         glowTargetRef.current = next;
       }}
@@ -202,15 +204,14 @@ export default function Hero() {
       }}
       className="relative w-full overflow-hidden bg-[#080808]"
       style={{
-        height: "calc(100dvh - 4.5rem)",
+        height: "100dvh",
         minHeight: "calc(100dvh - 4.5rem)",
         maxHeight: "100dvh",
       }}>
-      
       <Canvas
         orthographic
         gl={{alpha: true}}
-        camera={{ position: [0, 0, 100], zoom: 80, near: 0.1, far: 500 }}
+        camera={{position: [0, 0, 100], zoom: 80, near: 0.1, far: 500}}
         style={{position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 1}}>
         <Suspense fallback={null}>
           <CameraRig />
@@ -221,10 +222,10 @@ export default function Hero() {
       </Canvas>
 
       <div className="absolute top-[clamp(2rem,7vh,4rem)] left-[clamp(1.5rem,3vw,3rem)] z-10 pointer-events-none flex flex-col gap-[2.75rem] max-w-[min(42rem,90vw)] mt-20">
-        <h1 className="text-[clamp(3rem,4.7vw+1.4rem,6.4rem)] font-light tracking-[0.03em] text-[#eaeaea] leading-[0.95] m-0">
+        <h1 className=" font-ivy-presto text-[clamp(3rem,4.7vw+1.4rem,6.4rem)] font-bold tracking-[0.03em] text-[#eaeaea] leading-[0.95] m-0">
           Seu projeto é nosso projeto
         </h1>
-        <p className="text-[clamp(1.05rem,1.5vw+0.4rem,1.1rem)] font-bold tracking-[0.08em] text-[#b7b1ab] m-0 max-w-[30rem]">
+        <p className="font-ivy-presto text-[clamp(1.05rem,1.5vw+0.4rem,1.1rem)] font-bold tracking-[0.08em] text-[#b7b1ab] m-0 max-w-[30rem]">
           Criamos como se fosse para nossa casa !
         </p>
 
@@ -232,13 +233,15 @@ export default function Hero() {
           href="https://wa.me/5516981984000"
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center w-fit px-[1.15rem] py-[0.6rem] rounded-tr-[99px] rounded-bl-[99px] rounded-br-[99px] bg-[#f5f5f5] text-[#000000] font-extralight text-[0.65rem] tracking-[0.16em] uppercase no-underline mt-[0.35rem] shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_2px_4px_rgba(0,0,0,0.15)] pointer-events-auto"
-        >
+          className="font-neuehaas inline-flex items-center w-fit px-[1.15rem] py-[0.6rem] rounded-tr-[99px] rounded-bl-[99px] rounded-br-[99px] bg-[#f5f5f5] text-[#000000] font-extralight text-[0.65rem] tracking-[0.16em] uppercase no-underline mt-[0.35rem] shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_2px_4px_rgba(0,0,0,0.15)] pointer-events-auto">
           <span>Solicite seu orçamento →</span>
         </a>
       </div>
 
-      <div className="absolute inset-0 z-[2] pointer-events-none" style={{ background: "radial-gradient(ellipse 55% 60% at 50% 50%, transparent 0%, rgba(8,8,8,0.4) 100%)" }} />
+      <div
+        className="absolute inset-0 z-[2] pointer-events-none"
+        style={{background: "radial-gradient(ellipse 55% 60% at 50% 50%, transparent 0%, rgba(8,8,8,0.4) 100%)"}}
+      />
     </section>
   );
 }

@@ -23,10 +23,6 @@ const IMAGES = [
   {src: "/images/obra-6-casa-condominio.webp", alt: "Residencia completa"},
   {src: "/images/obra-7-magalu.webp", alt: "Magalu"},
   {src: "/images/obra-8-athenas.webp", alt: "Athenas"},
-  {src: "/images/Logo-1-biofarm.webp", alt: "Biofarm"},
-  {src: "/images/Logo-2-favaro.webp", alt: "Favaro"},
-  {src: "/images/Logo-3-grupoandremaria.webp", alt: "Grupo Andremaria"},
-  {src: "/images/Logo-4-ibis.webp", alt: "Ibis"},
 ];
 
 const sectionVariants = {
