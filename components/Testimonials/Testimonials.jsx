@@ -24,13 +24,11 @@ export default function Testimonials({customClass = "", showBottomLine = false})
   }, []);
 
   const handleCompanyClick = useCallback(
-    (companyIndex) => {
-      let targetIndex = 0;
-      for (let i = 0; i < TestimonialsData.length; i++) {
-        if (TestimonialsData[i].companyName === TestimonialsData[companyIndex].companyName) {
-          targetIndex = i;
-          break;
-        }
+    (companyName) => {
+      const targetIndex = TestimonialsData.findIndex(item => item.companyName === companyName);
+      if (targetIndex !== -1 && targetIndex !== activeIndex) {
+        setDirection(targetIndex > activeIndex ? 1 : -1);
+        setActiveIndex(targetIndex);
       }
     },
     [activeIndex],
@@ -48,16 +46,19 @@ export default function Testimonials({customClass = "", showBottomLine = false})
     enter: (direction) => ({
       x: direction > 0 ? 100 : -100,
       opacity: 0,
+      filter: "blur(4px)",
     }),
     center: {
       zIndex: 1,
       x: 0,
       opacity: 1,
+      filter: "blur(0px)",
     },
     exit: (direction) => ({
       zIndex: 0,
       x: direction < 0 ? 100 : -100,
       opacity: 0,
+      filter: "blur(4px)",
     }),
   };
 
@@ -69,7 +70,7 @@ export default function Testimonials({customClass = "", showBottomLine = false})
             as="h2"
             text="História.dos.clientes"
             animationType="chars"
-            stagger={0.05}
+            stagger={0.03}
             className="testimonials-section__title"
           />
 
@@ -133,7 +134,7 @@ export default function Testimonials({customClass = "", showBottomLine = false})
 
           <div className="testimonials-section__swiperWrap">
             <div className="testimonials-swiper-container relative overflow-hidden min-h-[300px]">
-              <AnimatePresence initial={false} custom={direction}>
+              <AnimatePresence initial={false} custom={direction} mode="wait">
                 <motion.div
                   key={activeIndex}
                   custom={direction}
@@ -142,19 +143,20 @@ export default function Testimonials({customClass = "", showBottomLine = false})
                   animate="center"
                   exit="exit"
                   transition={{
-                    x: {type: "spring", stiffness: 300, damping: 30},
-                    opacity: {duration: 0.2},
+                    x: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+                    opacity: { duration: 0.4 },
+                    filter: { duration: 0.4 }
                   }}
                   drag="x"
                   dragConstraints={{left: 0, right: 0}}
                   dragElastic={1}
-                  onDragEnd={(e, {offset, velocity}) => {
+                  onDragEnd={(e, {offset}) => {
                     const swipe = Math.abs(offset.x) > 50;
                     if (swipe) {
                       paginate(offset.x > 0 ? -1 : 1);
                     }
                   }}
-                  className="absolute w-full">
+                  className="w-full">
                   <TestimonialCard item={TestimonialsData[activeIndex]} />
                 </motion.div>
               </AnimatePresence>

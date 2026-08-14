@@ -11,14 +11,21 @@ export default function DividerPlus({customClass = "", lineClass = "", plusClass
       <motion.span
         initial={{scaleX: 0}}
         animate={isInView ? {scaleX: 1} : {scaleX: 0}}
-        transition={{duration: 0.8, ease: [0.22, 1, 0.36, 1]}}
+        transition={{
+          duration: 0.8, 
+          ease: [0.16, 1, 0.3, 1] // Equivalente ao power3.out do GSAP
+        }}
         style={{transformOrigin: "left center"}}
         className={`line ${lineClass}`.trim()}
       />
       <motion.svg
         initial={{opacity: 0, scale: 0.8}}
         animate={isInView ? {opacity: 1, scale: 1} : {opacity: 0, scale: 0.8}}
-        transition={{duration: 0.5, ease: "easeOut", delay: 0.1}}
+        transition={{
+          duration: 0.5, 
+          ease: [0.16, 1, 0.3, 1], // Equivalente ao power3.out do GSAP
+          delay: 0.1
+        }}
         width="12"
         height="12"
         viewBox="0 0 12 12"

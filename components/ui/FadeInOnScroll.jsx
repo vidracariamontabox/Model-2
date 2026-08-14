@@ -22,7 +22,7 @@ export default function FadeInOnScroll({
       transition={{
         duration,
         delay,
-        ease: [0.22, 1, 0.36, 1],
+        ease: [0.16, 1, 0.3, 1], // Equivalente ao power3.out do GSAP
       }}
       className={`fade-in-on-scroll ${className}`.trim()}
     >

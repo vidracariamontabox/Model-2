@@ -1,5 +1,5 @@
 "use client";
-import {Children, cloneElement, forwardRef, isValidElement, useRef} from "react";
+import {Children, cloneElement, forwardRef, isValidElement, useRef, useMemo} from "react";
 import {motion, useInView} from "framer-motion";
 
 const BlurTextReveal = forwardRef(function BlurTextReveal(
@@ -11,8 +11,8 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
     className = "",
     animationType = "chars",
     stagger = 0.05,
-    duration = 0.8,
-    ease = [0.22, 1, 0.36, 1],
+    duration = 1.0,
+    ease = [0.25, 0.46, 0.45, 0.94], // Equivalente aproximado ao power2.out do GSAP
     start = "top 90%",
     once = true,
     play,
@@ -25,14 +25,15 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
 
   const content = children || text || html;
 
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: stagger,
-      },
-    },
-  };
+  // Criamos uma ordem aleatória estável para o stagger, simulando o "from: random" do GSAP
+  const itemsCount = useMemo(() => {
+    if (typeof content !== "string") return 20; // fallback
+    return animationType === "words" ? content.split(/\s+/).length : content.length;
+  }, [content, animationType]);
+
+  const randomOrder = useMemo(() => {
+    return Array.from({ length: itemsCount }, (_, i) => i).sort(() => Math.random() - 0.5);
+  }, [itemsCount]);
 
   const itemVariants = {
     hidden: {
@@ -40,66 +41,85 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
       y: 25,
       filter: "blur(12px)",
     },
-    visible: {
+    visible: (i) => ({
       opacity: 1,
       y: 0,
       filter: "blur(0px)",
       transition: {
         duration,
         ease,
+        // Usamos o delay customizado baseado na ordem aleatória para simular o stagger random do GSAP
+        delay: randomOrder[i % itemsCount] * stagger,
       },
-    },
+    }),
   };
 
-  // Se play for controlado externamente, usamos ele, senão usamos o inView
   const animateState = play !== undefined ? (play ? "visible" : "hidden") : (isInView ? "visible" : "hidden");
 
   return (
     <Tag ref={rootRef} className={`blur-text-reveal ${className}`.trim()} {...props}>
-      <motion.span
-        variants={containerVariants}
-        initial="hidden"
-        animate={animateState}
-        className="inline-block"
-      >
+      <span className="inline-block">
         {html ? (
           <span dangerouslySetInnerHTML={{__html: html}} />
         ) : (
-          <SplitText content={content} type={animationType} variants={itemVariants} />
+          <SplitText content={content} type={animationType} variants={itemVariants} animateState={animateState} />
         )}
-      </motion.span>
+      </span>
     </Tag>
   );
 });
 
-function SplitText({content, type, variants}) {
-  if (Array.isArray(content)) {
-    return Children.map(content, (child) => <SplitText content={child} type={type} variants={variants} />);
-  }
+function SplitText({content, type, variants, animateState}) {
+  let itemIdx = 0;
 
-  if (isValidElement(content)) {
-    return cloneElement(content, undefined, <SplitText content={content.props.children} type={type} variants={variants} />);
-  }
+  const renderContent = (c) => {
+    if (Array.isArray(c)) {
+      return Children.map(c, (child) => renderContent(child));
+    }
 
-  if (typeof content !== "string") return content;
+    if (isValidElement(c)) {
+      return cloneElement(c, undefined, renderContent(c.props.children));
+    }
 
-  if (type === "words") {
-    return content.split(/(\s+)/).map((part, i) =>
-      /\s+/.test(part) ? (
-        part
-      ) : (
-        <motion.span key={i} variants={variants} className="blur-word inline-block">
-          {part}
+    if (typeof c !== "string") return c;
+
+    if (type === "words") {
+      return c.split(/(\s+)/).map((part, i) => {
+        if (/\s+/.test(part)) return part;
+        const currentIdx = itemIdx++;
+        return (
+          <motion.span 
+            key={i} 
+            custom={currentIdx}
+            variants={variants} 
+            initial="hidden"
+            animate={animateState}
+            className="blur-word inline-block"
+          >
+            {part}
+          </motion.span>
+        );
+      });
+    }
+
+    return c.split("").map((char, i) => {
+      const currentIdx = itemIdx++;
+      return (
+        <motion.span 
+          key={i} 
+          custom={currentIdx}
+          variants={variants} 
+          initial="hidden"
+          animate={animateState}
+          className="blur-char inline-block"
+        >
+          {char === " " ? "\u00A0" : char}
         </motion.span>
-      ),
-    );
-  }
+      );
+    });
+  };
 
-  return content.split("").map((char, i) => (
-    <motion.span key={i} variants={variants} className="blur-char inline-block">
-      {char === " " ? "\u00A0" : char}
-    </motion.span>
-  ));
+  return renderContent(content);
 }
 
 export default BlurTextReveal;

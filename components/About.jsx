@@ -25,6 +25,10 @@ const IMAGES = [
   {src: "/images/obra-6-casa-condominio.webp", alt: "Residencia completa"},
   {src: "/images/obra-7-magalu.webp", alt: "Magalu"},
   {src: "/images/obra-8-athenas.webp", alt: "Athenas"},
+  {src: "/images/Logo-1-biofarm.webp", alt: "Biofarm"},
+  {src: "/images/Logo-2-favaro.webp", alt: "Favaro"},
+  {src: "/images/Logo-3-grupoandremaria.webp", alt: "Grupo Andremaria"},
+  {src: "/images/Logo-4-ibis.webp", alt: "Ibis"},
 ];
 
 /* ─── Variants ──────────────────────────────────────────────────────── */
@@ -40,7 +44,11 @@ const fadeUp = {
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: {type: "spring", stiffness: 220, damping: 26, delay},
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1], // power3.out
+      delay
+    },
   }),
 };
 
@@ -52,18 +60,23 @@ const statVariants = {
 /* ─── Animated Title ────────────────────────────────────────────────── */
 function AnimatedTitle({line1, line2}) {
   return (
-    <BlurTextReveal
-      aria-label={`${line1} ${line2}`}
-      animationType="chars"
-      stagger={0.025}
-      className="leading-[1.02] text-[#eaeaea]">
-      <span className="block overflow-hidden text-[clamp(1.8rem,4vw,3rem)] uppercase font-black tracking-tight">
-        {line1}
-      </span>
-      <span className="block overflow-hidden pl-[0.08em] text-[0.95rem] uppercase font-light tracking-tight text-[#d8d8d8]">
-        {line2}
-      </span>
-    </BlurTextReveal>
+    <div className="flex flex-col">
+      <BlurTextReveal
+        aria-label={line1}
+        text={line1}
+        animationType="chars"
+        stagger={0.03}
+        className="block overflow-hidden text-[clamp(1.8rem,4vw,3rem)] uppercase font-black tracking-tight leading-[1.02] text-[#eaeaea]"
+      />
+      <BlurTextReveal
+        aria-label={line2}
+        text={line2}
+        animationType="words"
+        stagger={0.1}
+        delay={0.2}
+        className="block overflow-hidden pl-[0.08em] text-[0.95rem] uppercase font-light tracking-tight text-[#d8d8d8]"
+      />
+    </div>
   );
 }
 
@@ -81,12 +94,13 @@ function HoverExpandGallery({activeIndex, loadedIndices}) {
             width: safeActiveIndex === index ? "24rem" : "5rem",
             height: "100%",
           }}
-          transition={{duration: 0.65, ease: [0.22, 1, 0.36, 1]}}>
+          transition={{
+            duration: 0.8, 
+            ease: [0.16, 1, 0.3, 1] // power3.out para suavidade premium
+          }}>
           
-          {/* Somente renderiza a imagem se o index estiver na lista de carregados */}
           {loadedIndices.has(index) && (
             <>
-              {/* Overlay gradiente no ativo */}
               <AnimatePresence>
                 {safeActiveIndex === index && (
                   <motion.div
@@ -98,21 +112,19 @@ function HoverExpandGallery({activeIndex, loadedIndices}) {
                 )}
               </AnimatePresence>
 
-              {/* Label no ativo */}
               <AnimatePresence>
                 {safeActiveIndex === index && (
                   <motion.div
                     initial={{opacity: 0, y: 8}}
                     animate={{opacity: 1, y: 0}}
                     exit={{opacity: 0, y: 8}}
-                    transition={{type: "spring", stiffness: 260, damping: 26}}
+                    transition={{duration: 0.5, ease: "easeOut"}}
                     className="absolute bottom-4 left-4 z-20">
                     <p className="text-[0.65rem] font-light tracking-[0.18em] uppercase text-[#acaba9]">{image.alt}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* Imagem Otimizada */}
               <Image 
                 src={image.src} 
                 alt={image.alt} 
@@ -134,8 +146,6 @@ export default function About({scrollYProgress}) {
   const sectionRef = useRef(null);
   const inView = useInView(sectionRef, {once: true, margin: "-80px 0px"});
   const [activeScrollIndex, setActiveScrollIndex] = useState(0);
-  
-  // Estratégia de carregamento progressivo: inicia com os 3 primeiros
   const [loadedIndices, setLoadedIndices] = useState(new Set([0, 1, 2]));
 
   useEffect(() => {
@@ -158,8 +168,6 @@ export default function About({scrollYProgress}) {
 
       setActiveScrollIndex(index);
 
-      // Lógica de Janela de Carregamento:
-      // Ao visualizar o index atual, garante que o index + 3 seja carregado
       const nextToLoad = index + 3;
       if (nextToLoad < IMAGES.length) {
         setLoadedIndices(prev => {
@@ -179,7 +187,6 @@ export default function About({scrollYProgress}) {
       id="sobre"
       ref={sectionRef}
       className="relative bg-[#000000] overflow-hidden py-24 sm:py-28 lg:py-20 px-8 sm:px-12 lg:px-20 min-h-screen">
-      {/* Gradiente decorativo */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -193,9 +200,7 @@ export default function About({scrollYProgress}) {
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
         className="relative z-10 max-w-7xl mx-auto">
-        {/* ── Layout: 30% texto | 70% galeria ── */}
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-0">
-          {/* ── Coluna esquerda — textos (30%) ── */}
           <div className="lg:w-[30%] lg:pr-10 flex flex-col justify-start pt-0">
             <motion.p
               variants={fadeUp}
@@ -217,7 +222,6 @@ export default function About({scrollYProgress}) {
 
             <motion.div variants={fadeUp} custom={0.46} className="mt-10 mb-10 h-px bg-[#75706f]/20 w-full" />
 
-            {/* Stats */}
             <motion.div variants={statVariants} className="grid grid-cols-1 gap-4">
               {STATS.map(({value, label}, i) => (
                 <motion.div key={label} variants={fadeUp} custom={0.52 + i * 0.1} className="flex flex-col gap-1">
@@ -230,7 +234,6 @@ export default function About({scrollYProgress}) {
             </motion.div>
           </div>
 
-          {/* ── Coluna direita — galeria HoverExpand (70%) ── */}
           <motion.div
             variants={fadeUp}
             custom={0.3}
