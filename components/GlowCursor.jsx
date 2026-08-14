@@ -1,11 +1,13 @@
 "use client";
 
-import {useEffect, useRef, useMemo} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useFrame} from "@react-three/fiber";
 import * as THREE from "three";
 
 // Gerar textura de gradiente radial
 function createGlowTexture() {
+  if (typeof document === "undefined") return null;
+  
   const size = 256;
   const canvas = document.createElement("canvas");
   canvas.width = size;
@@ -26,7 +28,11 @@ function createGlowTexture() {
 export default function GlowCursor({mousePos}) {
   const meshRef = useRef(null);
   const targetRef = useRef({x: 0, y: 0});
-  const glowTexture = useMemo(() => createGlowTexture(), []);
+  const [glowTexture, setGlowTexture] = useState(null);
+
+  useEffect(() => {
+    setGlowTexture(createGlowTexture());
+  }, []);
 
   // Atualiza o alvo quando o mouse move
   useEffect(() => {
@@ -54,6 +60,8 @@ export default function GlowCursor({mousePos}) {
     mesh.position.y += (targetRef.current.y - mesh.position.y) * 0.08;
     mesh.position.z = -5;
   });
+
+  if (!glowTexture) return null;
 
   return (
     <mesh ref={meshRef} position={[0, 0, -5]} visible={false}>
