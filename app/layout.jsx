@@ -6,23 +6,29 @@ import "./Testimonials.css";
 import "./testimonials-ui.css";
 
 export const metadata = {
-  title: "Montabox — Preview",
-  description: "Preview do site Montabox.",
+  title: "Montabox — Vidraçaria e Serralheria de Alto Padrão",
+  description: "Especializada em projetos residenciais e comerciais de luxo, unindo estética refinada e engenharia de alta performance.",
 };
 
 const familjen = localFont({
   src: "../public/fonts/FamiljenGroteskVariable_Regular.woff2",
   variable: "--font-familjen",
+  display: "swap",
+  fallback: ["sans-serif"],
 });
 
 const neueHaas = localFont({
   src: "../public/fonts/NeueHaasDisplay_Roman.woff2",
   variable: "--font-neuehaas",
+  display: "swap",
+  fallback: ["Arial", "Helvetica", "sans-serif"],
 });
 
 const ivyPrestoDisplay = localFont({
   src: "../public/fonts/ivy-presto-display-thin.woff2",
   variable: "--font-ivy-presto",
+  display: "swap",
+  fallback: ["serif"],
 });
 
 export default function RootLayout({children}) {

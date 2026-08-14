@@ -1,6 +1,6 @@
 "use client";
-import {useEffect, useRef} from "react";
-import {gsap} from "gsap";
+import {useRef} from "react";
+import {motion, useInView} from "framer-motion";
 
 export default function FadeInOnScroll({
   children,
@@ -12,49 +12,21 @@ export default function FadeInOnScroll({
   start = "top 85%",
 }) {
   const ref = useRef(null);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    const animateIn = () => {
-      gsap.fromTo(
-        node,
-        {autoAlpha: 0, y},
-        {
-          autoAlpha: 1,
-          y: 0,
-          delay,
-          duration,
-          ease: "power3.out",
-        },
-      );
-    };
-
-    if (!("IntersectionObserver" in window)) {
-      animateIn();
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          animateIn();
-          if (once) observer.disconnect();
-        });
-      },
-      {threshold: 0.15, rootMargin: start === "top 100%" ? "0px 0px 100px 0px" : "0px"},
-    );
-
-    observer.observe(node);
-
-    return () => observer.disconnect();
-  }, [delay, duration, once, y, start]);
+  const isInView = useInView(ref, {once, margin: "-15% 0px"});
 
   return (
-    <div ref={ref} className={`fade-in-on-scroll ${className}`.trim()}>
+    <motion.div
+      ref={ref}
+      initial={{opacity: 0, y}}
+      animate={isInView ? {opacity: 1, y: 0} : {opacity: 0, y}}
+      transition={{
+        duration,
+        delay,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      className={`fade-in-on-scroll ${className}`.trim()}
+    >
       {children}
-    </div>
+    </motion.div>
   );
 }

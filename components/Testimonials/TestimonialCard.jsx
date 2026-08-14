@@ -1,4 +1,6 @@
 "use client";
+import Image from "next/image";
+
 export default function TestimonialCard({item}) {
   return (
     <article className="testimonial-item">
@@ -10,7 +12,13 @@ export default function TestimonialCard({item}) {
         <div className="testimonial-item__footer">
           <div className="testimonial-item__client">
             <div className="testimonial-item__avatar">
-              <img src={item.clientImage} alt={item.companyName} className="testimonial-item__avatarImg" />
+              <Image 
+                src={item.clientImage} 
+                alt={item.companyName} 
+                fill
+                sizes="80px"
+                className="object-cover" 
+              />
             </div>
 
             <div className="testimonial-item__meta">

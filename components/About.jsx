@@ -2,8 +2,10 @@
 
 import {useRef, useState, useEffect} from "react";
 import {motion, useInView, AnimatePresence} from "framer-motion";
+import Image from "next/image";
 import BlurTextReveal from "./ui/BlurTextReveal";
 
+/* ─── Copy ──────────────────────────────────────────────────────────── */
 const TITLE_LINE_1 = "Montabox";
 const TITLE_LINE_2 = "Vidraçaria e Serralheria de Alumínio.";
 const BODY_LEFT = `Especializada em projetos grandes, residenciais e comerciais, entregamos soluções que unem estética refinada e engenharia de alta performance.`;
@@ -29,6 +31,7 @@ const IMAGES = [
   {src: "/images/Logo-4-ibis.webp", alt: "Ibis"},
 ];
 
+/* ─── Variants ──────────────────────────────────────────────────────── */
 const sectionVariants = {
   hidden: {},
   visible: {
@@ -50,6 +53,7 @@ const statVariants = {
   visible: {transition: {staggerChildren: 0.1}},
 };
 
+/* ─── Animated Title ────────────────────────────────────────────────── */
 function AnimatedTitle({line1, line2}) {
   return (
     <BlurTextReveal
@@ -82,6 +86,7 @@ function HoverExpandGallery({activeIndex, loadedIndices}) {
             height: "100%",
           }}
           transition={{duration: 0.65, ease: [0.22, 1, 0.36, 1]}}>
+          
           {/* Somente renderiza a imagem se o index estiver na lista de carregados */}
           {loadedIndices.has(index) && (
             <>
@@ -111,13 +116,14 @@ function HoverExpandGallery({activeIndex, loadedIndices}) {
                 )}
               </AnimatePresence>
 
-              {/* Imagem */}
-              <motion.img
-                initial={{opacity: 0}}
-                animate={{opacity: 1}}
-                src={image.src}
-                alt={image.alt}
-                className="w-full h-full object-cover"
+              {/* Imagem Otimizada */}
+              <Image 
+                src={image.src} 
+                alt={image.alt} 
+                fill
+                sizes="(max-width: 1024px) 100vw, 400px"
+                className="object-cover"
+                priority={index < 3}
               />
             </>
           )}
@@ -127,19 +133,14 @@ function HoverExpandGallery({activeIndex, loadedIndices}) {
   );
 }
 
+/* ─── Component Principal ───────────────────────────────────────────── */
 export default function About({scrollYProgress}) {
   const sectionRef = useRef(null);
-  // useInView pode não disparar dentro de overflow-hidden sticky;
-  // usamos scrollYProgress como fallback: qualquer scroll > 0 significa visível
-  const inViewNative = useInView(sectionRef, {once: true, margin: "0px"});
-  const [hasScrolled, setHasScrolled] = useState(false);
-  const hasScrolledRef = useRef(false);
+  const inView = useInView(sectionRef, {once: true, margin: "-80px 0px"});
   const [activeScrollIndex, setActiveScrollIndex] = useState(0);
-
+  
   // Estratégia de carregamento progressivo: inicia com os 3 primeiros
   const [loadedIndices, setLoadedIndices] = useState(new Set([0, 1, 2]));
-
-  const inView = inViewNative || hasScrolled;
 
   useEffect(() => {
     if (!scrollYProgress) return;
@@ -165,7 +166,7 @@ export default function About({scrollYProgress}) {
       // Ao visualizar o index atual, garante que o index + 3 seja carregado
       const nextToLoad = index + 3;
       if (nextToLoad < IMAGES.length) {
-        setLoadedIndices((prev) => {
+        setLoadedIndices(prev => {
           if (prev.has(nextToLoad)) return prev;
           const nextSet = new Set(prev);
           nextSet.add(nextToLoad);
@@ -181,7 +182,8 @@ export default function About({scrollYProgress}) {
     <section
       id="sobre"
       ref={sectionRef}
-      className="relative bg-[#000000] overflow-hidden py-24 sm:py-28 lg:py-20 px-8 sm:px-12 lg:px-20 h-full min-h-screen">
+      className="relative bg-[#000000] overflow-hidden py-24 sm:py-28 lg:py-20 px-8 sm:px-12 lg:px-20 min-h-screen">
+      {/* Gradiente decorativo */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -195,7 +197,9 @@ export default function About({scrollYProgress}) {
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
         className="relative z-10 max-w-7xl mx-auto">
+        {/* ── Layout: 30% texto | 70% galeria ── */}
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-0">
+          {/* ── Coluna esquerda — textos (30%) ── */}
           <div className="lg:w-[30%] lg:pr-10 flex flex-col justify-start pt-0">
             <motion.p
               variants={fadeUp}
@@ -217,6 +221,7 @@ export default function About({scrollYProgress}) {
 
             <motion.div variants={fadeUp} custom={0.46} className="mt-10 mb-10 h-px bg-[#75706f]/20 w-full" />
 
+            {/* Stats */}
             <motion.div variants={statVariants} className="grid grid-cols-1 gap-4">
               {STATS.map(({value, label}, i) => (
                 <motion.div key={label} variants={fadeUp} custom={0.52 + i * 0.1} className="flex flex-col gap-1">
@@ -229,6 +234,7 @@ export default function About({scrollYProgress}) {
             </motion.div>
           </div>
 
+          {/* ── Coluna direita — galeria HoverExpand (70%) ── */}
           <motion.div
             variants={fadeUp}
             custom={0.3}
