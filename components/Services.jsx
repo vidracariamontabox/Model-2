@@ -4,27 +4,8 @@ import {motion} from "framer-motion";
 import BlurTextReveal from "./ui/BlurTextReveal";
 
 const services = ["Fachada Pele de Vidro.", "Esquadrias de Alumínio.", "Painel Ripado."];
-const CURTAIN_COMPLETE_PROGRESS = 0.45;
-const HEADER_REVEAL_DELAY = 0;
-
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.07,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: {opacity: 0, y: 40},
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {type: "spring", stiffness: 180, damping: 22},
-  },
-};
+const CURTAIN_COMPLETE_PROGRESS = 0.9;
+const HEADER_REVEAL_DELAY = 1000;
 
 function HandwrittenAltoPadrao() {
   return (
@@ -96,8 +77,7 @@ export default function Services({transitionProgress}) {
       <div className="max-w-7xl mx-auto w-full">
         <motion.div
           initial={{opacity: 0, y: 12}}
-          whileInView={{opacity: 1, y: 0}}
-          viewport={{once: true}}
+          animate={isHeaderReady ? {opacity: 1, y: 0} : {opacity: 0, y: 12}}
           transition={{type: "spring", stiffness: 150, damping: 20}}
           className="mb-20 flex items-center justify-center gap-6">
           <BlurTextReveal
@@ -113,23 +93,16 @@ export default function Services({transitionProgress}) {
           <CursiveAltoPadrao play={isHeaderReady} />
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate={isHeaderReady ? "visible" : "hidden"}
-          className="flex flex-col items-center text-center">
+        <div className="flex flex-col items-center text-center">
           {services.map((service, index) => (
             <motion.div
               key={index}
-              variants={itemVariants}
               whileHover={{x: 6}}
               transition={{type: "spring", stiffness: 400, damping: 30}}
               className="group relative overflow-hidden cursor-default">
-              <BlurTextReveal
-                text={service}
-                animationType="chars"
-                stagger={0.012}
-                className="text-[clamp(2.8rem,7vw,7rem)] font-black tracking-tight leading-[1.0] text-[#eaeaea] group-hover:text-[#acaba9] transition-colors duration-300 select-none"></BlurTextReveal>
+              <span className="text-[clamp(2.8rem,7vw,7rem)] font-black tracking-tight leading-[1.0] text-[#eaeaea] group-hover:text-[#acaba9] transition-colors duration-300 select-none">
+                {service}
+              </span>
 
               <motion.div
                 initial={{scaleX: 0}}
@@ -139,14 +112,9 @@ export default function Services({transitionProgress}) {
               />
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{opacity: 0, y: 16}}
-          whileInView={{opacity: 1, y: 0}}
-          viewport={{once: true}}
-          transition={{type: "spring", stiffness: 150, damping: 20, delay: 0.4}}
-          className="mt-20 flex items-right">
+        <div className="mt-20 flex items-right">
           <a
             href="https://wa.me/5516981984000"
             target="_blank"
@@ -159,7 +127,7 @@ export default function Services({transitionProgress}) {
               →
             </motion.span>
           </a>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
