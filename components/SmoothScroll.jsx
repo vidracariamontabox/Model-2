@@ -1,46 +1,24 @@
 "use client";
 
-import {useEffect} from "react";
+import { useEffect } from "react";
 
 /**
- * SmoothScroll — Scroll suave via interpolação nativa
- *
- * Implementação limpa sem Framer Motion useScroll
- * (que causa conflitos com sticky elements e HorizontalTransition)
- *
- * Usa requestAnimationFrame para animar o scroll de forma suave
- * com easing exponencial equivalente ao Lenis original.
+ * SmoothScroll simplificado e seguro para SSR.
+ * 
+ * Usamos a suavização nativa do navegador via CSS.
+ * Isso garante compatibilidade total com elementos sticky, 
+ * useScroll do Framer Motion e evita travamentos de runtime.
  */
-export default function SmoothScroll({children}) {
+export default function SmoothScroll({ children }) {
   useEffect(() => {
-    let scrollTarget = window.scrollY;
-    let currentScroll = window.scrollY;
-    let rafId = null;
-    const ease = 0.09; // Suavidade equivalente ao Lenis duration 1.4
+    if (typeof window === "undefined") return;
 
-    const onWheel = (e) => {
-      e.preventDefault();
-      scrollTarget += e.deltaY;
-      scrollTarget = Math.max(0, Math.min(scrollTarget, document.body.scrollHeight - window.innerHeight));
-    };
-
-    const animate = () => {
-      const diff = scrollTarget - currentScroll;
-      if (Math.abs(diff) < 0.5) {
-        currentScroll = scrollTarget;
-      } else {
-        currentScroll += diff * ease;
-      }
-      window.scrollTo(0, currentScroll);
-      rafId = requestAnimationFrame(animate);
-    };
-
-    window.addEventListener("wheel", onWheel, {passive: false});
-    rafId = requestAnimationFrame(animate);
+    // Aplica scroll suave nativo ao elemento raiz
+    const html = document.documentElement;
+    html.style.scrollBehavior = "smooth";
 
     return () => {
-      window.removeEventListener("wheel", onWheel);
-      if (rafId) cancelAnimationFrame(rafId);
+      html.style.scrollBehavior = "";
     };
   }, []);
 

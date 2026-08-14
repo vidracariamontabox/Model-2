@@ -99,7 +99,7 @@ export default function FAQ({faqs}) {
   };
 
   return (
-    <section id="faq" className="relative w-full overflow-hidden bg-[#2c2c2c] px-6 sm:px-10 py-24">
+    <section id="faq" className="relative w-full overflow-hidden bg-[#121212] px-6 sm:px-10 py-24">
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}} />
 
       <motion.div
@@ -122,12 +122,12 @@ export default function FAQ({faqs}) {
       />
 
       <div className="relative z-10 mx-auto max-w-3xl">
-        <p className="font-archivo text-[0.7rem] tracking-[0.3em] uppercase text-[#acaba9]">FAQ</p>
+        <p className="text-[0.7rem] tracking-[0.3em] uppercase text-[#acaba9]">FAQ</p>
         <BlurTextReveal
-          text="Perguntas frequentes (revisar)"
+          text="Perguntas frequentes"
           animationType="words"
           stagger={0.12}
-          className="mt-2 font-archivo font-light text-2xl sm:text-3xl text-[#eaeaea]"
+          className="mt-2 font-light text-2xl sm:text-3xl text-[#eaeaea]"
         />
 
         <div className="mt-10 flex flex-col gap-3">
