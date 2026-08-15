@@ -143,7 +143,7 @@ Antes de qualquer card ou animação visual, a primeira coisa a fazer é confirm
 |---|---|---|---|---|
 | 1 — Prova de conceito de scroll | Concluída | Manus + Claude | 15/08/2026 | GSAP instalado, /test-gsap criado e builda. O teste mostrou que o `SmoothScroll.jsx` nativo convive bem com o GSAP. |
 | 2 — Selected Work isolado | Concluída | Manus | 15/08/2026 | Implementado em /test-selected-work. Cards horizontais com Pin GSAP funcionando perfeitamente. Build OK. |
-| 3 — Services empilhados isolado | Não iniciada | — | — | — |
+| 3 — Services empilhados isolado | Concluída | Manus | 15/08/2026 | Implementado em /test-services-stack. Cards empilhados de baixo para cima com Pin GSAP. Testado entrada/saída e desempilhamento reverso. Build OK. |
 | 4 — Decisão de conteúdo do About | Não iniciada | — | — | Ver Seção 9 |
 | 5 — Integração na página principal | Não iniciada | — | — | — |
 | 6 — Limpeza | Não iniciada | — | — | — |
