@@ -140,13 +140,28 @@ Antes de qualquer card ou animação visual, a primeira coisa a fazer é confirm
 
 | Fase | Status | Última IA que trabalhou | Data | Notas |
 |---|---|---|---|---|
-| 1 — Prova de conceito de scroll | Concluída | Manus | 14/08/2026 | GSAP instalado. Teste de Pin criado em /test-gsap. Build OK. O SmoothScroll nativo não interfere no GSAP. |
-| 2 — Selected Work isolado | Não iniciada | — | — | — |
-| 3 — Services empilhados isolado | Não iniciada | — | — | — |
-| 4 — Decisão de conteúdo do About | Não iniciada | — | — | Ver Seção 9 |
-| 5 — Integração na página principal | Não iniciada | — | — | — |
+| 1 — Prova de conceito de scroll | Validada com ressalva | Manus + Claude | 15/08/2026 | GSAP instalado, /test-gsap criado e builda. Claude revisou o código: o mecanismo básico (pin + progresso lendo window.scrollY) deve funcionar, MAS existe um ponto de risco específico não testado ainda — ver nota de risco logo abaixo desta tabela. Quem construir a Fase 2/3 precisa testar manualmente esse ponto exato antes de marcar como concluído. |
+| 2 — Selected Work isolado | Atribuída — aguardando início | Grok | — | — |
+| 3 — Services empilhados isolado | Atribuída — aguardando início | Manus | — | Pode rodar em paralelo com a Fase 2 (rotas de teste diferentes, sem conflito) |
+| 4 — Decisão de conteúdo do About | Não iniciada | — | — | Precisa do William, não é tarefa de IA — ver Seção 9 |
+| 5 — Integração na página principal | Não iniciada | Claude (a definir com push por Grok ou Manus) | — | Só começa depois que Fases 2, 3 e 4 estiverem `Concluída` |
 | 6 — Limpeza | Não iniciada | — | — | — |
-| 7 — Regressão completa | Não iniciada | — | — | — |
+| 7 — Regressão completa | Não iniciada | — | — | Precisa de teste manual humano (William) em desktop e mobile |
+
+### ⚠️ Ponto de risco específico da Fase 1 — testar manualmente antes de prosseguir
+
+O `SmoothScroll.jsx` calcula os limites do scroll usando `document.body.scrollHeight`, lido a cada evento de wheel. O GSAP, ao fazer `pin: true`, insere um elemento espaçador que muda essa altura exatamente no início e no fim do pin. Existe risco de um salto de scroll bem nesses dois momentos específicos (não durante o pin em si, que deve estar ok).
+
+**Teste manual necessário antes de confiar 100% na Fase 1:** abrir `/test-gsap`, rolar bem devagar exatamente no momento em que a seção trava (início do pin) e exatamente no momento em que ela destrava (fim do pin), tanto descendo quanto subindo. Se não houver nenhum salto perceptível nesses dois pontos, a Fase 1 pode ser marcada como `Concluída` de verdade.
+
+---
+
+## ATRIBUIÇÕES ATUAIS (15/08/2026)
+
+- **Grok** (push direto) — Fase 2: Selected Work isolado, em `/test-selected-work` (ou nome equivalente). Antes de começar, fazer o teste manual descrito acima em `/test-gsap`.
+- **Manus** (push direto) — Fase 3: Services empilhados isolado, em `/test-services-stack` (ou nome equivalente). Pode trabalhar ao mesmo tempo que o Grok.
+- **Claude** (sem push — analisa, constrói/testa build no próprio ambiente, entrega arquivos para o William ou para quem tiver push aplicar) — acompanha os commits de Grok e Manus conforme forem subindo, sinaliza problemas cedo, e assume a Fase 5 (integração) assim que 2, 3 e 4 estiverem prontas — a integração exige entender as duas peças juntas, então faz sentido ser uma única pessoa/IA cuidando disso.
+- **William** — decide a Fase 4 (onde entra o conteúdo do About atual na nova estrutura, ver Seção 9) e faz a verificação manual da Fase 1 antes de liberar Grok/Manus pra valer.
 
 **Status possíveis:** `Não iniciada` / `Em andamento` / `Bloqueada` (explicar o motivo em Notas) / `Concluída`
 
