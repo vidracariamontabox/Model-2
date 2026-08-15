@@ -156,12 +156,25 @@ O `SmoothScroll.jsx` calcula os limites do scroll usando `document.body.scrollHe
 
 ---
 
-## ATRIBUIÇÕES ATUAIS (15/08/2026)
+## ATRIBUIÇÕES ATUAIS (15/08/2026) — MODELO SEQUENCIAL
 
-- **Grok** (push direto) — Fase 2: Selected Work isolado, em `/test-selected-work` (ou nome equivalente). Antes de começar, fazer o teste manual descrito acima em `/test-gsap`.
-- **Manus** (push direto) — Fase 3: Services empilhados isolado, em `/test-services-stack` (ou nome equivalente). Pode trabalhar ao mesmo tempo que o Grok.
-- **Claude** (sem push — analisa, constrói/testa build no próprio ambiente, entrega arquivos para o William ou para quem tiver push aplicar) — acompanha os commits de Grok e Manus conforme forem subindo, sinaliza problemas cedo, e assume a Fase 5 (integração) assim que 2, 3 e 4 estiverem prontas — a integração exige entender as duas peças juntas, então faz sentido ser uma única pessoa/IA cuidando disso.
-- **William** — decide a Fase 4 (onde entra o conteúdo do About atual na nova estrutura, ver Seção 9) e faz a verificação manual da Fase 1 antes de liberar Grok/Manus pra valer.
+Mudança de modelo: não é mais Grok e Manus em paralelo em fases diferentes. Agora é sequencial, uma etapa de cada vez:
+
+- **Claude** — supervisiona, escreve o prompt técnico de cada etapa (com base neste documento e na análise da Trionn), revisa o código depois que é commitado (clonando o repo).
+- **Manus** (push direto) — constrói e faz push de cada etapa, uma de cada vez, seguindo o prompt que o Claude escrever.
+- **Grok** (push direto) — entra em contingência: só assume uma etapa se o Manus falhar ou travar nela. Quando isso acontece, pega o mesmo prompt (ajustado se necessário com o que já se sabe do que não funcionou).
+- **William** — decide a Fase 4 (onde entra o conteúdo do About atual na nova estrutura, ver Seção 9) quando chegarmos nela.
+
+### Fase 1 — status final
+Considerada resolvida por decisão do William: o comportamento específico dessa seção de teste vai mudar de qualquer forma nas próximas fases, então o ponto de risco de fronteira do pin não bloqueia mais o andamento. Segue sendo algo a observar durante os testes manuais das próximas fases, sem ser um bloqueio formal.
+
+### Ordem das próximas etapas
+1. Fase 2 — Selected Work isolado (**próxima, prompt já escrito, aguardando o Manus**)
+2. Fase 3 — Services empilhados isolado
+3. Fase 4 — decisão de conteúdo (William)
+4. Fase 5 — integração na página principal
+5. Fase 6 — limpeza
+6. Fase 7 — regressão completa
 
 **Status possíveis:** `Não iniciada` / `Em andamento` / `Bloqueada` (explicar o motivo em Notas) / `Concluída`
 
