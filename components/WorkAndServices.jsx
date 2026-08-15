@@ -191,14 +191,7 @@ export default function WorkAndServices() {
         ref={servicesStackSectionRef} 
         className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-black"
       >
-        <div className="absolute top-20 z-20 text-center">
-          <BlurTextReveal
-            text="Nossos Serviços"
-            animationType="chars"
-            stagger={0.05}
-            className="text-[2.5rem] leading-[1.1] md:text-6xl font-medium tracking-tight text-white uppercase"
-          />
-        </div>
+
         <div className="relative w-[90vw] max-w-4xl h-[60vh] mt-20 perspective-[93.75rem]">
           {SERVICE_CARDS.map((service, index) => (
             <div 
