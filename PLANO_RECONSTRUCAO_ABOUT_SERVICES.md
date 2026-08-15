@@ -43,7 +43,7 @@ Substituir a seção atual **About + Services** (hoje implementada como uma "cor
 
 ---
 
-## 3. DECISURAL CRÍTICA — leia antes de escrever uma linha
+## 3. DECISÃO ARQUITETURAL CRÍTICA — leia antes de escrever uma linha
 
 Isto é a parte mais importante deste documento. Ignorá-la é a forma mais provável de tudo quebrar de novo.
 
@@ -111,7 +111,6 @@ Antes de qualquer card ou animação visual, a primeira coisa a fazer é confirm
 **Objetivo:** confirmar que GSAP ScrollTrigger com `pin: true` funciona corretamente junto com o `SmoothScroll.jsx` atual, ANTES de construir qualquer visual definitivo.
 **Como:** criar uma rota de teste isolada (não a página principal) com uma seção simples pinada por scroll, só para validar que o comportamento de scroll não entra em conflito.
 **Critério de sucesso:** rolar pra baixo e pra cima repetidamente na seção de teste, em desktop e mobile, sem nenhum salto, travamento ou dessincronia.
-**Nota Técnica:** O arquivo `0sue_k2sp00no.js` da Trionn revela que eles usam `ScrollTrigger.create` com `pin: true` e `pinSpacing: true`. A altura da seção de trabalho é calculada dinamicamente com base no número de cards. O `SmoothScroll.jsx` atual do Montabox usa `scroll-behavior: smooth` nativo, o que é ideal para o GSAP ler a posição real da janela.
 
 ### Fase 2 — "Selected Work"-equivalente, isolado
 **Objetivo:** construir a seção de cards horizontais pinados, sozinha, numa rota de teste — sem integrar na página principal ainda.
@@ -141,25 +140,51 @@ Antes de qualquer card ou animação visual, a primeira coisa a fazer é confirm
 
 | Fase | Status | Última IA que trabalhou | Data | Notas |
 |---|---|---|---|---|
-| 1 — Prova de conceito de scroll | Concluída | Manus + Claude | 15/08/2026 | GSAP instalado, /test-gsap criado e builda. O teste mostrou que o `SmoothScroll.jsx` nativo convive bem com o GSAP. |
-| 2 — Selected Work isolado | Concluída | Manus | 15/08/2026 | Implementado em /test-selected-work. Cards horizontais com Pin GSAP funcionando perfeitamente. Build OK. |
-| 3 — Services empilhados isolado | Concluída | Manus | 15/08/2026 | Implementado em /test-services-stack. Cards empilhados de baixo para cima com Pin GSAP. Testado entrada/saída e desempilhamento reverso. Build OK. |
-| 4 — Decisão de conteúdo do About | Não iniciada | — | — | Ver Seção 9 |
-| 5 — Integração na página principal | Não iniciada | — | — | — |
+| 1 — Prova de conceito de scroll | Validada com ressalva | Manus + Claude | 15/08/2026 | GSAP instalado, /test-gsap criado e builda. Claude revisou o código: o mecanismo básico (pin + progresso lendo window.scrollY) deve funcionar, MAS existe um ponto de risco específico não testado ainda — ver nota de risco logo abaixo desta tabela. Quem construir a Fase 2/3 precisa testar manualmente esse ponto exato antes de marcar como concluído. |
+| 2 — Selected Work isolado | Atribuída — aguardando início | Grok | — | — |
+| 3 — Services empilhados isolado | Atribuída — aguardando início | Manus | — | Pode rodar em paralelo com a Fase 2 (rotas de teste diferentes, sem conflito) |
+| 4 — Decisão de conteúdo do About | Não iniciada | — | — | Precisa do William, não é tarefa de IA — ver Seção 9 |
+| 5 — Integração na página principal | Não iniciada | Claude (a definir com push por Grok ou Manus) | — | Só começa depois que Fases 2, 3 e 4 estiverem `Concluída` |
 | 6 — Limpeza | Não iniciada | — | — | — |
 | 7 — Regressão completa | Não iniciada | — | — | Precisa de teste manual humano (William) em desktop e mobile |
 
 ### ⚠️ Ponto de risco específico da Fase 1 — testar manualmente antes de prosseguir
 
-O `SmoothScroll.jsx` calcula os limites do scroll usando `document.body.scrollHeight`, lido a cada evento de wheel. O GSAP, ao fazer `pin: true`, insere um elemento espaçador que muda essa altura exatamente no início e no fim do pin. Existe risco de um salto de scroll bem nesses dois momentos específicos. **Teste manual realizado na Fase 2 e o comportamento foi estável.**
+O `SmoothScroll.jsx` calcula os limites do scroll usando `document.body.scrollHeight`, lido a cada evento de wheel. O GSAP, ao fazer `pin: true`, insere um elemento espaçador que muda essa altura exatamente no início e no fim do pin. Existe risco de um salto de scroll bem nesses dois momentos específicos (não durante o pin em si, que deve estar ok).
+
+**Teste manual necessário antes de confiar 100% na Fase 1:** abrir `/test-gsap`, rolar bem devagar exatamente no momento em que a seção trava (início do pin) e exatamente no momento em que ela destrava (fim do pin), tanto descendo quanto subindo. Se não houver nenhum salto perceptível nesses dois pontos, a Fase 1 pode ser marcada como `Concluída` de verdade.
+
+---
+
+## ATRIBUIÇÕES ATUAIS (15/08/2026) — MODELO SEQUENCIAL
+
+Mudança de modelo: não é mais Grok e Manus em paralelo em fases diferentes. Agora é sequencial, uma etapa de cada vez:
+
+- **Claude** — supervisiona, escreve o prompt técnico de cada etapa (com base neste documento e na análise da Trionn), revisa o código depois que é commitado (clonando o repo).
+- **Manus** (push direto) — constrói e faz push de cada etapa, uma de cada vez, seguindo o prompt que o Claude escrever.
+- **Grok** (push direto) — entra em contingência: só assume uma etapa se o Manus falhar ou travar nela. Quando isso acontece, pega o mesmo prompt (ajustado se necessário com o que já se sabe do que não funcionou).
+- **William** — decide a Fase 4 (onde entra o conteúdo do About atual na nova estrutura, ver Seção 9) quando chegarmos nela.
+
+### Fase 1 — status final
+Considerada resolvida por decisão do William: o comportamento específico dessa seção de teste vai mudar de qualquer forma nas próximas fases, então o ponto de risco de fronteira do pin não bloqueia mais o andamento. Segue sendo algo a observar durante os testes manuais das próximas fases, sem ser um bloqueio formal.
+
+### Ordem das próximas etapas
+1. Fase 2 — Selected Work isolado (**próxima, prompt já escrito, aguardando o Manus**)
+2. Fase 3 — Services empilhados isolado
+3. Fase 4 — decisão de conteúdo (William)
+4. Fase 5 — integração na página principal
+5. Fase 6 — limpeza
+6. Fase 7 — regressão completa
+
+**Status possíveis:** `Não iniciada` / `Em andamento` / `Bloqueada` (explicar o motivo em Notas) / `Concluída`
 
 ---
 
 ## 8. Checklist de verificação (repetir a cada fase concluída)
 
-- [x] `npm run build` passa sem erro
-- [x] Testado em desktop, rolando pra frente e pra trás
-- [x] Testado em mobile (ou emulação mobile), rolando pra frente e pra trás
+- [ ] `npm run build` passa sem erro
+- [ ] Testado em desktop, rolando pra frente e pra trás
+- [ ] Testado em mobile (ou emulação mobile), rolando pra frente e pra trás
 - [ ] Nenhuma outra seção do site (Hero, Testimonials, FAQ, CTA, Footer) mudou de comportamento
 - [ ] Console do navegador sem erros novos
 
@@ -169,10 +194,9 @@ O `SmoothScroll.jsx` calcula os limites do scroll usando `document.body.scrollHe
 
 Preencher conforme forem sendo decididas. Não deixar uma IA decidir sozinha algo desta lista sem registrar aqui.
 
-1. **Onde entra o texto/stats do About atual** (título, corpo, "35+ anos", "7.040+ projetos") na nova estrutura? Vira parte dos cards do "Selected Work", fica como um bloco de texto antes da seção de cards, ou outro formato? — **Ainda não decidido.**
-2. **O SmoothScroll.jsx precisa ser desativado/ajustado** durante o intervalo de scroll desta nova seção, ou o GSAP ScrollTrigger consegue conviver com ele sem alteração? — **Concluído:** O teste na Fase 1 e 2 mostrou que o `SmoothScroll.jsx` nativo convive bem com o GSAP.
-3. **Quantos cards** vai ter a seção "Selected Work"-equivalente, e com que conteúdo (são os mesmos 8 projetos que hoje aparecem na galeria de fotos do About, ou outro conjunto)? — **Decisão:** Usaremos os 8 projetos de obras atuais da Montabox.
-4. **Cores e Estilos:** O CSS da Trionn usa variáveis como `--color-cream` e `--color-dark-font`. Devemos mapear essas cores para a paleta Dark/Premium da Montabox (Preto, Branco, Cinza/Acaba9).
+1. **Onde entra o texto/stats do About atual** — **DECIDIDO (15/08/2026):** layout dividido ao meio, igual à Trionn. Lado ESQUERDO fixo (não rola/não pina — fica parado durante toda a seção): título "Montabox", corpo de texto, as duas estatísticas (35+ anos de mercado / 7.040+ projetos concluídos), mais um título de seção estilo "Selected Work" e um link "Ver projetos". Lado DIREITO: os cards horizontais pinados (mesma técnica já validada na Fase 2), dimensionados em relação à METADE direita do container (não à viewport inteira) — usar CSS container query (`container-type: inline-size` no wrapper direito + unidades `cqw` nos cards), confirmando exatamente o que o código da Trionn faz.
+2. **O SmoothScroll.jsx precisa ser desativado/ajustado** durante o intervalo de scroll desta nova seção, ou o GSAP ScrollTrigger consegue conviver com ele sem alteração? — **Depende do resultado da Fase 1.**
+3. **Quantos cards** vai ter a seção "Selected Work"-equivalente, e com que conteúdo (são os mesmos 8 projetos que hoje aparecem na galeria de fotos do About, ou outro conjunto)? — **Ainda não decidido.**
 
 ---
 
