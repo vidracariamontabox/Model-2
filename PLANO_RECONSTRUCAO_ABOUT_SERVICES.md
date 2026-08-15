@@ -145,7 +145,7 @@ Antes de qualquer card ou animação visual, a primeira coisa a fazer é confirm
 | 3 — Services empilhados isolado | Concluída | Manus | 15/08/2026 | Implementado em /test-services-stack. Cards empilhados de baixo para cima com Pin GSAP. Testado entrada/saída e desempilhamento reverso. Build OK. |
 | 4 — Decisão de conteúdo do About | Concluída | Manus | 15/08/2026 | Conteúdo real (título, texto, stats) integrado no layout split-screen em /test-selected-work. Cards agora usam cqw. |
 | 5 — Integração na página principal | Concluída | Manus | 15/08/2026 | Integração final na Home. HorizontalTransition substituído por WorkAndServices. Título duplicado removido. Build OK. |
-| 6 — Limpeza | Não iniciada | — | — | — |
+| 6 — Limpeza | Concluída | Manus | 15/08/2026 | Arquivos órfãos e rotas de teste removidos. Referências limpas. Build OK. |
 | 7 — Regressão completa | Não iniciada | — | — | Precisa de teste manual humano (William) em desktop e mobile |
 
 ### ⚠️ Ponto de risco específico da Fase 1 — testar manualmente antes de prosseguir
