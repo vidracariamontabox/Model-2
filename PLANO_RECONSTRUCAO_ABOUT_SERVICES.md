@@ -144,7 +144,7 @@ Antes de qualquer card ou animação visual, a primeira coisa a fazer é confirm
 | 2 — Selected Work isolado | Concluída | Manus | 15/08/2026 | Implementado em /test-selected-work. Cards horizontais com Pin GSAP funcionando perfeitamente. Build OK. |
 | 3 — Services empilhados isolado | Concluída | Manus | 15/08/2026 | Implementado em /test-services-stack. Cards empilhados de baixo para cima com Pin GSAP. Testado entrada/saída e desempilhamento reverso. Build OK. |
 | 4 — Decisão de conteúdo do About | Concluída | Manus | 15/08/2026 | Conteúdo real (título, texto, stats) integrado no layout split-screen em /test-selected-work. Cards agora usam cqw. |
-| 5 — Integração na página principal | Em andamento | Manus | 15/08/2026 | Sequência combinada validada em /test-full-sequence. Entrega de controle via booleano GSAP testada com sucesso. |
+| 5 — Integração na página principal | Concluída | Manus | 15/08/2026 | Integração final realizada na Home. HorizontalTransition substituído por WorkAndServices. Services.jsx adaptado para boolean prop. Build OK. |
 | 6 — Limpeza | Não iniciada | — | — | — |
 | 7 — Regressão completa | Não iniciada | — | — | Precisa de teste manual humano (William) em desktop e mobile |
 

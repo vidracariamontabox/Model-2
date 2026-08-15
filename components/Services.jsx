@@ -4,7 +4,6 @@ import {motion} from "framer-motion";
 import BlurTextReveal from "./ui/BlurTextReveal";
 
 const services = ["Fachada Pele de Vidro.", "Esquadrias de Alumínio.", "Painel Ripado."];
-const CURTAIN_COMPLETE_PROGRESS = 0.85;
 const READING_DELAY = 800; // Tempo de leitura em ms
 
 function CursiveAltoPadrao({play}) {
@@ -20,47 +19,38 @@ function CursiveAltoPadrao({play}) {
   );
 }
 
-export default function Services({transitionProgress}) {
+export default function Services({ isRevealed }) {
   const [isHeaderReady, setIsHeaderReady] = useState(false);
   const timerRef = useRef(null);
-  const lastDirection = useRef("down");
 
   useEffect(() => {
-    if (!transitionProgress) {
+    // Fallback: se isRevealed for undefined (não passado), mostra imediatamente
+    if (isRevealed === undefined) {
       setIsHeaderReady(true);
       return;
     }
 
-    const unsubscribe = transitionProgress.on("change", (value) => {
-      const prevValue = transitionProgress.getPrevious();
-      const direction = value > prevValue ? "down" : "up";
-
-      // Se a cortina está aberta o suficiente
-      if (value >= CURTAIN_COMPLETE_PROGRESS) {
-        // Se mudamos de direção ou se acabamos de atingir o ponto de abertura
-        if (!isHeaderReady && !timerRef.current) {
-          timerRef.current = setTimeout(() => {
-            setIsHeaderReady(true);
-            timerRef.current = null;
-          }, READING_DELAY);
-        }
-      } else {
-        // Se a cortina está fechando, resetamos o estado imediatamente
-        if (timerRef.current) {
-          clearTimeout(timerRef.current);
+    if (isRevealed) {
+      // Se a seção foi revelada, inicia o delay de leitura
+      if (!isHeaderReady && !timerRef.current) {
+        timerRef.current = setTimeout(() => {
+          setIsHeaderReady(true);
           timerRef.current = null;
-        }
-        setIsHeaderReady(false);
+        }, READING_DELAY);
       }
-      
-      lastDirection.current = direction;
-    });
+    } else {
+      // Se a seção sumiu (scroll para cima), reseta tudo instantaneamente
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      setIsHeaderReady(false);
+    }
 
     return () => {
-      unsubscribe();
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [transitionProgress, isHeaderReady]);
+  }, [isRevealed, isHeaderReady]);
 
   return (
     <section
