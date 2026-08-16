@@ -72,6 +72,7 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 | 14 — Revisão e Ajustes Finais | **CONCLUÍDA** | Manus | 16/08 | **Revisão Técnica:** Fix de lacunas entre seções, fluidez do Lenis com `lerp: 0.1`, primeiro card sem efeito bottom-up e Services posicionado fisicamente atrás do About. |
 | 15 — Revelação Horizontal Trionn | **CONCLUÍDA** | Manus | 16/08 | **Alta Fidelidade:** Cortina alterada para deslizamento horizontal (`xPercent: -100`). Corrigida visibilidade do Instagram e sincronia do trilho. |
 | 16 — Refino de Transição e Visibilidade | **CONCLUÍDA** | Manus | 16/08 | **Ajuste Fino:** Removido efeito de surgimento em Services (exceto título), corrigida largura do trilho para o Instagram e sincronizada a revelação horizontal. |
+| 17 — Ajustes de Ritmo e Entrada | **CONCLUÍDA** | Manus | 16/08 | **Refino de UX:** Reduzido delay inicial, antecipada a entrada dos cards (bottom-up) para permitir múltiplos cards visíveis e reestruturado card do Instagram como bloco padrão do trilho. |
 
 ---
 

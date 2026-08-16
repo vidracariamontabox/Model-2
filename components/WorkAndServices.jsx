@@ -40,14 +40,14 @@ export default function WorkAndServices() {
     const track = trackRef.current;
     const wrapper = wrapperRef.current;
     
-    // Filtra inners válidos e garante ordem correta
-    const inners = cardInnerRefs.current.filter(Boolean);
-    
     const getScrollAmount = () => {
       return track.scrollWidth - window.innerWidth;
     };
 
-    // Configuração inicial: Pula Intro (0) e Primeira Foto (1)
+    // Filtra inners válidos
+    const inners = cardInnerRefs.current.filter(Boolean);
+
+    // Configuração inicial
     inners.forEach((inner, i) => {
       if (i > 1) {
         gsap.set(inner, { y: 550, opacity: 1 });
@@ -56,27 +56,26 @@ export default function WorkAndServices() {
       }
     });
 
-    // Refresh ScrollTrigger após montagem para capturar largura real
     ScrollTrigger.refresh();
 
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: () => `+=${track.scrollWidth + window.innerHeight * 2}`, 
+        end: () => `+=${track.scrollWidth + window.innerHeight * 2.5}`, 
         pin: true,
         pinSpacing: true,
-        scrub: 0.5, // Aumentado levemente para maior suavidade
+        scrub: 0.5,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          // Revelação começa quando o scroll horizontal está quase no fim (80%)
-          setIsServicesRevealed(self.progress > 0.75);
+          // Revelação começa na parte final da timeline (após scroll e delay)
+          setIsServicesRevealed(self.progress > 0.88);
         }
       }
     });
 
-    // 1. Reading Delay no About
-    tl.to({}, { duration: 0.5 });
+    // 1. Reading Delay no About (Reduzido pela metade conforme pedido)
+    tl.to({}, { duration: 0.25 });
 
     // 2. Scroll Horizontal e Animação Bottom-Up
     tl.to(track, {
@@ -87,7 +86,6 @@ export default function WorkAndServices() {
         const currentX = gsap.getProperty(track, "x");
         const viewportWidth = window.innerWidth;
         
-        // Recalcula posições dinamicamente para evitar erros de redimensionamento
         inners.forEach((inner, i) => {
           if (i <= 1) return;
 
@@ -95,19 +93,20 @@ export default function WorkAndServices() {
           if (!card) return;
           
           const cardLeftInViewport = card.offsetLeft + currentX;
-          const cardWidth = card.offsetWidth;
-          const cardCenterX = cardLeftInViewport + cardWidth / 2;
           
-          // Progresso de entrada do card na tela
-          const progress = gsap.utils.clamp(0, 1, 1 - (cardCenterX - viewportWidth / 2) / (viewportWidth / 2));
+          // Ajustado para entrar ANTES (mais cedo na tela)
+          // O card começa a subir assim que o seu lado esquerdo entra no viewport
+          const progress = gsap.utils.clamp(0, 1, (viewportWidth - cardLeftInViewport) / (viewportWidth * 0.8));
           const yOffset = 550 * (1 - Math.pow(progress, 4));
           gsap.set(inner, { y: yOffset, force3D: true });
         });
       }
     });
 
-    // 3. Efeito Cortina Horizontal
-    // O wrapper inteiro desliza para a esquerda, revelando o Services que está fixo atrás
+    // 3. Pequena pausa para leitura do Instagram antes da cortina
+    tl.to({}, { duration: 0.5 });
+
+    // 4. Efeito Cortina Horizontal
     tl.to(wrapper, {
       xPercent: -100,
       ease: "power2.inOut",
@@ -222,22 +221,31 @@ export default function WorkAndServices() {
             </div>
           ))}
 
-          {/* BLOCO FINAL: Instagram (50vw) */}
-          <div className="flex-shrink-0 w-screen md:w-[50vw] h-full flex flex-col justify-center items-center text-center px-12 md:px-20 bg-black border-l border-white/5">
-            <div ref={el => cardInnerRefs.current[IMAGES.length + 1] = el} className="will-change-transform flex flex-col items-center max-w-md">
-              <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen mb-8 leading-tight tracking-tight">
-                Visite nosso <br /> <span className="text-[#acaba9]">Instagram</span>
-              </h3>
-              <p className="font-neuehaas text-[0.9rem] text-[#75706f] mb-12 max-w-xs leading-relaxed">
-                Confira nossa coleção completa de experiências e projetos executados.
-              </p>
-              <a 
-                href="https://www.instagram.com/vidracariamontabox/" 
-                target="_blank" 
-                className="px-8 py-4 border border-white/20 rounded-tr-[99px] rounded-bl-[99px] rounded-br-[99px] bg-transparent text-white font-neuehaas text-[0.65rem] tracking-[0.16em] uppercase hover:bg-white hover:text-black transition-all duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]"
-              >
-                Seguir no Instagram →
-              </a>
+          {/* BLOCO FINAL: Instagram (Reestruturado como um card de imagem para garantir visibilidade) */}
+          <div className="flex-shrink-0 h-full flex items-center justify-center px-[40px] border-l border-white/5 bg-black">
+            <div 
+              ref={el => cardInnerRefs.current[IMAGES.length + 1] = el}
+              className="flex flex-col items-center will-change-transform"
+            >
+              {/* Container com o mesmo aspect ratio das imagens, mas sem bordas e apenas com texto */}
+              <div className="relative h-[70vh] aspect-[670/460] max-w-[90vw] flex flex-col justify-center items-center text-center bg-transparent">
+                <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen mb-8 leading-tight tracking-tight">
+                  Visite nosso <br /> <span className="text-[#acaba9]">Instagram</span>
+                </h3>
+                <p className="font-neuehaas text-[0.9rem] text-[#75706f] mb-12 max-w-xs leading-relaxed">
+                  Confira nossa coleção completa de experiências e projetos executados.
+                </p>
+                <a 
+                  href="https://www.instagram.com/vidracariamontabox/" 
+                  target="_blank" 
+                  className="px-8 py-4 border border-white/20 rounded-tr-[99px] rounded-bl-[99px] rounded-br-[99px] bg-transparent text-white font-neuehaas text-[0.65rem] tracking-[0.16em] uppercase hover:bg-white hover:text-black transition-all duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]"
+                >
+                  Seguir no Instagram →
+                </a>
+              </div>
+              
+              {/* Espaçador para manter o rótulo alinhado se necessário, ou apenas vazio */}
+              <div className="mt-6 w-full h-[60px]" />
             </div>
           </div>
 
