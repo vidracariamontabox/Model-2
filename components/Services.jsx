@@ -63,7 +63,7 @@ export default function Services({ isRevealed }) {
             animationType="chars"
             stagger={0.04}
             play={isHeaderReady}
-            className="font-familjen text-[0.95rem] font-bold tracking-tight text-[#eaeaea] leading-none uppercase">
+            className="font-familjen text-[1.1rem] font-bold tracking-tight text-[#eaeaea] leading-none">
             Nossos.<span className="text-[#acaba9]">Serviços</span>
           </BlurTextReveal>
 
@@ -99,7 +99,7 @@ export default function Services({ isRevealed }) {
           initial={{ opacity: 0 }}
           animate={isHeaderReady ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="mt-20 flex items-center justify-center"
+          className="mt-20 flex items-center justify-start"
         >
           <a
             href="https://wa.me/5516981984000"

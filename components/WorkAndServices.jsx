@@ -19,27 +19,6 @@ const PROJECTS = [
   { id: 6, title: "Projeto 06", color: "bg-zinc-700" },
 ];
 
-const SERVICE_CARDS = [
-  { 
-    id: "card-1", 
-    title: "Fachada Pele de Vidro.", 
-    description: "Soluções modernas e elegantes para fachadas comerciais e residenciais.",
-    color: "bg-zinc-900"
-  },
-  { 
-    id: "card-2", 
-    title: "Esquadrias de Alumínio.", 
-    description: "Serralheria de alta performance com acabamento refinado.",
-    color: "bg-zinc-800"
-  },
-  { 
-    id: "card-3", 
-    title: "Painel Ripado.", 
-    description: "Revestimentos em alumínio que reproduzem a estética da madeira.",
-    color: "bg-zinc-900"
-  },
-];
-
 export default function WorkAndServices() {
   const containerRef = useRef(null);
   
@@ -48,18 +27,13 @@ export default function WorkAndServices() {
   const selectedWorkRightColRef = useRef(null);
   const selectedWorkTrackRef = useRef(null);
   
-  // Refs para Services Stack
-  const servicesStackSectionRef = useRef(null);
-  const servicesCardsRef = useRef([]);
-
   // Estado para controle da seção final (Nossos Serviços)
   const [isServicesRevealed, setIsServicesRevealed] = useState(false);
 
   useGSAP(() => {
     if (!selectedWorkSectionRef.current || !selectedWorkTrackRef.current || !selectedWorkRightColRef.current) return;
-    if (!servicesStackSectionRef.current) return;
 
-    // --- 1. SELECTED WORK TIMELINE ---
+    // --- SELECTED WORK TIMELINE ---
     const swTrack = selectedWorkTrackRef.current;
     const swRightCol = selectedWorkRightColRef.current;
     
@@ -74,56 +48,19 @@ export default function WorkAndServices() {
         pinSpacing: true,
         scrub: 1,
         invalidateOnRefresh: true,
-      }
-    }).to(swTrack, {
-      x: () => -calculateSwScroll(),
-      ease: "none"
-    });
-
-    // --- 2. SERVICES STACK TIMELINE ---
-    const sCards = servicesCardsRef.current;
-    const scrollPerCard = 800;
-    const totalServicesScroll = scrollPerCard * sCards.length;
-
-    // Reset cards position
-    sCards.forEach((card, index) => {
-      if (index > 0) gsap.set(card, { yPercent: 100, opacity: 0 });
-    });
-
-    const sTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: servicesStackSectionRef.current,
-        start: "top top",
-        end: `+=${totalServicesScroll}`,
-        pin: true,
-        pinSpacing: true,
-        scrub: 1,
-        invalidateOnRefresh: true,
         onUpdate: (self) => {
-          if (self.progress > 0.95) {
+          // Revela a seção de serviços real ao final do scroll horizontal
+          if (self.progress > 0.98) {
             setIsServicesRevealed(true);
           } else {
             setIsServicesRevealed(false);
           }
         }
       }
+    }).to(swTrack, {
+      x: () => -calculateSwScroll(),
+      ease: "none"
     });
-
-    sCards.forEach((card, index) => {
-      if (index > 0) {
-        sTl.to(card, {
-          yPercent: 0,
-          opacity: 1,
-          ease: "power2.inOut",
-          duration: 1,
-        }, `card-${index}`);
-        sTl.to({}, { duration: 0.5 }); 
-      } else {
-        sTl.to({}, { duration: 0.5 });
-      }
-    });
-
-    sTl.to({}, { duration: 0.5 });
 
   }, { scope: containerRef });
 
@@ -143,13 +80,11 @@ export default function WorkAndServices() {
             </p>
             
             <div className="flex flex-col mb-8">
-              <HoverBlur>
-                <h2 className="text-[clamp(1.8rem,4vw,3rem)] uppercase font-bold tracking-tight leading-[1.02] text-[#eaeaea] font-familjen">
-                  Montabox
-                </h2>
-              </HoverBlur>
+              <h2 className="text-[clamp(1.8rem,4vw,3rem)] uppercase font-bold tracking-tight leading-[1.02] text-[#eaeaea] font-familjen">
+                <HoverBlur>Montabox</HoverBlur>
+              </h2>
               <BlurTextReveal
-                text="Vidraçaria e Serralheria de Alumínio."
+                html='Vidraçaria e Serralheria <span className="text-[#acaba9]">de Alumínio.</span>'
                 animationType="words"
                 stagger={0.1}
                 delay={0.2}
@@ -209,28 +144,7 @@ export default function WorkAndServices() {
         </div>
       </section>
 
-      {/* SEÇÃO 2: Services Stack (Cards Empilhados) */}
-      <section 
-        ref={servicesStackSectionRef} 
-        className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-black"
-      >
-        <div className="relative w-[90vw] max-w-4xl h-[60vh] perspective-[93.75rem]">
-          {SERVICE_CARDS.map((service, index) => (
-            <div 
-              key={service.id}
-              ref={(el) => (servicesCardsRef.current[index] = el)}
-              className="absolute inset-0 z-10 will-change-[transform,opacity] transform-3d"
-            >
-              <div className={`w-full h-full rounded-2xl ${service.color} border border-white/10 flex flex-col justify-center items-center p-10 text-center shadow-2xl backdrop-blur-sm`}>
-                <h3 className="font-familjen text-4xl md:text-6xl font-bold uppercase text-[#eaeaea] mb-8 leading-tight">{service.title}</h3>
-                <p className="font-neuehaas text-lg md:text-xl text-[#acaba9] max-w-2xl font-light leading-relaxed">{service.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* SEÇÃO 3: Services Real (Lista Completa) */}
+      {/* SEÇÃO 2: Services Real (Lista Completa) - Agora aparece logo após o Selected Work */}
       <Services isRevealed={isServicesRevealed} />
 
     </div>
