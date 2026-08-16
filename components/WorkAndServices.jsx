@@ -8,9 +8,11 @@ import { useGSAP } from "@gsap/react";
 import BlurTextReveal from "./ui/BlurTextReveal";
 import HoverBlur from "./ui/HoverBlur";
 import Services from "./Services";
-import "../Trionn/0-x39_77jza10.css";
-import "../Trionn/0wf1gwg29cqjw.css";
-import "../Trionn/0xt8hh0aijjr~.css";
+
+// Trionn CSS removido para evitar poluição global da tipografia (afetava Hero e outras seções)
+// import "../Trionn/0-x39_77jza10.css";
+// import "../Trionn/0wf1gwg29cqjw.css";
+// import "../Trionn/0xt8hh0aijjr~.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -43,8 +45,8 @@ export default function WorkAndServices() {
       return track.scrollWidth - window.innerWidth;
     };
 
-    // Configuração inicial: inners começam em 550px (exceto o primeiro se for intro)
-    inners.forEach((inner, i) => {
+    // Configuração inicial: inners começam em 550px
+    inners.forEach((inner) => {
       gsap.set(inner, { y: 550 });
     });
 
@@ -54,10 +56,10 @@ export default function WorkAndServices() {
       end: () => `+=${track.scrollWidth + window.innerHeight * 1.2}`, 
       pin: true,
       pinSpacing: true,
-      scrub: 0.5, // Menor valor para scroll mais reativo/fluido
+      scrub: 0.5,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
-        const horizontalLimit = 0.85; // Aumentado para dar mais tempo ao trilho
+        const horizontalLimit = 0.85;
         
         if (self.progress <= horizontalLimit) {
           const normProgress = self.progress / horizontalLimit;
@@ -71,14 +73,9 @@ export default function WorkAndServices() {
             const rect = parent.getBoundingClientRect();
             const viewportWidth = window.innerWidth;
             
-            // Lógica Trionn: A animação começa quando o card toca a borda direita
             const cardLeft = rect.left;
-            const cardWidth = rect.width;
-            
-            // Progress 0 = borda direita, Progress 1 = totalmente visível à esquerda
             const progress = gsap.utils.clamp(0, 1, 1 - (cardLeft - viewportWidth / 2) / (viewportWidth / 2));
             
-            // Curva de potência 4 para um efeito ainda mais "explosivo" e fluido
             const yOffset = 550 * (1 - Math.pow(progress, 4));
             gsap.set(inner, { y: yOffset, force3D: true });
           });
@@ -115,7 +112,7 @@ export default function WorkAndServices() {
               </p>
               
               <div className="flex flex-col mb-8">
-                <h2 className="text-[clamp(1.8rem,4vw,3.5rem)] uppercase font-bold tracking-tight leading-[1.02] text-[#eaeaea] font-familjen">
+                <h2 className="text-[clamp(1.8rem,4vw,3rem)] uppercase font-bold tracking-tight leading-[1.02] text-[#eaeaea] font-familjen">
                   <HoverBlur>Montabox</HoverBlur>
                 </h2>
                 <BlurTextReveal
@@ -123,28 +120,28 @@ export default function WorkAndServices() {
                   animationType="words"
                   stagger={0.1}
                   delay={0.2}
-                  className="block overflow-hidden pl-[0.08em] text-[1.1rem] uppercase font-bold tracking-tight text-[#d8d8d8] font-familjen"
+                  className="block overflow-hidden pl-[0.08em] text-[0.95rem] uppercase font-bold tracking-tight text-[#d8d8d8] font-familjen"
                 />
               </div>
 
               <div className="mt-8 mb-8 h-px bg-[#75706f]/20 w-full" />
               
-              <p className="font-light text-[1rem] leading-[1.85] text-[#acaba9] mb-10 font-neuehaas">
+              <p className="font-light text-[0.95rem] leading-[1.85] text-[#acaba9] mb-10 font-neuehaas">
                 Especializada em projetos grandes, residenciais e comerciais, entregamos soluções que unem estética refinada e engenharia de alta performance.
               </p>
 
               <div className="grid grid-cols-1 gap-6">
                 <div className="flex flex-col gap-1">
-                  <span className="text-[clamp(1.5rem,2.5vw,2.5rem)] font-bold tracking-tight text-[#eaeaea] font-familjen">
+                  <span className="text-[clamp(1.2rem,2vw,2rem)] font-bold tracking-tight text-[#eaeaea] font-familjen">
                     35+
                   </span>
-                  <span className="text-[0.6rem] font-light tracking-[0.18em] uppercase text-[#75706f] font-neuehaas">anos de mercado</span>
+                  <span className="text-[0.55rem] font-light tracking-[0.18em] uppercase text-[#75706f] font-neuehaas">anos de mercado</span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-[clamp(1.5rem,2.5vw,2.5rem)] font-bold tracking-tight text-[#eaeaea] font-familjen">
+                  <span className="text-[clamp(1.2rem,2vw,2rem)] font-bold tracking-tight text-[#eaeaea] font-familjen">
                     7.040+
                   </span>
-                  <span className="text-[0.6rem] font-light tracking-[0.18em] uppercase text-[#75706f] font-neuehaas">projetos concluídos</span>
+                  <span className="text-[0.55rem] font-light tracking-[0.18em] uppercase text-[#75706f] font-neuehaas">projetos concluídos</span>
                 </div>
               </div>
 
@@ -153,7 +150,7 @@ export default function WorkAndServices() {
                   text="Selected Work"
                   animationType="chars"
                   stagger={0.05}
-                  className="font-familjen text-3xl md:text-4xl font-bold tracking-tight text-white uppercase"
+                  className="font-familjen text-2xl md:text-3xl font-bold tracking-tighter text-white uppercase"
                 />
               </div>
             </div>
@@ -176,11 +173,11 @@ export default function WorkAndServices() {
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-10 left-10 z-10">
-                  <span className="block text-[11px] uppercase tracking-[0.3em] text-white/50 mb-3 font-neuehaas font-bold">
+                <div className="absolute bottom-8 left-8 z-10">
+                  <span className="block text-[10px] uppercase tracking-[0.3em] text-white/50 mb-2 font-neuehaas font-bold">
                     {img.year} — Case Study
                   </span>
-                  <h3 className="text-3xl md:text-4xl font-bold uppercase text-white font-familjen leading-tight tracking-tight">
+                  <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen leading-tight tracking-tight">
                     {img.title}
                   </h3>
                 </div>
