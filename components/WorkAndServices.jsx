@@ -9,11 +9,6 @@ import BlurTextReveal from "./ui/BlurTextReveal";
 import HoverBlur from "./ui/HoverBlur";
 import Services from "./Services";
 
-// Trionn CSS removido para evitar poluição global da tipografia (afetava Hero e outras seções)
-// import "../Trionn/0-x39_77jza10.css";
-// import "../Trionn/0wf1gwg29cqjw.css";
-// import "../Trionn/0xt8hh0aijjr~.css";
-
 gsap.registerPlugin(ScrollTrigger);
 
 const IMAGES = [
@@ -156,7 +151,7 @@ export default function WorkAndServices() {
             </div>
           </div>
 
-          {/* BLOCOS DE OBRAS (50vw cada, vertical 4:5) */}
+          {/* BLOCOS DE OBRAS (50vw cada, vertical 60vh) */}
           {IMAGES.map((img, i) => (
             <div 
               key={i} 
@@ -164,20 +159,25 @@ export default function WorkAndServices() {
             >
               <div 
                 ref={el => cardInnerRefs.current[i + 1] = el}
-                className="relative w-full aspect-[4/5] group overflow-hidden bg-zinc-900 border border-white/5 will-change-transform"
+                className="w-full flex flex-col will-change-transform"
               >
-                <Image 
-                  src={img.src} 
-                  alt={img.alt} 
-                  fill 
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-8 left-8 z-10">
-                  <span className="block text-[10px] uppercase tracking-[0.3em] text-white/50 mb-2 font-neuehaas font-bold">
+                {/* Card da Imagem: 60vh de altura */}
+                <div className="relative w-full h-[60vh] group overflow-hidden bg-zinc-900 border border-white/5">
+                  <Image 
+                    src={img.src} 
+                    alt={img.alt} 
+                    fill 
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
+                </div>
+
+                {/* Rótulo: Fora do card, abaixo da imagem */}
+                <div className="mt-8 px-2">
+                  <span className="block text-[10px] uppercase tracking-[0.3em] text-white/40 mb-2 font-neuehaas font-bold">
                     {img.year} — Case Study
                   </span>
-                  <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen leading-tight tracking-tight">
+                  <h3 className="text-xl md:text-2xl font-bold uppercase text-white font-familjen leading-tight tracking-tight">
                     {img.title}
                   </h3>
                 </div>
