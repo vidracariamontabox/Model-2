@@ -146,7 +146,7 @@ Antes de qualquer card ou animação visual, a primeira coisa a fazer é confirm
 | 4 — Decisão de conteúdo do About | Concluída | Manus | 15/08/2026 | Conteúdo real (título, texto, stats) integrado no layout split-screen em /test-selected-work. Cards agora usam cqw. |
 | 5 — Integração na página principal | Concluída | Manus | 15/08/2026 | Integração final na Home. HorizontalTransition substituído por WorkAndServices. Título duplicado removido. Build OK. |
 | 6 — Limpeza | Concluída | Manus | 15/08/2026 | Arquivos órfãos e rotas de teste removidos. Referências limpas. Build OK. |
-| 7 — Regressão completa | Não iniciada | — | — | Precisa de teste manual humano (William) em desktop e mobile |
+| 7 — Regressão completa | Em andamento | Manus | 16/08/2026 | Aplicadas correções técnicas de SSR, Scroll e CSS na branch feat/reconstruction-cinematic. Pronto para teste 2. |
 
 ### ⚠️ Ponto de risco específico da Fase 1 — testar manualmente antes de prosseguir
 
