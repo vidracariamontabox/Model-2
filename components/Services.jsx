@@ -4,7 +4,7 @@ import {motion} from "framer-motion";
 import BlurTextReveal from "./ui/BlurTextReveal";
 
 const services = ["Fachada Pele de Vidro.", "Esquadrias de Alumínio.", "Painel Ripado."];
-const READING_DELAY = 800; // Tempo de leitura em ms
+const READING_DELAY = 100; // Reduzido drasticamente para aparecer logo
 
 function CursiveAltoPadrao({play}) {
   return (
@@ -30,35 +30,19 @@ export default function Services({ isRevealed }) {
     }
 
     if (isRevealed) {
-      if (!isHeaderReady && !timerRef.current) {
-        timerRef.current = setTimeout(() => {
-          setIsHeaderReady(true);
-          timerRef.current = null;
-        }, READING_DELAY);
-      }
+      // O título ainda tem o efeito, mas o resto já deve estar lá
+      setIsHeaderReady(true);
     } else {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
       setIsHeaderReady(false);
     }
-
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [isRevealed, isHeaderReady]);
+  }, [isRevealed]);
 
   return (
     <section
       id="servicos"
       className="relative z-10 h-full min-h-screen bg-[#121212] flex flex-col justify-center px-6 py-24 md:px-16 lg:px-24">
       <div className="max-w-7xl mx-auto w-full">
-        <motion.div
-          initial={{opacity: 0, y: 12}}
-          animate={isHeaderReady ? {opacity: 1, y: 0} : {opacity: 0, y: 12}}
-          transition={{duration: 0.5, ease: "easeOut"}}
-          className="mb-20 flex items-center justify-center gap-6">
+        <div className="mb-20 flex items-center justify-center gap-6">
           <BlurTextReveal
             animationType="chars"
             stagger={0.04}
@@ -70,15 +54,13 @@ export default function Services({ isRevealed }) {
           <span className="block w-px h-[2cm] bg-[#75706f]/30" />
 
           <CursiveAltoPadrao play={isHeaderReady} />
-        </motion.div>
+        </div>
 
         <div className="flex flex-col items-center text-center">
           {services.map((service, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isHeaderReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ opacity: 1, y: 0 }}
               whileHover={{x: 6}}
               className="group relative overflow-hidden cursor-default">
               <span className="font-familjen text-[clamp(2.8rem,7vw,7rem)] font-bold tracking-tight leading-[1.0] text-[#eaeaea] group-hover:text-[#acaba9] transition-colors duration-300 select-none uppercase">
@@ -95,12 +77,7 @@ export default function Services({ isRevealed }) {
           ))}
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={isHeaderReady ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="mt-20 flex items-center justify-start"
-        >
+        <div className="mt-20 flex items-center justify-start">
           <a
             href="https://wa.me/5516981984000"
             target="_blank"
@@ -109,7 +86,7 @@ export default function Services({ isRevealed }) {
             <span>Solicite seu orçamento</span>
             <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
           </a>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

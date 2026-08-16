@@ -30,59 +30,53 @@ export default function WorkAndServices() {
   const [isServicesRevealed, setIsServicesRevealed] = useState(false);
 
   useEffect(() => {
-    cardInnerRefs.current = cardInnerRefs.current.slice(0, IMAGES.length + 2);
+    // Inicializa o array de refs com o tamanho correto (Intro + Images + Instagram)
+    cardInnerRefs.current = new Array(IMAGES.length + 2).fill(null);
   }, []);
 
   useGSAP(() => {
     if (!containerRef.current || !trackRef.current || !wrapperRef.current) return;
 
     const track = trackRef.current;
-    const inners = cardInnerRefs.current.filter(Boolean);
     const wrapper = wrapperRef.current;
     
+    // Filtra inners válidos e garante ordem correta
+    const inners = cardInnerRefs.current.filter(Boolean);
+    
     const getScrollAmount = () => {
-      // O scroll horizontal deve ir até o final do card do Instagram
       return track.scrollWidth - window.innerWidth;
     };
 
-    // Pré-calcula as posições estáticas
-    const cardStaticLefts = inners.map((inner) => inner.parentElement.offsetLeft);
-    const cardWidths = inners.map((inner) => inner.parentElement.offsetWidth);
-
-    // Configuração inicial
+    // Configuração inicial: Pula Intro (0) e Primeira Foto (1)
     inners.forEach((inner, i) => {
       if (i > 1) {
-        gsap.set(inner, { y: 550 });
+        gsap.set(inner, { y: 550, opacity: 1 });
       } else {
-        gsap.set(inner, { y: 0 });
+        gsap.set(inner, { y: 0, opacity: 1 });
       }
     });
+
+    // Refresh ScrollTrigger após montagem para capturar largura real
+    ScrollTrigger.refresh();
 
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        // End estendido para garantir a visualização do Instagram e a transição horizontal
-        end: () => `+=${track.scrollWidth + window.innerHeight * 2.5}`, 
+        end: () => `+=${track.scrollWidth + window.innerHeight * 2}`, 
         pin: true,
         pinSpacing: true,
-        scrub: 0.3,
+        scrub: 0.5, // Aumentado levemente para maior suavidade
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          // Revelação baseada no progresso da timeline
-          // Ajustado para o novo movimento horizontal (xPercent)
-          const horizontalThreshold = 0.85; 
-          if (self.progress > horizontalThreshold) {
-            setIsServicesRevealed(true);
-          } else {
-            setIsServicesRevealed(false);
-          }
+          // Revelação começa quando o scroll horizontal está quase no fim (80%)
+          setIsServicesRevealed(self.progress > 0.75);
         }
       }
     });
 
     // 1. Reading Delay no About
-    tl.to({}, { duration: 0.8 });
+    tl.to({}, { duration: 0.5 });
 
     // 2. Scroll Horizontal e Animação Bottom-Up
     tl.to(track, {
@@ -93,12 +87,18 @@ export default function WorkAndServices() {
         const currentX = gsap.getProperty(track, "x");
         const viewportWidth = window.innerWidth;
         
+        // Recalcula posições dinamicamente para evitar erros de redimensionamento
         inners.forEach((inner, i) => {
-          if (i <= 1) return; // Pula Intro e Primeira Foto
+          if (i <= 1) return;
 
-          const cardLeftInViewport = cardStaticLefts[i] + currentX;
-          const cardCenterX = cardLeftInViewport + cardWidths[i] / 2;
+          const card = inner.parentElement;
+          if (!card) return;
           
+          const cardLeftInViewport = card.offsetLeft + currentX;
+          const cardWidth = card.offsetWidth;
+          const cardCenterX = cardLeftInViewport + cardWidth / 2;
+          
+          // Progresso de entrada do card na tela
           const progress = gsap.utils.clamp(0, 1, 1 - (cardCenterX - viewportWidth / 2) / (viewportWidth / 2));
           const yOffset = 550 * (1 - Math.pow(progress, 4));
           gsap.set(inner, { y: yOffset, force3D: true });
@@ -106,15 +106,18 @@ export default function WorkAndServices() {
       }
     });
 
-    // 3. Efeito Cortina HORIZONTAL (Igual à Trionn)
-    // Em vez de subir, o About/Work desliza para a ESQUERDA para revelar o Services atrás
+    // 3. Efeito Cortina Horizontal
+    // O wrapper inteiro desliza para a esquerda, revelando o Services que está fixo atrás
     tl.to(wrapper, {
       xPercent: -100,
       ease: "power2.inOut",
       duration: 1.5
     });
 
-    return () => tl.kill();
+    return () => {
+      tl.kill();
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
 
   }, { scope: containerRef });
 
@@ -122,19 +125,18 @@ export default function WorkAndServices() {
     <section ref={containerRef} className="relative w-full h-dvh bg-black overflow-hidden m-0 p-0">
       
       {/* Services fica FISICAMENTE ATRÁS (z-10) */}
-      <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none">
-        <div className={isServicesRevealed ? "pointer-events-auto h-full w-full" : "h-full w-full"}>
+      <div className="absolute inset-0 z-10 overflow-hidden">
+        <div className={`h-full w-full transition-opacity duration-500 ${isServicesRevealed ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-100"}`}>
           <Services isRevealed={isServicesRevealed} />
         </div>
       </div>
 
       {/* About/Work fica FISICAMENTE NA FRENTE (z-20) */}
-      {/* Agora desliza para a esquerda (xPercent) para revelar o fundo */}
       <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden m-0 p-0">
         <div ref={trackRef} className="flex h-full items-center will-change-transform m-0 p-0">
           
           {/* BLOCO 1: INTRO (50vw) */}
-          <div className="flex-shrink-0 w-screen md:w-[50vw] h-full flex flex-col justify-center px-12 md:px-20 border-r border-white/5">
+          <div className="flex-shrink-0 w-screen md:w-[50vw] h-full flex flex-col justify-center px-12 md:px-20 border-r border-white/5 bg-black">
             <div ref={el => cardInnerRefs.current[0] = el} className="max-w-md will-change-transform">
               <p className="mb-8 text-[0.68rem] font-light tracking-[0.28em] uppercase text-[#75706f] font-neuehaas">
                 Quem somos
@@ -189,7 +191,7 @@ export default function WorkAndServices() {
           {IMAGES.map((img, i) => (
             <div 
               key={i} 
-              className="flex-shrink-0 h-full flex items-center justify-center px-[40px] border-r border-white/5 bg-[#0a0a0a]"
+              className="flex-shrink-0 h-full flex items-center justify-center px-[40px] border-r border-white/5 bg-black"
             >
               <div 
                 ref={el => cardInnerRefs.current[i + 1] = el}
@@ -221,8 +223,8 @@ export default function WorkAndServices() {
           ))}
 
           {/* BLOCO FINAL: Instagram (50vw) */}
-          <div className="flex-shrink-0 w-screen md:w-[50vw] h-full flex flex-col justify-center items-center text-center p-10 bg-zinc-950 border-l border-white/5">
-            <div ref={el => cardInnerRefs.current[IMAGES.length + 1] = el} className="will-change-transform flex flex-col items-center">
+          <div className="flex-shrink-0 w-screen md:w-[50vw] h-full flex flex-col justify-center items-center text-center px-12 md:px-20 bg-black border-l border-white/5">
+            <div ref={el => cardInnerRefs.current[IMAGES.length + 1] = el} className="will-change-transform flex flex-col items-center max-w-md">
               <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen mb-8 leading-tight tracking-tight">
                 Visite nosso <br /> <span className="text-[#acaba9]">Instagram</span>
               </h3>
