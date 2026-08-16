@@ -49,13 +49,12 @@ export default function WorkAndServices() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: () => `+=${track.scrollWidth + window.innerHeight * 2}`, // Aumentado para acomodar os delays
+        end: () => `+=${track.scrollWidth + window.innerHeight * 2}`, 
         pin: true,
         pinSpacing: true,
         scrub: 0.5,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          // Lógica de revelação da cortina no final
           if (self.progress > 0.95) {
             setIsServicesRevealed(true);
           } else {
@@ -65,24 +64,21 @@ export default function WorkAndServices() {
       }
     });
 
-    // 1. Delay Inicial (Reading Delay no About) - Ida e Volta
-    tl.to({}, { duration: 0.5 }); // Pausa no início
+    // 1. Delay Inicial (Reading Delay no About)
+    tl.to({}, { duration: 0.5 });
 
-    // 2. Scroll Horizontal e Animação Bottom-Up dos Cards
+    // 2. Scroll Horizontal e Animação Bottom-Up
     tl.to(track, {
       x: () => -getScrollAmount(),
       ease: "none",
       duration: 3,
       onUpdate: function() {
-        const horizontalProgress = this.progress();
-        
         inners.forEach((inner) => {
           const parent = inner.parentElement;
           const rect = parent.getBoundingClientRect();
           const viewportWidth = window.innerWidth;
           
           const cardLeft = rect.left;
-          // Progress 0 = borda direita, Progress 1 = totalmente visível
           const progress = gsap.utils.clamp(0, 1, 1 - (cardLeft - viewportWidth / 2) / (viewportWidth / 2));
           
           const yOffset = 550 * (1 - Math.pow(progress, 4));
@@ -97,6 +93,8 @@ export default function WorkAndServices() {
       ease: "power2.inOut",
       duration: 1
     });
+
+    return () => tl.kill();
 
   }, { scope: containerRef });
 
@@ -158,29 +156,29 @@ export default function WorkAndServices() {
             </div>
           </div>
 
-          {/* BLOCOS DE OBRAS (Proporção 4:5 de pé, 60vh altura -> 48vh largura) */}
+          {/* BLOCOS DE OBRAS (Proporção 4:5 deitado, 60vh altura -> 75vh largura) */}
           {IMAGES.map((img, i) => (
             <div 
               key={i} 
-              className="flex-shrink-0 w-screen md:w-[50vw] h-full flex items-center justify-center px-10 md:px-16 border-r border-white/5 bg-[#0a0a0a]"
+              className="flex-shrink-0 w-screen md:w-[80vw] h-full flex items-center justify-center px-10 md:px-16 border-r border-white/5 bg-[#0a0a0a]"
             >
               <div 
                 ref={el => cardInnerRefs.current[i + 1] = el}
                 className="w-full flex flex-col items-center will-change-transform"
               >
-                {/* Card da Imagem: 60vh de altura, largura automática para manter 4:5 (48vh) */}
-                <div className="relative h-[60vh] aspect-[4/5] group overflow-hidden bg-zinc-900 border border-white/5">
+                {/* Card da Imagem: 60vh de altura, 75vh de largura (4:5 deitado) */}
+                <div className="relative h-[60vh] w-[75vh] max-w-[85vw] group overflow-hidden bg-zinc-900 border border-white/5">
                   <Image 
                     src={img.src} 
                     alt={img.alt} 
                     fill 
-                    className="object-contain transition-transform duration-700 group-hover:scale-105"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40" />
                 </div>
 
                 {/* Rótulo: Fora do card, abaixo da imagem */}
-                <div className="mt-8 w-full max-w-[48vh] px-2 text-left">
+                <div className="mt-8 w-full max-w-[75vh] px-2 text-left">
                   <span className="block text-[10px] uppercase tracking-[0.3em] text-white/40 mb-2 font-neuehaas font-bold">
                     {img.year} — Case Study
                   </span>
@@ -195,18 +193,18 @@ export default function WorkAndServices() {
           {/* BLOCO FINAL: Instagram (50vw) */}
           <div className="flex-shrink-0 w-screen md:w-[50vw] h-full flex flex-col justify-center items-center text-center p-10 bg-zinc-950">
             <div ref={el => cardInnerRefs.current[IMAGES.length + 1] = el} className="will-change-transform flex flex-col items-center">
-              <h3 className="text-4xl md:text-6xl font-bold uppercase text-white font-familjen mb-10 leading-tight tracking-tight">
+              <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen mb-8 leading-tight tracking-tight">
                 Visite nosso <br /> <span className="text-[#acaba9]">Instagram</span>
               </h3>
-              <p className="font-neuehaas text-xl text-[#75706f] mb-14 max-w-sm">
+              <p className="font-neuehaas text-[0.9rem] text-[#75706f] mb-12 max-w-xs leading-relaxed">
                 Confira nossa coleção completa de experiências e projetos executados.
               </p>
               <a 
                 href="https://www.instagram.com/vidracariamontabox/" 
                 target="_blank" 
-                className="px-10 py-5 border border-white/20 rounded-full text-[0.7rem] uppercase tracking-[0.2em] text-white hover:bg-white hover:text-black transition-all duration-300 font-neuehaas font-bold"
+                className="px-8 py-4 border border-white/20 rounded-tr-[99px] rounded-bl-[99px] rounded-br-[99px] bg-transparent text-white font-neuehaas text-[0.65rem] tracking-[0.16em] uppercase hover:bg-white hover:text-black transition-all duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]"
               >
-                Seguir no Instagram
+                Seguir no Instagram →
               </a>
             </div>
           </div>
