@@ -221,7 +221,7 @@ export default function WorkAndServices() {
         </div>
       </div>
 
-      <div className="absolute inset-0 z-10">
+      <div style={{ marginTop: "-100vh" }} className="relative z-10">
         <Services isRevealed={isServicesRevealed} />
       </div>
 
