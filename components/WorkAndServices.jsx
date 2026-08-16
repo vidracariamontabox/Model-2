@@ -29,7 +29,6 @@ export default function WorkAndServices() {
   const cardInnerRefs = useRef([]);
   const [isServicesRevealed, setIsServicesRevealed] = useState(false);
 
-  // Garantir que a lista de refs esteja limpa e com o tamanho correto
   useEffect(() => {
     cardInnerRefs.current = cardInnerRefs.current.slice(0, IMAGES.length + 2);
   }, []);
@@ -42,6 +41,7 @@ export default function WorkAndServices() {
     const wrapper = wrapperRef.current;
     
     const getScrollAmount = () => {
+      // O scroll horizontal deve ir até o final do card do Instagram
       return track.scrollWidth - window.innerWidth;
     };
 
@@ -49,7 +49,7 @@ export default function WorkAndServices() {
     const cardStaticLefts = inners.map((inner) => inner.parentElement.offsetLeft);
     const cardWidths = inners.map((inner) => inner.parentElement.offsetWidth);
 
-    // Configuração inicial: Pula Intro (0) e Primeira Foto (1)
+    // Configuração inicial
     inners.forEach((inner, i) => {
       if (i > 1) {
         gsap.set(inner, { y: 550 });
@@ -62,23 +62,17 @@ export default function WorkAndServices() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        // O end precisa ser longo o suficiente para o scroll horizontal + a cortina
-        end: () => `+=${track.scrollWidth + window.innerHeight * 2}`, 
+        // End estendido para garantir a visualização do Instagram e a transição horizontal
+        end: () => `+=${track.scrollWidth + window.innerHeight * 2.5}`, 
         pin: true,
         pinSpacing: true,
         scrub: 0.3,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          // Revelação da cortina: quando o scroll horizontal chega no fim
-          // Calculamos o progresso relativo da parte horizontal
-          const horizontalDuration = 3;
-          const curtainDuration = 1.5;
-          const delayDuration = 0.8;
-          const totalDuration = horizontalDuration + curtainDuration + delayDuration;
-          
-          const curtainStartThreshold = (delayDuration + horizontalDuration) / totalDuration;
-          
-          if (self.progress > curtainStartThreshold) {
+          // Revelação baseada no progresso da timeline
+          // Ajustado para o novo movimento horizontal (xPercent)
+          const horizontalThreshold = 0.85; 
+          if (self.progress > horizontalThreshold) {
             setIsServicesRevealed(true);
           } else {
             setIsServicesRevealed(false);
@@ -100,13 +94,11 @@ export default function WorkAndServices() {
         const viewportWidth = window.innerWidth;
         
         inners.forEach((inner, i) => {
-          // REGRA: Primeiro card de foto (i=1) e Intro (i=0) não têm efeito
-          if (i <= 1) return;
+          if (i <= 1) return; // Pula Intro e Primeira Foto
 
           const cardLeftInViewport = cardStaticLefts[i] + currentX;
           const cardCenterX = cardLeftInViewport + cardWidths[i] / 2;
           
-          // Progresso baseado no centro da tela
           const progress = gsap.utils.clamp(0, 1, 1 - (cardCenterX - viewportWidth / 2) / (viewportWidth / 2));
           const yOffset = 550 * (1 - Math.pow(progress, 4));
           gsap.set(inner, { y: yOffset, force3D: true });
@@ -114,9 +106,10 @@ export default function WorkAndServices() {
       }
     });
 
-    // 3. Efeito Cortina (Slide Up do Wrapper)
+    // 3. Efeito Cortina HORIZONTAL (Igual à Trionn)
+    // Em vez de subir, o About/Work desliza para a ESQUERDA para revelar o Services atrás
     tl.to(wrapper, {
-      yPercent: -100,
+      xPercent: -100,
       ease: "power2.inOut",
       duration: 1.5
     });
@@ -136,6 +129,7 @@ export default function WorkAndServices() {
       </div>
 
       {/* About/Work fica FISICAMENTE NA FRENTE (z-20) */}
+      {/* Agora desliza para a esquerda (xPercent) para revelar o fundo */}
       <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden m-0 p-0">
         <div ref={trackRef} className="flex h-full items-center will-change-transform m-0 p-0">
           
