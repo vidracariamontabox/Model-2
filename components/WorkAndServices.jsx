@@ -30,7 +30,6 @@ export default function WorkAndServices() {
   const [isServicesRevealed, setIsServicesRevealed] = useState(false);
 
   useEffect(() => {
-    // Inicializa o array de refs com o tamanho correto (Intro + Images + Instagram)
     cardInnerRefs.current = new Array(IMAGES.length + 2).fill(null);
   }, []);
 
@@ -39,13 +38,11 @@ export default function WorkAndServices() {
 
     const track = trackRef.current;
     const wrapper = wrapperRef.current;
+    const inners = cardInnerRefs.current.filter(Boolean);
     
     const getScrollAmount = () => {
       return track.scrollWidth - window.innerWidth;
     };
-
-    // Filtra inners válidos
-    const inners = cardInnerRefs.current.filter(Boolean);
 
     // Configuração inicial
     inners.forEach((inner, i) => {
@@ -68,13 +65,12 @@ export default function WorkAndServices() {
         scrub: 0.5,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          // Revelação começa na parte final da timeline (após scroll e delay)
           setIsServicesRevealed(self.progress > 0.88);
         }
       }
     });
 
-    // 1. Reading Delay no About (Reduzido pela metade conforme pedido)
+    // 1. Reading Delay no About
     tl.to({}, { duration: 0.25 });
 
     // 2. Scroll Horizontal e Animação Bottom-Up
@@ -94,19 +90,22 @@ export default function WorkAndServices() {
           
           const cardLeftInViewport = card.offsetLeft + currentX;
           
-          // Ajustado para entrar ANTES (mais cedo na tela)
-          // O card começa a subir assim que o seu lado esquerdo entra no viewport
-          const progress = gsap.utils.clamp(0, 1, (viewportWidth - cardLeftInViewport) / (viewportWidth * 0.8));
-          const yOffset = 550 * (1 - Math.pow(progress, 4));
+          // MATEMÁTICA REFINADA:
+          // progress 0 = card começa a entrar na tela (borda direita)
+          // progress 1 = card no centro da tela
+          const progress = gsap.utils.clamp(0, 1, (viewportWidth - cardLeftInViewport) / (viewportWidth * 0.9));
+          
+          // CURVA EXPLOSIVA: Sobe rápido no início e suaviza no final
+          // Usando uma curva que atinge ~50% do caminho muito cedo
+          const yOffset = 550 * (1 - Math.pow(progress, 2.5)); 
+          
           gsap.set(inner, { y: yOffset, force3D: true });
         });
       }
     });
 
-    // 3. Pequena pausa para leitura do Instagram antes da cortina
     tl.to({}, { duration: 0.5 });
 
-    // 4. Efeito Cortina Horizontal
     tl.to(wrapper, {
       xPercent: -100,
       ease: "power2.inOut",
@@ -123,14 +122,12 @@ export default function WorkAndServices() {
   return (
     <section ref={containerRef} className="relative w-full h-dvh bg-black overflow-hidden m-0 p-0">
       
-      {/* Services fica FISICAMENTE ATRÁS (z-10) */}
       <div className="absolute inset-0 z-10 overflow-hidden">
         <div className={`h-full w-full transition-opacity duration-500 ${isServicesRevealed ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-100"}`}>
           <Services isRevealed={isServicesRevealed} />
         </div>
       </div>
 
-      {/* About/Work fica FISICAMENTE NA FRENTE (z-20) */}
       <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden m-0 p-0">
         <div ref={trackRef} className="flex h-full items-center will-change-transform m-0 p-0">
           
@@ -190,13 +187,15 @@ export default function WorkAndServices() {
           {IMAGES.map((img, i) => (
             <div 
               key={i} 
-              className="flex-shrink-0 h-full flex items-center justify-center px-[40px] border-r border-white/5 bg-black"
+              // Espaçamento aumentado em 10% (de 40px para 44px)
+              className="flex-shrink-0 h-full flex items-center justify-center px-[44px] border-r border-white/5 bg-black"
             >
               <div 
                 ref={el => cardInnerRefs.current[i + 1] = el}
                 className="flex flex-col items-center will-change-transform"
               >
-                <div className="relative h-[70vh] aspect-[670/460] max-w-[90vw] group overflow-hidden bg-zinc-900 border border-white/5 rounded-[5px]">
+                {/* Aspect Ratio ajustado para 640/439 */}
+                <div className="relative h-[70vh] aspect-[640/439] max-w-[90vw] group overflow-hidden bg-zinc-900 border border-white/5 rounded-[5px]">
                   <Image 
                     src={img.src} 
                     alt={img.alt} 
@@ -221,14 +220,13 @@ export default function WorkAndServices() {
             </div>
           ))}
 
-          {/* BLOCO FINAL: Instagram (Reestruturado como um card de imagem para garantir visibilidade) */}
-          <div className="flex-shrink-0 h-full flex items-center justify-center px-[40px] border-l border-white/5 bg-black">
+          {/* BLOCO FINAL: Instagram */}
+          <div className="flex-shrink-0 h-full flex items-center justify-center px-[44px] border-l border-white/5 bg-black">
             <div 
               ref={el => cardInnerRefs.current[IMAGES.length + 1] = el}
               className="flex flex-col items-center will-change-transform"
             >
-              {/* Container com o mesmo aspect ratio das imagens, mas sem bordas e apenas com texto */}
-              <div className="relative h-[70vh] aspect-[670/460] max-w-[90vw] flex flex-col justify-center items-center text-center bg-transparent">
+              <div className="relative h-[70vh] aspect-[640/439] max-w-[90vw] flex flex-col justify-center items-center text-center bg-transparent">
                 <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen mb-8 leading-tight tracking-tight">
                   Visite nosso <br /> <span className="text-[#acaba9]">Instagram</span>
                 </h3>
@@ -243,8 +241,6 @@ export default function WorkAndServices() {
                   Seguir no Instagram →
                 </a>
               </div>
-              
-              {/* Espaçador para manter o rótulo alinhado se necessário, ou apenas vazio */}
               <div className="mt-6 w-full h-[60px]" />
             </div>
           </div>
