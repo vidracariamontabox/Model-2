@@ -9,7 +9,10 @@ import {faqs} from "@/data/faq";
 import Footer from "@/components/Footer";
 
 // Componentes que usam Canvas/Three.js/Browser APIs devem ser carregados dinamicamente
-const Hero = dynamic(() => import("@/components/Hero"), { ssr: false });
+const Hero = dynamic(() => import("@/components/Hero"), { 
+  ssr: false,
+  loading: () => <div className="h-screen w-full bg-[#080808]" />
+});
 const CTA = dynamic(() => import("@/components/CTA"), { ssr: false });
 
 export default function Page() {
