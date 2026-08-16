@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import BlurTextReveal from "./ui/BlurTextReveal";
+import HoverBlur from "./ui/HoverBlur";
 import Services from "./Services";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -134,30 +135,57 @@ export default function WorkAndServices() {
         ref={selectedWorkSectionRef} 
         className="relative h-screen w-full flex flex-col md:flex-row overflow-hidden bg-black"
       >
-        {/* Coluna Esquerda: Conteúdo About */}
+        {/* Coluna Esquerda: Conteúdo About (Restaurado) */}
         <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center px-10 md:px-20 z-20 bg-black border-b md:border-b-0 md:border-r border-white/5">
           <div className="max-w-md">
-            <span className="font-neuehaas text-xs uppercase tracking-[0.4em] text-[#acaba9] mb-4 block font-bold">Sobre Nós</span>
-            <h2 className="font-familjen text-5xl md:text-7xl font-bold uppercase text-white mb-8 leading-[0.9]">Montabox</h2>
-            <p className="font-neuehaas text-lg md:text-xl text-[#acaba9] mb-12 font-bold leading-relaxed">
+            <p className="mb-8 text-[0.68rem] font-light tracking-[0.28em] uppercase text-[#75706f] font-neuehaas">
+              Quem somos
+            </p>
+            
+            <div className="flex flex-col mb-8">
+              <HoverBlur>
+                <h2 className="text-[clamp(1.8rem,4vw,3rem)] uppercase font-bold tracking-tight leading-[1.02] text-[#eaeaea] font-familjen">
+                  Montabox
+                </h2>
+              </HoverBlur>
+              <BlurTextReveal
+                text="Vidraçaria e Serralheria de Alumínio."
+                animationType="words"
+                stagger={0.1}
+                delay={0.2}
+                className="block overflow-hidden pl-[0.08em] text-[0.95rem] uppercase font-light tracking-tight text-[#d8d8d8] font-familjen"
+              />
+            </div>
+
+            <div className="mt-8 mb-8 h-px bg-[#75706f]/20 w-full" />
+            
+            <p className="font-light text-[0.95rem] leading-[1.85] text-[#acaba9] mb-10 font-neuehaas">
               Especializada em projetos grandes, residenciais e comerciais, entregamos soluções que unem estética refinada e engenharia de alta performance.
             </p>
-            <div className="flex gap-12 mb-16">
-              <div>
-                <span className="font-familjen text-4xl md:text-5xl font-bold text-white block mb-1">35+</span>
-                <span className="font-neuehaas text-xs uppercase tracking-widest text-[#acaba9] font-bold">anos de mercado</span>
+
+            <div className="mt-10 mb-10 h-px bg-[#75706f]/20 w-full" />
+
+            <div className="grid grid-cols-1 gap-6">
+              <div className="flex flex-col gap-1">
+                <span className="text-[clamp(1.2rem,2vw,2rem)] font-bold tracking-tight text-[#eaeaea] font-familjen">
+                  35+
+                </span>
+                <span className="text-[0.55rem] font-light tracking-[0.18em] uppercase text-[#75706f] font-neuehaas">anos de mercado</span>
               </div>
-              <div>
-                <span className="font-familjen text-4xl md:text-5xl font-bold text-white block mb-1">7.040+</span>
-                <span className="font-neuehaas text-xs uppercase tracking-widest text-[#acaba9] font-bold">projetos concluídos</span>
+              <div className="flex flex-col gap-1">
+                <span className="text-[clamp(1.2rem,2vw,2rem)] font-bold tracking-tight text-[#eaeaea] font-familjen">
+                  7.040+
+                </span>
+                <span className="text-[0.55rem] font-light tracking-[0.18em] uppercase text-[#75706f] font-neuehaas">projetos concluídos</span>
               </div>
             </div>
-            <div className="mt-auto">
+
+            <div className="mt-16">
               <BlurTextReveal
                 text="Selected Work"
                 animationType="chars"
                 stagger={0.05}
-                className="font-familjen text-2xl md:text-3xl font-bold tracking-tighter text-white uppercase mb-4"
+                className="font-familjen text-2xl md:text-3xl font-bold tracking-tighter text-white uppercase"
               />
             </div>
           </div>
@@ -195,7 +223,7 @@ export default function WorkAndServices() {
             >
               <div className={`w-full h-full rounded-2xl ${service.color} border border-white/10 flex flex-col justify-center items-center p-10 text-center shadow-2xl backdrop-blur-sm`}>
                 <h3 className="font-familjen text-4xl md:text-6xl font-bold uppercase text-[#eaeaea] mb-8 leading-tight">{service.title}</h3>
-                <p className="font-neuehaas text-lg md:text-xl text-[#acaba9] max-w-2xl font-bold leading-relaxed">{service.description}</p>
+                <p className="font-neuehaas text-lg md:text-xl text-[#acaba9] max-w-2xl font-light leading-relaxed">{service.description}</p>
               </div>
             </div>
           ))}

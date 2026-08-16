@@ -57,13 +57,13 @@ export default function Services({ isRevealed }) {
         <motion.div
           initial={{opacity: 0, y: 12}}
           animate={isHeaderReady ? {opacity: 1, y: 0} : {opacity: 0, y: 12}}
-          transition={{duration: 0.6, ease: [0.16, 1, 0.3, 1]}}
+          transition={{duration: 0.5, ease: "easeOut"}}
           className="mb-20 flex items-center justify-center gap-6">
           <BlurTextReveal
             animationType="chars"
             stagger={0.04}
             play={isHeaderReady}
-            className="font-familjen text-[1.1rem] font-bold tracking-tight text-[#eaeaea] leading-none uppercase">
+            className="font-familjen text-[0.95rem] font-bold tracking-tight text-[#eaeaea] leading-none uppercase">
             Nossos.<span className="text-[#acaba9]">Serviços</span>
           </BlurTextReveal>
 
