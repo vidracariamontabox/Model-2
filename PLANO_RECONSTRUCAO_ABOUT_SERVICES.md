@@ -62,7 +62,7 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 | Fase | Status | Última IA | Data | Notas |
 |---|---|---|---|---|
 | 1-6 | Concluídas | Manus | 15/08 | Fases iniciais de setup e integração básica. |
-| 7 — Refino Trionn | **EM ANDAMENTO** | Manus | 16/08 | **Mecânica Real Descoberta:** Identificado offset de 550px e lógica de entrada baseada em posição (não tempo). Próximo passo: aplicar a fórmula `y = 550 * (1 - progress)` no `WorkAndServices.jsx`. |
+| 7 — Refino Trionn | **CONCLUÍDA** | Manus | 16/08 | **Alta Fidelidade:** Implementado grid 50/50, offset de 550px com fórmula cúbica no `onUpdate` e efeito cortina cinemática (`yPercent: -100`). Build OK. |
 
 ---
 

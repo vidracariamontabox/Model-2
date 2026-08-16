@@ -29,34 +29,66 @@ export default function WorkAndServices() {
   const containerRef = useRef(null);
   const wrapperRef = useRef(null);
   const trackRef = useRef(null);
-  const introRef = useRef(null);
-  const cardRefs = useRef([]);
+  const cardInnerRefs = useRef([]);
   const [isServicesRevealed, setIsServicesRevealed] = useState(false);
 
   useGSAP(() => {
     if (!containerRef.current || !trackRef.current || !wrapperRef.current) return;
 
     const track = trackRef.current;
-    const cards = cardRefs.current.filter(Boolean);
-    const totalCards = cards.length;
+    const inners = cardInnerRefs.current.filter(Boolean);
+    const wrapper = wrapperRef.current;
     
-    // Cálculo do scroll horizontal total
     const getScrollAmount = () => {
       return track.scrollWidth - window.innerWidth;
     };
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top top",
-        end: () => `+=${track.scrollWidth + window.innerHeight * 1.5}`, // Espaço extra para o hold e a cortina
-        pin: true,
-        pinSpacing: true,
-        scrub: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          // Revela a seção de serviços real ao final da cortina
-          if (self.progress > 0.92) {
+    // Configuração inicial: todos os inners começam em 550px para baixo
+    inners.forEach((inner) => {
+      gsap.set(inner, { y: 550 });
+    });
+
+    const st = ScrollTrigger.create({
+      trigger: containerRef.current,
+      start: "top top",
+      end: () => `+=${track.scrollWidth + window.innerHeight}`, // Espaço extra para a cortina
+      pin: true,
+      pinSpacing: true,
+      scrub: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        // Progresso do scroll horizontal (0 a 0.8)
+        // Progresso da cortina (0.8 a 1.0)
+        const horizontalLimit = 0.8;
+        
+        if (self.progress <= horizontalLimit) {
+          const normProgress = self.progress / horizontalLimit;
+          const scrollX = normProgress * getScrollAmount();
+          
+          // Move o trilho horizontalmente
+          gsap.set(track, { x: -scrollX });
+          gsap.set(wrapper, { yPercent: 0 }); // Garante que a cortina está abaixada
+
+          // Calcula a animação vertical de cada card baseado na sua posição horizontal
+          inners.forEach((inner) => {
+            const parent = inner.parentElement;
+            const rect = parent.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+            
+            const cardCenterX = rect.left + rect.width / 2;
+            const progress = gsap.utils.clamp(0, 1, 1 - (cardCenterX - viewportWidth / 2) / (viewportWidth / 2));
+            
+            const yOffset = 550 * (1 - Math.pow(progress, 3));
+            gsap.set(inner, { y: yOffset });
+          });
+          
+          setIsServicesRevealed(false);
+        } else {
+          // Efeito Cortina: O wrapper sobe para revelar o que está atrás
+          const curtainProgress = (self.progress - horizontalLimit) / (1 - horizontalLimit);
+          gsap.set(wrapper, { yPercent: -curtainProgress * 100 });
+          
+          if (curtainProgress > 0.5) {
             setIsServicesRevealed(true);
           } else {
             setIsServicesRevealed(false);
@@ -65,56 +97,19 @@ export default function WorkAndServices() {
       }
     });
 
-    // 1. O "Hold" de leitura (simulando os 2 segundos de pausa)
-    tl.to({}, { duration: 0.8 }); // Pausa inicial
-
-    // 2. O Scroll Horizontal e Animação de Entrada Sincronizada
-    // O intervalo total do scroll horizontal é de duration: 3
-    tl.to(track, {
-      x: () => -getScrollAmount(),
-      ease: "none",
-      duration: 3
-    }, 0.8);
-
-    // 3. Animação Bottom-Up Sincronizada com a entrada de cada card
-    cards.forEach((card, i) => {
-      // Calculamos o tempo de início baseado na posição proporcional do card no trilho
-      // O primeiro card (Intro) já está na tela, os outros entram conforme o scroll horizontal avança.
-      // O intervalo do scroll horizontal é [0.8, 3.8]
-      const startTime = 0.8 + (i / totalCards) * 3;
-      
-      tl.fromTo(card, 
-        { y: 150, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          ease: "power2.out",
-          duration: 0.6
-        }, 
-        startTime
-      );
-    });
-
-    // 4. Efeito Cortina Total (Levantando a seção inteira)
-    tl.to(wrapperRef.current, {
-      yPercent: -100,
-      ease: "power2.inOut",
-      duration: 1
-    }, 3.8); // Começa logo após o scroll horizontal terminar
+    return () => st.kill();
 
   }, { scope: containerRef });
 
   return (
-    <div ref={containerRef} className="relative bg-black overflow-hidden">
+    <div ref={containerRef} className="relative w-full h-dvh bg-black overflow-hidden">
       
-      {/* O Wrapper que será pinado e depois subirá como cortina */}
-      <div ref={wrapperRef} className="relative w-full h-screen bg-black z-20 will-change-transform">
-        
-        {/* O Trilho Horizontal */}
-        <div ref={trackRef} className="flex h-full items-center will-change-transform px-[10vw]">
+      {/* O Wrapper que contém o trilho e sobe como cortina */}
+      <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden">
+        <div ref={trackRef} className="flex h-full items-center will-change-transform">
           
-          {/* INTRO: Quem Somos (Parte do Trilho) */}
-          <div ref={el => cardRefs.current[0] = el} className="flex-shrink-0 w-[80vw] md:w-[45vw] mr-[10vw]">
+          {/* BLOCO 1: INTRO (50vw) */}
+          <div className="flex-shrink-0 w-screen md:w-[50vw] h-full flex flex-col justify-center px-12 md:px-20 border-r border-white/5">
             <div className="max-w-md">
               <p className="mb-8 text-[0.68rem] font-light tracking-[0.28em] uppercase text-[#75706f] font-neuehaas">
                 Quem somos
@@ -138,8 +133,6 @@ export default function WorkAndServices() {
               <p className="font-light text-[0.95rem] leading-[1.85] text-[#acaba9] mb-10 font-neuehaas">
                 Especializada em projetos grandes, residenciais e comerciais, entregamos soluções que unem estética refinada e engenharia de alta performance.
               </p>
-
-              <div className="mt-10 mb-10 h-px bg-[#75706f]/20 w-full" />
 
               <div className="grid grid-cols-1 gap-6">
                 <div className="flex flex-col gap-1">
@@ -167,55 +160,58 @@ export default function WorkAndServices() {
             </div>
           </div>
 
-          {/* CARDS DE OBRAS (Proporção Trionn) */}
+          {/* BLOCOS DE OBRAS (50vw cada) */}
           {IMAGES.map((img, i) => (
             <div 
               key={i} 
-              ref={el => cardRefs.current[i + 1] = el}
-              className="flex-shrink-0 w-[75vw] md:w-[35vw] aspect-[4/5] mr-[8vw] relative group overflow-hidden rounded-2xl bg-zinc-900 border border-white/5"
+              className="flex-shrink-0 w-screen md:w-[50vw] h-full flex items-center justify-center px-10 md:px-16 border-r border-white/5 bg-[#0a0a0a]"
             >
-              <Image 
-                src={img.src} 
-                alt={img.alt} 
-                fill 
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
-              <div className="absolute bottom-8 left-8 z-10">
-                <span className="block text-[10px] uppercase tracking-[0.3em] text-white/50 mb-2 font-neuehaas font-bold">
-                  {img.year} — Case Study
-                </span>
-                <h3 className="text-2xl md:text-3xl font-medium uppercase text-white font-familjen leading-tight tracking-[-0.04em]">
-                  {img.title}
-                </h3>
+              <div 
+                ref={el => cardInnerRefs.current[i] = el}
+                className="relative w-full aspect-[4/5] md:aspect-auto md:h-[70vh] group overflow-hidden rounded-2xl bg-zinc-900 border border-white/5 will-change-transform"
+              >
+                <Image 
+                  src={img.src} 
+                  alt={img.alt} 
+                  fill 
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80" />
+                <div className="absolute bottom-8 left-8 z-10">
+                  <span className="block text-[10px] uppercase tracking-[0.3em] text-white/50 mb-2 font-neuehaas font-bold">
+                    {img.year} — Case Study
+                  </span>
+                  <h3 className="text-2xl md:text-3xl font-medium uppercase text-white font-familjen leading-tight tracking-[-0.04em]">
+                    {img.title}
+                  </h3>
+                </div>
               </div>
             </div>
           ))}
 
-          {/* CARD FINAL: Instagram */}
-          <div 
-            ref={el => cardRefs.current[IMAGES.length + 1] = el}
-            className="flex-shrink-0 w-[75vw] md:w-[35vw] aspect-[4/5] flex flex-col justify-center items-center text-center p-10 bg-zinc-950 border border-white/10 rounded-2xl"
-          >
-            <h3 className="text-3xl md:text-5xl font-medium uppercase text-white font-familjen mb-8 leading-tight tracking-[-0.04em]">
-              Visite nosso <br /> <span className="text-[#acaba9]">Instagram</span>
-            </h3>
-            <p className="font-neuehaas text-lg text-[#75706f] mb-12 max-w-xs">
-              Confira nossa coleção completa de experiências e projetos executados.
-            </p>
-            <a 
-              href="https://www.instagram.com/vidracariamontabox/" 
-              target="_blank" 
-              className="px-8 py-4 border border-white/20 rounded-full text-xs uppercase tracking-widest text-white hover:bg-white hover:text-black transition-all duration-300 font-neuehaas"
-            >
-              Seguir no Instagram
-            </a>
+          {/* BLOCO FINAL: Instagram (50vw) */}
+          <div className="flex-shrink-0 w-screen md:w-[50vw] h-full flex flex-col justify-center items-center text-center p-10 bg-zinc-950">
+            <div ref={el => cardInnerRefs.current[IMAGES.length] = el} className="will-change-transform">
+              <h3 className="text-3xl md:text-5xl font-medium uppercase text-white font-familjen mb-8 leading-tight tracking-[-0.04em]">
+                Visite nosso <br /> <span className="text-[#acaba9]">Instagram</span>
+              </h3>
+              <p className="font-neuehaas text-lg text-[#75706f] mb-12 max-w-xs">
+                Confira nossa coleção completa de experiências e projetos executados.
+              </p>
+              <a 
+                href="https://www.instagram.com/vidracariamontabox/" 
+                target="_blank" 
+                className="px-8 py-4 border border-white/20 rounded-full text-xs uppercase tracking-widest text-white hover:bg-white hover:text-black transition-all duration-300 font-neuehaas"
+              >
+                Seguir no Instagram
+              </a>
+            </div>
           </div>
 
         </div>
       </div>
 
-      {/* A SEÇÃO DE SERVICES: Fica atrás do wrapper e é revelada pela cortina */}
+      {/* A SEÇÃO DE SERVICES: Revelada pela cortina */}
       <div className="absolute inset-0 z-10">
         <Services isRevealed={isServicesRevealed} />
       </div>
