@@ -49,13 +49,13 @@ export default function WorkAndServices() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: () => `+=${track.scrollWidth + window.innerHeight * 2}`, 
+        end: () => `+=${track.scrollWidth + window.innerHeight * 1.5}`, 
         pin: true,
         pinSpacing: true,
         scrub: 0.5,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          if (self.progress > 0.95) {
+          if (self.progress > 0.96) {
             setIsServicesRevealed(true);
           } else {
             setIsServicesRevealed(false);
@@ -156,18 +156,18 @@ export default function WorkAndServices() {
             </div>
           </div>
 
-          {/* BLOCOS DE OBRAS (Proporção 4:5 deitado, 60vh altura -> 75vh largura) */}
+          {/* BLOCOS DE OBRAS (Altura 70vh, Largura 4:5 landscape -> 87.5vh) */}
           {IMAGES.map((img, i) => (
             <div 
               key={i} 
-              className="flex-shrink-0 w-screen md:w-[80vw] h-full flex items-center justify-center px-10 md:px-16 border-r border-white/5 bg-[#0a0a0a]"
+              className="flex-shrink-0 w-screen md:w-[60vw] h-full flex items-center justify-center px-4 md:px-6 border-r border-white/5 bg-[#0a0a0a]"
             >
               <div 
                 ref={el => cardInnerRefs.current[i + 1] = el}
                 className="w-full flex flex-col items-center will-change-transform"
               >
-                {/* Card da Imagem: 60vh de altura, 75vh de largura (4:5 deitado) */}
-                <div className="relative h-[60vh] w-[75vh] max-w-[85vw] group overflow-hidden bg-zinc-900 border border-white/5">
+                {/* Card da Imagem: 70vh de altura, 87.5vh de largura (4:5 deitado) */}
+                <div className="relative h-[70vh] w-[87.5vh] max-w-[90vw] group overflow-hidden bg-zinc-900 border border-white/5">
                   <Image 
                     src={img.src} 
                     alt={img.alt} 
@@ -177,12 +177,12 @@ export default function WorkAndServices() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40" />
                 </div>
 
-                {/* Rótulo: Fora do card, abaixo da imagem */}
-                <div className="mt-8 w-full max-w-[75vh] px-2 text-left">
-                  <span className="block text-[10px] uppercase tracking-[0.3em] text-white/40 mb-2 font-neuehaas font-bold">
+                {/* Rótulo: Reduzido pela metade (text-xs/text-sm) */}
+                <div className="mt-6 w-full max-w-[87.5vh] px-2 text-left">
+                  <span className="block text-[8px] uppercase tracking-[0.25em] text-white/40 mb-1 font-neuehaas font-bold">
                     {img.year} — Case Study
                   </span>
-                  <h3 className="text-xl md:text-2xl font-bold uppercase text-white font-familjen leading-tight tracking-tight">
+                  <h3 className="text-sm md:text-base font-bold uppercase text-white font-familjen leading-tight tracking-tight">
                     {img.title}
                   </h3>
                 </div>
