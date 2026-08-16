@@ -24,14 +24,12 @@ export default function Services({ isRevealed }) {
   const timerRef = useRef(null);
 
   useEffect(() => {
-    // Fallback: se isRevealed for undefined (não passado), mostra imediatamente
     if (isRevealed === undefined) {
       setIsHeaderReady(true);
       return;
     }
 
     if (isRevealed) {
-      // Se a seção foi revelada, inicia o delay de leitura
       if (!isHeaderReady && !timerRef.current) {
         timerRef.current = setTimeout(() => {
           setIsHeaderReady(true);
@@ -39,7 +37,6 @@ export default function Services({ isRevealed }) {
         }, READING_DELAY);
       }
     } else {
-      // Se a seção sumiu (scroll para cima), reseta tudo instantaneamente
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         timerRef.current = null;
@@ -55,7 +52,7 @@ export default function Services({ isRevealed }) {
   return (
     <section
       id="servicos"
-      className="h-full min-h-screen bg-[#121212] flex flex-col justify-center px-6 py-24 md:px-16 lg:px-24">
+      className="relative z-10 h-full min-h-screen bg-[#121212] flex flex-col justify-center px-6 py-24 md:px-16 lg:px-24">
       <div className="max-w-7xl mx-auto w-full">
         <motion.div
           initial={{opacity: 0, y: 12}}
@@ -66,7 +63,7 @@ export default function Services({ isRevealed }) {
             animationType="chars"
             stagger={0.04}
             play={isHeaderReady}
-            className="text-[0.95rem] font-black tracking-tight text-[#eaeaea] leading-none">
+            className="font-familjen text-[1.1rem] font-bold tracking-tight text-[#eaeaea] leading-none uppercase">
             Nossos.<span className="text-[#acaba9]">Serviços</span>
           </BlurTextReveal>
 
@@ -84,7 +81,7 @@ export default function Services({ isRevealed }) {
               transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
               whileHover={{x: 6}}
               className="group relative overflow-hidden cursor-default">
-              <span className="text-[clamp(2.8rem,7vw,7rem)] font-black tracking-tight leading-[1.0] text-[#eaeaea] group-hover:text-[#acaba9] transition-colors duration-300 select-none">
+              <span className="font-familjen text-[clamp(2.8rem,7vw,7rem)] font-bold tracking-tight leading-[1.0] text-[#eaeaea] group-hover:text-[#acaba9] transition-colors duration-300 select-none uppercase">
                 {service}
               </span>
 
@@ -108,8 +105,8 @@ export default function Services({ isRevealed }) {
             href="https://wa.me/5516981984000"
             target="_blank"
             rel="noreferrer"
-            className="group inline-flex items-center gap-3 text-[0.72rem] font-light tracking-widest uppercase text-[#acaba9] hover:text-[#eaeaea] transition-colors duration-300">
-            <span>Ver mais projetos</span>
+            className="group inline-flex items-center gap-3 text-[0.72rem] font-light tracking-widest uppercase text-[#acaba9] hover:text-[#eaeaea] transition-colors duration-300 font-neuehaas">
+            <span>Solicite seu orçamento</span>
             <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
           </a>
         </motion.div>
