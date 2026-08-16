@@ -52,8 +52,8 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 - Ela é revelada apenas quando o trilho de obras termina sua jornada horizontal completa.
 
 ### 10.5. Tipografia Premium
-- **Headings (h2, h3):** Devem usar `font-medium` (não bold) e `tracking-[-0.05em]` (tracking negativo agressivo).
-- **Container Queries:** Usar `cqw` para dimensionar elementos internos dos cards, garantindo proporção constante.
+- **Headings (h2, h3):** Devem usar `font-bold` (conforme restauração solicitada pelo usuário) e respeitar o layout original do projeto.
+- **Aspect Ratio:** Os cards de obra devem seguir a proporção `670/460` (conforme F12 da Trionn).
 
 ---
 
@@ -62,14 +62,21 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 | Fase | Status | Última IA | Data | Notas |
 |---|---|---|---|---|
 | 1-6 | Concluídas | Manus | 15/08 | Fases iniciais de setup e integração básica. |
-| 7 — Refino Trionn | **CONCLUÍDA** | Manus | 16/08 | **Alta Fidelidade:** Implementado grid 50/50, offset de 550px com fórmula cúbica no `onUpdate` e efeito cortina cinemática (`yPercent: -100`). Build OK. |
+| 7 — Refino Trionn | **CONCLUÍDA** | Manus | 16/08 | **Alta Fidelidade:** Implementado grid 50/50, offset de 550px com fórmula cúbica no `onUpdate` e efeito cortina cinemática. |
+| 8 — Restauração e Ajustes | **CONCLUÍDA** | Manus | 16/08 | Restaurada tipografia original, removida poluição de CSS global, ajustado aspect-ratio 670/460, border-radius 5px e espaçamento de 80px entre cards. Adicionadas sub-descrições. |
+| 9 — Fluidez e Estrutura | **PENDENTE** | - | - | **Próximas Etapas:** Implementar Smooth Scroll (Lenis) para fluidez e ajustar Services para ficar fisicamente atrás do About na estrutura DOM/CSS. |
 
 ---
 
 ## 8. Checklist de verificação
 
 - [x] `npm run build` passa sem erro.
-- [ ] Section com `100dvh`.
-- [ ] Cards com offset inicial de `550px`.
-- [ ] Animação `y` sincronizada com a posição horizontal (onUpdate).
-- [ ] Tracking negativo de `-0.05em` nos títulos.
+- [x] Section com `100dvh`.
+- [x] Cards com offset inicial de `550px`.
+- [x] Animação `y` sincronizada com a posição horizontal (onUpdate).
+- [x] Aspect-ratio dos cards em `670/460`.
+- [x] Espaçamento entre cards reduzido (aprox. 80px/2cm).
+- [x] Sub-descrições em Neue Haas cinza adicionadas.
+- [x] Reading Delay implementado na descida e subida do About.
+- [ ] Implementação de Smooth Scroll (Fase 9).
+- [ ] Services posicionado atrás do About (Fase 9).
