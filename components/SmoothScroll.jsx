@@ -11,33 +11,32 @@ export default function SmoothScroll({ children }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Inicializa o Lenis
+    // Inicializa o Lenis com foco em fluidez elástica
     const lenis = new Lenis({
-      duration: 1.5, // Increased duration for more "weight"
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      direction: "vertical",
-      gestureDirection: "vertical",
-      smoothTouch: true, // Enable for better mobile/touchpad feel
-      touchMultiplier: 1.5,
-      wheelMultiplier: 1.2, // Slightly more responsive wheel
-      infinite: false,
+      lerp: 0.1, // Valor clássico para suavidade elástica
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
+      smoothWheel: true,
+      smoothTouch: false,
     });
 
     lenisRef.current = lenis;
 
-    // Integra o Lenis com o ScrollTrigger do GSAP
+    // Sincroniza o ScrollTrigger com o Lenis
     lenis.on("scroll", ScrollTrigger.update);
 
-    gsap.ticker.add((time) => {
+    // Usa o ticker do GSAP para rodar o Lenis
+    function update(time) {
       lenis.raf(time * 1000);
-    });
+    }
 
+    gsap.ticker.add(update);
     gsap.ticker.lagSmoothing(0);
 
-    // Limpeza ao desmontar
+    // Limpeza
     return () => {
       lenis.destroy();
-      gsap.ticker.remove(lenis.raf);
+      gsap.ticker.remove(update);
     };
   }, []);
 

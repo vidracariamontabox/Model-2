@@ -69,6 +69,7 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 | 11 — Smooth Scroll (Lenis) | **CONCLUÍDA** | Manus | 16/08 | **Fluidez Total:** Instalado e configurado Lenis integrado ao GSAP. |
 | 12 — Reconstrução Z-Index | **CONCLUÍDA** | Manus | 16/08 | **Arquitetura de Camadas:** Services posicionado como `absolute z-10` atrás do About (`z-20`). Eliminadas lacunas entre seções. |
 | 13 — Refino de Lógica | **CONCLUÍDA** | Manus | 16/08 | **Trilho Horizontal:** Primeiro card estático, visibilidade do Instagram corrigida e aspect-ratio 670/460 aplicado. |
+| 14 — Revisão e Ajustes Finais | **CONCLUÍDA** | Manus | 16/08 | **Revisão Técnica:** Fix de lacunas entre seções, fluidez do Lenis com `lerp: 0.1`, primeiro card sem efeito bottom-up e Services posicionado fisicamente atrás do About. |
 
 ---
 

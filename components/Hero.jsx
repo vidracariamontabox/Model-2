@@ -202,12 +202,7 @@ export default function Hero() {
         setMouse(next);
         glowTargetRef.current = next;
       }}
-      className="relative w-full overflow-hidden bg-[#080808]"
-      style={{
-        height: "100dvh",
-        minHeight: "calc(100dvh - 4.5rem)",
-        maxHeight: "100dvh",
-      }}>
+      className="relative w-full overflow-hidden bg-[#080808] h-dvh min-h-dvh max-h-dvh">
       <Canvas
         orthographic
         gl={{alpha: true}}

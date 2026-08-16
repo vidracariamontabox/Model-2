@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -29,6 +29,11 @@ export default function WorkAndServices() {
   const cardInnerRefs = useRef([]);
   const [isServicesRevealed, setIsServicesRevealed] = useState(false);
 
+  // Garantir que a lista de refs esteja limpa e com o tamanho correto
+  useEffect(() => {
+    cardInnerRefs.current = cardInnerRefs.current.slice(0, IMAGES.length + 2);
+  }, []);
+
   useGSAP(() => {
     if (!containerRef.current || !trackRef.current || !wrapperRef.current) return;
 
@@ -44,9 +49,8 @@ export default function WorkAndServices() {
     const cardStaticLefts = inners.map((inner) => inner.parentElement.offsetLeft);
     const cardWidths = inners.map((inner) => inner.parentElement.offsetWidth);
 
-    // Configuração inicial
+    // Configuração inicial: Pula Intro (0) e Primeira Foto (1)
     inners.forEach((inner, i) => {
-      // Pula Intro (0) e Primeira Foto (1)
       if (i > 1) {
         gsap.set(inner, { y: 550 });
       } else {
@@ -58,16 +62,23 @@ export default function WorkAndServices() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: () => `+=${track.scrollWidth + window.innerHeight * 2.5}`, // Aumentado para garantir que tudo apareça e a cortina suba
+        // O end precisa ser longo o suficiente para o scroll horizontal + a cortina
+        end: () => `+=${track.scrollWidth + window.innerHeight * 2}`, 
         pin: true,
         pinSpacing: true,
         scrub: 0.3,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          // A cortina começa a subir no final da timeline
-          // O progresso horizontal termina por volta de 0.7
-          const horizontalLimit = 0.75;
-          if (self.progress > horizontalLimit) {
+          // Revelação da cortina: quando o scroll horizontal chega no fim
+          // Calculamos o progresso relativo da parte horizontal
+          const horizontalDuration = 3;
+          const curtainDuration = 1.5;
+          const delayDuration = 0.8;
+          const totalDuration = horizontalDuration + curtainDuration + delayDuration;
+          
+          const curtainStartThreshold = (delayDuration + horizontalDuration) / totalDuration;
+          
+          if (self.progress > curtainStartThreshold) {
             setIsServicesRevealed(true);
           } else {
             setIsServicesRevealed(false);
@@ -76,8 +87,8 @@ export default function WorkAndServices() {
       }
     });
 
-    // 1. Reading Delay Inicial (About)
-    tl.to({}, { duration: 0.8 }); // Aumentado para 0.8 para percepção clara
+    // 1. Reading Delay no About
+    tl.to({}, { duration: 0.8 });
 
     // 2. Scroll Horizontal e Animação Bottom-Up
     tl.to(track, {
@@ -89,11 +100,13 @@ export default function WorkAndServices() {
         const viewportWidth = window.innerWidth;
         
         inners.forEach((inner, i) => {
-          if (i <= 1) return; // Pula Intro e Primeira Foto
+          // REGRA: Primeiro card de foto (i=1) e Intro (i=0) não têm efeito
+          if (i <= 1) return;
 
           const cardLeftInViewport = cardStaticLefts[i] + currentX;
           const cardCenterX = cardLeftInViewport + cardWidths[i] / 2;
           
+          // Progresso baseado no centro da tela
           const progress = gsap.utils.clamp(0, 1, 1 - (cardCenterX - viewportWidth / 2) / (viewportWidth / 2));
           const yOffset = 550 * (1 - Math.pow(progress, 4));
           gsap.set(inner, { y: yOffset, force3D: true });
@@ -105,7 +118,7 @@ export default function WorkAndServices() {
     tl.to(wrapper, {
       yPercent: -100,
       ease: "power2.inOut",
-      duration: 1.5 // Mais lento e dramático
+      duration: 1.5
     });
 
     return () => tl.kill();
@@ -113,16 +126,18 @@ export default function WorkAndServices() {
   }, { scope: containerRef });
 
   return (
-    <div ref={containerRef} className="relative w-full h-dvh bg-black overflow-hidden">
+    <section ref={containerRef} className="relative w-full h-dvh bg-black overflow-hidden m-0 p-0">
       
-      {/* Services fica FISICAMENTE ATRÁS (z-10) - Absolute para evitar lacunas */}
-      <div className="absolute inset-0 z-10 overflow-hidden">
-        <Services isRevealed={isServicesRevealed} />
+      {/* Services fica FISICAMENTE ATRÁS (z-10) */}
+      <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none">
+        <div className={isServicesRevealed ? "pointer-events-auto h-full w-full" : "h-full w-full"}>
+          <Services isRevealed={isServicesRevealed} />
+        </div>
       </div>
 
       {/* About/Work fica FISICAMENTE NA FRENTE (z-20) */}
-      <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden">
-        <div ref={trackRef} className="flex h-full items-center will-change-transform">
+      <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden m-0 p-0">
+        <div ref={trackRef} className="flex h-full items-center will-change-transform m-0 p-0">
           
           {/* BLOCO 1: INTRO (50vw) */}
           <div className="flex-shrink-0 w-screen md:w-[50vw] h-full flex flex-col justify-center px-12 md:px-20 border-r border-white/5">
@@ -233,6 +248,6 @@ export default function WorkAndServices() {
         </div>
       </div>
 
-    </div>
+    </section>
   );
 }
