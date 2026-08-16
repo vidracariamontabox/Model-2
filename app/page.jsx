@@ -2,16 +2,17 @@
 
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
-import About from "@/components/About";
 import LazyTestimonials from "@/components/Testimonials/LazyTestimonials";
 import FAQ from "@/components/FAQ";
-import Services from "@/components/Services";
-import HorizontalTransition from "@/components/HorizontalTransition";
+import WorkAndServices from "@/components/WorkAndServices";
 import {faqs} from "@/data/faq";
 import Footer from "@/components/Footer";
 
 // Componentes que usam Canvas/Three.js/Browser APIs devem ser carregados dinamicamente
-const Hero = dynamic(() => import("@/components/Hero"), { ssr: false });
+const Hero = dynamic(() => import("@/components/Hero"), { 
+  ssr: false,
+  loading: () => <div className="h-screen w-full bg-[#080808]" />
+});
 const CTA = dynamic(() => import("@/components/CTA"), { ssr: false });
 
 export default function Page() {
@@ -19,7 +20,7 @@ export default function Page() {
     <main className="bg-[#121212]">
       <Navbar />
       <Hero />
-      <HorizontalTransition leftSection={<About />} rightSection={<Services />} />
+      <WorkAndServices />
       <LazyTestimonials />
       <FAQ faqs={faqs} />
       <CTA />
