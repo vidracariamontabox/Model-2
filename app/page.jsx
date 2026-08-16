@@ -4,7 +4,11 @@ import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import LazyTestimonials from "@/components/Testimonials/LazyTestimonials";
 import FAQ from "@/components/FAQ";
-import WorkAndServices from "@/components/WorkAndServices";
+// WorkAndServices usa GSAP e APIs de browser, precisa de ssr: false
+const WorkAndServices = dynamic(() => import("@/components/WorkAndServices"), { 
+  ssr: false,
+  loading: () => <div className="min-h-screen bg-black" />
+});
 import {faqs} from "@/data/faq";
 import Footer from "@/components/Footer";
 

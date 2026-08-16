@@ -8,8 +8,9 @@ import { useGSAP } from "@gsap/react";
 import BlurTextReveal from "./ui/BlurTextReveal";
 import HoverBlur from "./ui/HoverBlur";
 import Services from "./Services";
-
-gsap.registerPlugin(ScrollTrigger);
+import "../Trionn/0-x39_77jza10.css";
+import "../Trionn/0wf1gwg29cqjw.css";
+import "../Trionn/0xt8hh0aijjr~.css";
 
 const IMAGES = [
   { src: "/images/obra-1-oxquimica.webp", alt: "Oxíquimica", title: "Oxíquimica", year: "2023" },
@@ -29,8 +30,13 @@ export default function WorkAndServices() {
   const introRef = useRef(null);
   const cardRefs = useRef([]);
   const [isServicesRevealed, setIsServicesRevealed] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
+  // Garantia de montagem para evitar erros de SSR
   useGSAP(() => {
+    setIsMounted(true);
+    gsap.registerPlugin(ScrollTrigger);
+    
     if (!containerRef.current || !trackRef.current || !wrapperRef.current) return;
 
     const track = trackRef.current;
@@ -97,6 +103,8 @@ export default function WorkAndServices() {
 
   }, { scope: containerRef });
 
+  if (!isMounted) return <div className="min-h-screen bg-black" />;
+
   return (
     <div ref={containerRef} className="relative bg-black overflow-hidden">
       
@@ -118,7 +126,7 @@ export default function WorkAndServices() {
                   <HoverBlur>Montabox</HoverBlur>
                 </h2>
                 <BlurTextReveal
-                  html='Vidraçaria e Serralheria <span className="text-[#acaba9]">de Alumínio.</span>'
+                  html='Vidraçaria e Serralheria <span class="text-[#acaba9]">de Alumínio.</span>'
                   animationType="words"
                   stagger={0.1}
                   delay={0.2}
