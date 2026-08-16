@@ -12,14 +12,14 @@ import Services from "./Services";
 gsap.registerPlugin(ScrollTrigger);
 
 const IMAGES = [
-  { src: "/images/obra-1-oxquimica.webp", alt: "Oxíquimica", title: "Oxíquimica", year: "2023" },
-  { src: "/images/obra-2-porta-ripado.webp", alt: "Porta Ripado", title: "Residência Privada", year: "2024" },
-  { src: "/images/obra-3-centro-emprestarial.webp", alt: "Centro empresarial", title: "Hotel Íbis", year: "2023" },
-  { src: "/images/obra-4-favaro.webp", alt: "Clínica médica", title: "Clínica Fávaro", year: "2024" },
-  { src: "/images/obra-5-casa-condominio.webp", alt: "Condomínio", title: "Condomínio Luxo", year: "2023" },
-  { src: "/images/obra-6-casa-condominio.webp", alt: "Residencia", title: "Residência Completa", year: "2024" },
-  { src: "/images/obra-7-magalu.webp", alt: "Magalu", title: "Magalu Corporate", year: "2023" },
-  { src: "/images/obra-8-athenas.webp", alt: "Athenas", title: "Edifício Athenas", year: "2024" },
+  { src: "/images/obra-1-oxquimica.webp", alt: "Oxíquimica", title: "Oxíquimica", year: "2023", desc: "Soluções em vidros temperados e laminados para ambientes corporativos de alto padrão." },
+  { src: "/images/obra-2-porta-ripado.webp", alt: "Porta Ripado", title: "Residência Privada", year: "2024", desc: "Serralheria de alumínio com acabamento ripado, unindo privacidade e ventilação natural." },
+  { src: "/images/obra-3-centro-emprestarial.webp", alt: "Centro empresarial", title: "Hotel Íbis", year: "2023", desc: "Instalação de fachadas glazing e esquadrias de alta performance em empreendimentos hoteleiros." },
+  { src: "/images/obra-4-favaro.webp", alt: "Clínica médica", title: "Clínica Fávaro", year: "2024", desc: "Divisórias de vidro e sistemas de abertura automatizados para clínicas e consultórios." },
+  { src: "/images/obra-5-casa-condominio.webp", alt: "Condomínio", title: "Condomínio Luxo", year: "2023", desc: "Guarda-corpos e fechamentos de sacada com sistema de envidraçamento total." },
+  { src: "/images/obra-6-casa-condominio.webp", alt: "Residencia", title: "Residência Completa", year: "2024", desc: "Projetos personalizados em alumínio e vidro para residências de alto padrão." },
+  { src: "/images/obra-7-magalu.webp", alt: "Magalu", title: "Magalu Corporate", year: "2023", desc: "Estruturas metálicas e vidros de segurança para grandes centros administrativos." },
+  { src: "/images/obra-8-athenas.webp", alt: "Athenas", title: "Edifício Athenas", year: "2024", desc: "Manutenção e instalação de sistemas de fachada em edifícios comerciais de grande porte." },
 ];
 
 export default function WorkAndServices() {
@@ -40,7 +40,6 @@ export default function WorkAndServices() {
       return track.scrollWidth - window.innerWidth;
     };
 
-    // Configuração inicial: inners começam em 550px
     inners.forEach((inner) => {
       gsap.set(inner, { y: 550 });
     });
@@ -64,10 +63,8 @@ export default function WorkAndServices() {
       }
     });
 
-    // 1. Delay Inicial (Reading Delay no About)
     tl.to({}, { duration: 0.5 });
 
-    // 2. Scroll Horizontal e Animação Bottom-Up
     tl.to(track, {
       x: () => -getScrollAmount(),
       ease: "none",
@@ -87,7 +84,6 @@ export default function WorkAndServices() {
       }
     });
 
-    // 3. Efeito Cortina Final
     tl.to(wrapper, {
       yPercent: -100,
       ease: "power2.inOut",
@@ -156,18 +152,18 @@ export default function WorkAndServices() {
             </div>
           </div>
 
-          {/* BLOCOS DE OBRAS (Altura 70vh, Largura 4:5 landscape -> 87.5vh) */}
+          {/* BLOCOS DE OBRAS (Aspect 670/460, Height 70vh, Border-radius 5px, Spacing 80px) */}
           {IMAGES.map((img, i) => (
             <div 
               key={i} 
-              className="flex-shrink-0 w-screen md:w-[60vw] h-full flex items-center justify-center px-4 md:px-6 border-r border-white/5 bg-[#0a0a0a]"
+              className="flex-shrink-0 h-full flex items-center justify-center px-[40px] border-r border-white/5 bg-[#0a0a0a]"
             >
               <div 
                 ref={el => cardInnerRefs.current[i + 1] = el}
-                className="w-full flex flex-col items-center will-change-transform"
+                className="flex flex-col items-center will-change-transform"
               >
-                {/* Card da Imagem: 70vh de altura, 87.5vh de largura (4:5 deitado) */}
-                <div className="relative h-[70vh] w-[87.5vh] max-w-[90vw] group overflow-hidden bg-zinc-900 border border-white/5">
+                {/* Card da Imagem: Aspect 670/460, Height 70vh, Border-radius 5px */}
+                <div className="relative h-[70vh] aspect-[670/460] max-w-[90vw] group overflow-hidden bg-zinc-900 border border-white/5 rounded-[5px]">
                   <Image 
                     src={img.src} 
                     alt={img.alt} 
@@ -177,14 +173,17 @@ export default function WorkAndServices() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40" />
                 </div>
 
-                {/* Rótulo: Reduzido pela metade (text-xs/text-sm) */}
-                <div className="mt-6 w-full max-w-[87.5vh] px-2 text-left">
+                {/* Rótulo e Sub-descrição */}
+                <div className="mt-6 w-full px-2 text-left">
                   <span className="block text-[8px] uppercase tracking-[0.25em] text-white/40 mb-1 font-neuehaas font-bold">
                     {img.year} — Case Study
                   </span>
-                  <h3 className="text-sm md:text-base font-bold uppercase text-white font-familjen leading-tight tracking-tight">
+                  <h3 className="text-sm md:text-base font-bold uppercase text-white font-familjen leading-tight tracking-tight mb-2">
                     {img.title}
                   </h3>
+                  <p className="text-[10px] md:text-[11px] font-neuehaas text-[#75706f] leading-relaxed max-w-[90%]">
+                    {img.desc}
+                  </p>
                 </div>
               </div>
             </div>
