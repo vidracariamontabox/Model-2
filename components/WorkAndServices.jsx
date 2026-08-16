@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -29,15 +29,21 @@ export default function WorkAndServices() {
   const introRef = useRef(null);
   const cardRefs = useRef([]);
   const [isServicesRevealed, setIsServicesRevealed] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useGSAP(() => {
-    if (!containerRef.current || !trackRef.current || !wrapperRef.current) return;
+    if (!isMounted || !containerRef.current || !trackRef.current || !wrapperRef.current) return;
 
     const track = trackRef.current;
     const cards = cardRefs.current;
     
-    // Cálculo do scroll horizontal total
+    // Cálculo do scroll horizontal total seguro
     const getScrollAmount = () => {
+      if (typeof window === "undefined") return 0;
       return track.scrollWidth - window.innerWidth;
     };
 
@@ -45,13 +51,15 @@ export default function WorkAndServices() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: () => `+=${track.scrollWidth + window.innerHeight * 1.5}`, // Espaço extra para o hold e a cortina
+        end: () => {
+          const vh = typeof window !== "undefined" ? window.innerHeight : 1000;
+          return `+=${track.scrollWidth + vh * 1.5}`;
+        },
         pin: true,
         pinSpacing: true,
         scrub: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          // Revela a seção de serviços real ao final da cortina
           if (self.progress > 0.92) {
             setIsServicesRevealed(true);
           } else {
@@ -61,8 +69,8 @@ export default function WorkAndServices() {
       }
     });
 
-    // 1. O "Hold" de leitura (simulando os 2 segundos de pausa)
-    tl.to({}, { duration: 0.8 }); // Pausa inicial
+    // 1. O "Hold" de leitura
+    tl.to({}, { duration: 0.8 });
 
     // 2. O Scroll Horizontal
     tl.to(track, {
@@ -74,8 +82,6 @@ export default function WorkAndServices() {
     // 3. Animação Bottom-Up para cada card
     cards.forEach((card, i) => {
       if (!card) return;
-      
-      // Animação de entrada vindo de baixo
       tl.fromTo(card, 
         { y: 150, opacity: 0 },
         { 
@@ -84,29 +90,29 @@ export default function WorkAndServices() {
           ease: "power2.out",
           duration: 0.5 
         }, 
-        0.8 + (i * 0.3) // Inicia conforme o scroll avança
+        0.8 + (i * 0.3)
       );
     });
 
-    // 4. Efeito Cortina Total (Levantando a seção inteira)
+    // 4. Efeito Cortina Total
     tl.to(wrapperRef.current, {
       yPercent: -100,
       ease: "power2.inOut",
       duration: 1
     });
 
-  }, { scope: containerRef });
+  }, { scope: containerRef, dependencies: [isMounted] });
+
+  if (!isMounted) {
+    return <div className="h-screen bg-black" />;
+  }
 
   return (
     <div ref={containerRef} className="relative bg-black overflow-hidden">
       
-      {/* O Wrapper que será pinado e depois subirá como cortina */}
       <div ref={wrapperRef} className="relative w-full h-screen bg-black z-20 will-change-transform">
-        
-        {/* O Trilho Horizontal */}
         <div ref={trackRef} className="flex h-full items-center will-change-transform px-[10vw]">
           
-          {/* INTRO: Quem Somos (Parte do Trilho) */}
           <div ref={introRef} className="flex-shrink-0 w-[80vw] md:w-[45vw] mr-[10vw]">
             <div className="max-w-md">
               <p className="mb-8 text-[0.68rem] font-light tracking-[0.28em] uppercase text-[#75706f] font-neuehaas">
@@ -118,7 +124,7 @@ export default function WorkAndServices() {
                   <HoverBlur>Montabox</HoverBlur>
                 </h2>
                 <BlurTextReveal
-                  html='Vidraçaria e Serralheria <span className="text-[#acaba9]">de Alumínio.</span>'
+                  html='Vidraçaria e Serralheria <span class="text-[#acaba9]">de Alumínio.</span>'
                   animationType="words"
                   stagger={0.1}
                   delay={0.2}
@@ -160,7 +166,6 @@ export default function WorkAndServices() {
             </div>
           </div>
 
-          {/* CARDS DE OBRAS (Proporção Trionn) */}
           {IMAGES.map((img, i) => (
             <div 
               key={i} 
@@ -185,7 +190,6 @@ export default function WorkAndServices() {
             </div>
           ))}
 
-          {/* CARD FINAL: Instagram */}
           <div 
             ref={el => cardRefs.current[IMAGES.length] = el}
             className="flex-shrink-0 w-[75vw] md:w-[35vw] aspect-[4/5] flex flex-col justify-center items-center text-center p-10 bg-zinc-950 border border-white/10 rounded-2xl"
@@ -208,7 +212,6 @@ export default function WorkAndServices() {
         </div>
       </div>
 
-      {/* A SEÇÃO DE SERVICES: Fica atrás do wrapper e é revelada pela cortina */}
       <div className="absolute inset-0 z-10">
         <Services isRevealed={isServicesRevealed} />
       </div>
