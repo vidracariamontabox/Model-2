@@ -64,7 +64,8 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 | 1-6 | Concluídas | Manus | 15/08 | Fases iniciais de setup e integração básica. |
 | 7 — Refino Trionn | **CONCLUÍDA** | Manus | 16/08 | **Alta Fidelidade:** Implementado grid 50/50, offset de 550px com fórmula cúbica no `onUpdate` e efeito cortina cinemática. |
 | 8 — Restauração e Ajustes | **CONCLUÍDA** | Manus | 16/08 | Restaurada tipografia original, removida poluição de CSS global, ajustado aspect-ratio 670/460, border-radius 5px e espaçamento de 80px entre cards. Adicionadas sub-descrições. |
-| 9 — Fluidez e Estrutura | **PENDENTE** | - | - | **Próximas Etapas:** Implementar Smooth Scroll (Lenis) para fluidez e ajustar Services para ficar fisicamente atrás do About na estrutura DOM/CSS. |
+| 9 — Otimização de Performance | **CONCLUÍDA** | Manus | 16/08 | **Alta Performance:** Substituído `getBoundingClientRect` por cálculos matemáticos puros no `onUpdate`. Testado `scrub: 0.3` para maior responsividade. |
+| 10 — Estrutura de Camadas | **PENDENTE** | - | - | **Próximas Etapas:** Ajustar Services para ficar fisicamente atrás do About na estrutura DOM/CSS e refinar a cortina. |
 
 ---
 

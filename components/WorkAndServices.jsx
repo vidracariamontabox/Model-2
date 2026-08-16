@@ -40,6 +40,11 @@ export default function WorkAndServices() {
       return track.scrollWidth - window.innerWidth;
     };
 
+    // Pré-calcula as posições estáticas para evitar getBoundingClientRect no onUpdate
+    const cardStaticLefts = inners.map((inner) => inner.parentElement.offsetLeft);
+    const cardWidths = inners.map((inner) => inner.parentElement.offsetWidth);
+
+    // Configuração inicial: inners começam em 550px
     inners.forEach((inner) => {
       gsap.set(inner, { y: 550 });
     });
@@ -51,7 +56,7 @@ export default function WorkAndServices() {
         end: () => `+=${track.scrollWidth + window.innerHeight * 1.5}`, 
         pin: true,
         pinSpacing: true,
-        scrub: 0.5,
+        scrub: 0.3, // Testando 0.3 para maior responsividade conforme prompt
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           if (self.progress > 0.96) {
@@ -63,27 +68,34 @@ export default function WorkAndServices() {
       }
     });
 
+    // 1. Delay Inicial (Reading Delay no About)
     tl.to({}, { duration: 0.5 });
 
+    // 2. Scroll Horizontal e Animação Bottom-Up Otimizada
     tl.to(track, {
       x: () => -getScrollAmount(),
       ease: "none",
       duration: 3,
       onUpdate: function() {
-        inners.forEach((inner) => {
-          const parent = inner.parentElement;
-          const rect = parent.getBoundingClientRect();
-          const viewportWidth = window.innerWidth;
+        const currentX = gsap.getProperty(track, "x");
+        const viewportWidth = window.innerWidth;
+        
+        inners.forEach((inner, i) => {
+          // Matemática pura em vez de DOM: posição do card = offset estático + translação do trilho
+          const cardLeftInViewport = cardStaticLefts[i] + currentX;
+          const cardCenterX = cardLeftInViewport + cardWidths[i] / 2;
           
-          const cardLeft = rect.left;
-          const progress = gsap.utils.clamp(0, 1, 1 - (cardLeft - viewportWidth / 2) / (viewportWidth / 2));
+          // Lógica de progresso baseada no centro da tela
+          const progress = gsap.utils.clamp(0, 1, 1 - (cardCenterX - viewportWidth / 2) / (viewportWidth / 2));
           
+          // Fórmula da Trionn: y = 550 * (1 - progress^4)
           const yOffset = 550 * (1 - Math.pow(progress, 4));
           gsap.set(inner, { y: yOffset, force3D: true });
         });
       }
     });
 
+    // 3. Efeito Cortina Final
     tl.to(wrapper, {
       yPercent: -100,
       ease: "power2.inOut",
@@ -162,7 +174,6 @@ export default function WorkAndServices() {
                 ref={el => cardInnerRefs.current[i + 1] = el}
                 className="flex flex-col items-center will-change-transform"
               >
-                {/* Card da Imagem: Aspect 670/460, Height 70vh, Border-radius 5px */}
                 <div className="relative h-[70vh] aspect-[670/460] max-w-[90vw] group overflow-hidden bg-zinc-900 border border-white/5 rounded-[5px]">
                   <Image 
                     src={img.src} 
@@ -173,7 +184,6 @@ export default function WorkAndServices() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40" />
                 </div>
 
-                {/* Rótulo e Sub-descrição */}
                 <div className="mt-6 w-full px-2 text-left">
                   <span className="block text-[8px] uppercase tracking-[0.25em] text-white/40 mb-1 font-neuehaas font-bold">
                     {img.year} — Case Study
