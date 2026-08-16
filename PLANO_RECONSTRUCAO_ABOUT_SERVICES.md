@@ -66,6 +66,9 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 | 8 — Restauração e Ajustes | **CONCLUÍDA** | Manus | 16/08 | Restaurada tipografia original, removida poluição de CSS global, ajustado aspect-ratio 670/460, border-radius 5px e espaçamento de 80px entre cards. Adicionadas sub-descrições. |
 | 9 — Otimização de Performance | **CONCLUÍDA** | Manus | 16/08 | **Alta Performance:** Substituído `getBoundingClientRect` por cálculos matemáticos puros no `onUpdate`. Testado `scrub: 0.3` para maior responsividade. |
 | 10 — Estrutura de Camadas | **CONCLUÍDA** | Manus | 16/08 | **Fidelidade Técnica:** Services movido para fluxo de documento com `marginTop: -100vh`, espelhando a técnica da Trionn. |
+| 11 — Smooth Scroll (Lenis) | **CONCLUÍDA** | Manus | 16/08 | **Fluidez Total:** Instalado e configurado Lenis integrado ao GSAP. |
+| 12 — Reconstrução Z-Index | **CONCLUÍDA** | Manus | 16/08 | **Arquitetura de Camadas:** Services posicionado como `absolute z-10` atrás do About (`z-20`). Eliminadas lacunas entre seções. |
+| 13 — Refino de Lógica | **CONCLUÍDA** | Manus | 16/08 | **Trilho Horizontal:** Primeiro card estático, visibilidade do Instagram corrigida e aspect-ratio 670/460 aplicado. |
 
 ---
 

@@ -40,26 +40,34 @@ export default function WorkAndServices() {
       return track.scrollWidth - window.innerWidth;
     };
 
-    // Pré-calcula as posições estáticas para evitar getBoundingClientRect no onUpdate
+    // Pré-calcula as posições estáticas
     const cardStaticLefts = inners.map((inner) => inner.parentElement.offsetLeft);
     const cardWidths = inners.map((inner) => inner.parentElement.offsetWidth);
 
-    // Configuração inicial: inners começam em 550px
-    inners.forEach((inner) => {
-      gsap.set(inner, { y: 550 });
+    // Configuração inicial
+    inners.forEach((inner, i) => {
+      // Pula Intro (0) e Primeira Foto (1)
+      if (i > 1) {
+        gsap.set(inner, { y: 550 });
+      } else {
+        gsap.set(inner, { y: 0 });
+      }
     });
 
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: () => `+=${track.scrollWidth + window.innerHeight * 1.5}`, 
+        end: () => `+=${track.scrollWidth + window.innerHeight * 2.5}`, // Aumentado para garantir que tudo apareça e a cortina suba
         pin: true,
         pinSpacing: true,
-        scrub: 0.3, // Testando 0.3 para maior responsividade conforme prompt
+        scrub: 0.3,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          if (self.progress > 0.96) {
+          // A cortina começa a subir no final da timeline
+          // O progresso horizontal termina por volta de 0.7
+          const horizontalLimit = 0.75;
+          if (self.progress > horizontalLimit) {
             setIsServicesRevealed(true);
           } else {
             setIsServicesRevealed(false);
@@ -68,10 +76,10 @@ export default function WorkAndServices() {
       }
     });
 
-    // 1. Delay Inicial (Reading Delay no About)
-    tl.to({}, { duration: 0.5 });
+    // 1. Reading Delay Inicial (About)
+    tl.to({}, { duration: 0.8 }); // Aumentado para 0.8 para percepção clara
 
-    // 2. Scroll Horizontal e Animação Bottom-Up Otimizada
+    // 2. Scroll Horizontal e Animação Bottom-Up
     tl.to(track, {
       x: () => -getScrollAmount(),
       ease: "none",
@@ -81,25 +89,23 @@ export default function WorkAndServices() {
         const viewportWidth = window.innerWidth;
         
         inners.forEach((inner, i) => {
-          // Matemática pura em vez de DOM: posição do card = offset estático + translação do trilho
+          if (i <= 1) return; // Pula Intro e Primeira Foto
+
           const cardLeftInViewport = cardStaticLefts[i] + currentX;
           const cardCenterX = cardLeftInViewport + cardWidths[i] / 2;
           
-          // Lógica de progresso baseada no centro da tela
           const progress = gsap.utils.clamp(0, 1, 1 - (cardCenterX - viewportWidth / 2) / (viewportWidth / 2));
-          
-          // Fórmula da Trionn: y = 550 * (1 - progress^4)
           const yOffset = 550 * (1 - Math.pow(progress, 4));
           gsap.set(inner, { y: yOffset, force3D: true });
         });
       }
     });
 
-    // 3. Efeito Cortina Final
+    // 3. Efeito Cortina (Slide Up do Wrapper)
     tl.to(wrapper, {
       yPercent: -100,
       ease: "power2.inOut",
-      duration: 1
+      duration: 1.5 // Mais lento e dramático
     });
 
     return () => tl.kill();
@@ -109,6 +115,12 @@ export default function WorkAndServices() {
   return (
     <div ref={containerRef} className="relative w-full h-dvh bg-black overflow-hidden">
       
+      {/* Services fica FISICAMENTE ATRÁS (z-10) - Absolute para evitar lacunas */}
+      <div className="absolute inset-0 z-10 overflow-hidden">
+        <Services isRevealed={isServicesRevealed} />
+      </div>
+
+      {/* About/Work fica FISICAMENTE NA FRENTE (z-20) */}
       <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden">
         <div ref={trackRef} className="flex h-full items-center will-change-transform">
           
@@ -164,7 +176,7 @@ export default function WorkAndServices() {
             </div>
           </div>
 
-          {/* BLOCOS DE OBRAS (Aspect 670/460, Height 70vh, Border-radius 5px, Spacing 80px) */}
+          {/* BLOCOS DE OBRAS */}
           {IMAGES.map((img, i) => (
             <div 
               key={i} 
@@ -200,7 +212,7 @@ export default function WorkAndServices() {
           ))}
 
           {/* BLOCO FINAL: Instagram (50vw) */}
-          <div className="flex-shrink-0 w-screen md:w-[50vw] h-full flex flex-col justify-center items-center text-center p-10 bg-zinc-950">
+          <div className="flex-shrink-0 w-screen md:w-[50vw] h-full flex flex-col justify-center items-center text-center p-10 bg-zinc-950 border-l border-white/5">
             <div ref={el => cardInnerRefs.current[IMAGES.length + 1] = el} className="will-change-transform flex flex-col items-center">
               <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen mb-8 leading-tight tracking-tight">
                 Visite nosso <br /> <span className="text-[#acaba9]">Instagram</span>
@@ -219,10 +231,6 @@ export default function WorkAndServices() {
           </div>
 
         </div>
-      </div>
-
-      <div style={{ marginTop: "-100vh" }} className="relative z-10">
-        <Services isRevealed={isServicesRevealed} />
       </div>
 
     </div>

@@ -21,7 +21,7 @@ const CTA = dynamic(() => import("@/components/CTA"), { ssr: false });
 
 export default function Page() {
   return (
-    <main className="bg-[#121212]">
+    <main className="bg-black">
       <Navbar />
       <Hero />
       <WorkAndServices />
