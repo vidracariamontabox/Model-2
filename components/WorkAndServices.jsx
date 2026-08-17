@@ -40,9 +40,6 @@ export default function WorkAndServices() {
     const wrapper = wrapperRef.current;
     const inners = cardInnerRefs.current.filter(Boolean);
     
-    // TRIONN MATH: O scroll horizontal total é baseado no número de blocos de 50vw
-    // Temos Intro (1) + Imagens (8) + Instagram (1) = 10 blocos de 50vw = 500vw total
-    // O deslocamento horizontal é 500vw - 100vw = 400vw
     const getScrollAmount = () => {
       return track.scrollWidth - window.innerWidth;
     };
@@ -58,27 +55,23 @@ export default function WorkAndServices() {
 
     ScrollTrigger.refresh();
 
-    // TRIONN TIMING: Eles usam uma duração de 200% da altura da viewport para o trilho horizontal
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: () => `+=${window.innerHeight * 4}`, // Aumentado para dar mais espaço ao scroll
+        end: () => `+=${window.innerHeight * 4}`, 
         pin: true,
         pinSpacing: true,
-        scrub: 0.8, // Mais inércia para parecer fluido
+        scrub: 0.8,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          // Revelação começa no final da timeline
           setIsServicesRevealed(self.progress > 0.88);
         }
       }
     });
 
-    // 1. Reading Delay no About
     tl.to({}, { duration: 0.2 });
 
-    // 2. Scroll Horizontal e Animação Bottom-Up
     tl.to(track, {
       x: () => -getScrollAmount(),
       ease: "none",
@@ -88,7 +81,7 @@ export default function WorkAndServices() {
         const viewportWidth = window.innerWidth;
         
         inners.forEach((inner, i) => {
-          if (i <= 1) return; // Pula Intro e primeira foto
+          if (i <= 1) return;
 
           const card = inner.parentElement;
           if (!card) return;
@@ -96,11 +89,8 @@ export default function WorkAndServices() {
           const cardLeftInViewport = card.offsetLeft + currentX;
           const cardWidth = card.offsetWidth;
           
-          // FÓRMULA TRIONN EXATA:
-          // A posição relativa (r) do centro do card em relação ao viewport
           const r = (cardLeftInViewport + cardWidth / 2) / viewportWidth;
           
-          // y = r > 1.2 ? 550 : r > 0.5 ? 550 * (1 - (1 - Math.pow(1 - (1.2 - r) / 0.7, 3))) : 0
           let yOffset = 0;
           if (r > 1.2) {
             yOffset = 550;
@@ -116,7 +106,6 @@ export default function WorkAndServices() {
       }
     });
 
-    // 3. Efeito Cortina Horizontal
     tl.to(wrapper, {
       xPercent: -100,
       ease: "power2.inOut",
@@ -130,23 +119,24 @@ export default function WorkAndServices() {
 
   }, { scope: containerRef });
 
+  // Largura e Padding extraídos da Trionn (Fase 20)
+  const blockClass = "flex-shrink-0 w-[calc(100%-3rem)] md:w-[50%] md:max-w-[50cqw] h-full flex items-center justify-center px-0 md:px-10 lg:px-16 xl:px-20 border-r border-white/5 bg-black";
+
   return (
     <section ref={containerRef} className="relative w-full h-dvh bg-black overflow-hidden m-0 p-0">
       
-      {/* Services Camada Inferior */}
       <div className="absolute inset-0 z-10 overflow-hidden">
         <div className="h-full w-full">
           <Services isRevealed={isServicesRevealed} />
         </div>
       </div>
 
-      {/* About/Work Camada Superior */}
       <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden m-0 p-0">
         <div ref={trackRef} className="flex h-full items-center will-change-transform m-0 p-0">
           
-          {/* INTRO: 50vw fixo */}
-          <div className="flex-shrink-0 w-[50vw] h-full flex flex-col justify-center px-12 md:px-20 border-r border-white/5 bg-black">
-            <div ref={el => cardInnerRefs.current[0] = el} className="max-w-md will-change-transform">
+          {/* INTRO */}
+          <div className={blockClass}>
+            <div ref={el => cardInnerRefs.current[0] = el} className="max-w-md w-full will-change-transform px-6 md:px-0">
               <p className="mb-8 text-[0.68rem] font-light tracking-[0.28em] uppercase text-[#75706f] font-neuehaas">
                 Quem somos
               </p>
@@ -196,15 +186,12 @@ export default function WorkAndServices() {
             </div>
           </div>
 
-          {/* OBRAS: Cada uma com 50vw fixo, sem gap adicional */}
+          {/* OBRAS */}
           {IMAGES.map((img, i) => (
-            <div 
-              key={i} 
-              className="flex-shrink-0 w-[50vw] h-full flex items-center justify-center border-r border-white/5 bg-black"
-            >
+            <div key={i} className={blockClass}>
               <div 
                 ref={el => cardInnerRefs.current[i + 1] = el}
-                className="flex flex-col items-center w-full will-change-transform px-10"
+                className="flex flex-col items-center w-full will-change-transform"
               >
                 <div className="relative w-full aspect-[640/439] group overflow-hidden bg-zinc-900 border border-white/5 rounded-[5px]">
                   <Image 
@@ -231,11 +218,11 @@ export default function WorkAndServices() {
             </div>
           ))}
 
-          {/* INSTAGRAM: 50vw fixo */}
-          <div className="flex-shrink-0 w-[50vw] h-full flex items-center justify-center bg-black border-l border-white/5">
+          {/* INSTAGRAM */}
+          <div className={blockClass}>
             <div 
               ref={el => cardInnerRefs.current[IMAGES.length + 1] = el}
-              className="flex flex-col items-center w-full will-change-transform px-10"
+              className="flex flex-col items-center w-full will-change-transform"
             >
               <div className="relative w-full aspect-[640/439] flex flex-col justify-center items-center text-center bg-transparent">
                 <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen mb-8 leading-tight tracking-tight">
