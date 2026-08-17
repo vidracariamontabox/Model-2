@@ -54,16 +54,6 @@ function WhatsAppIcon(props) {
   );
 }
 
-const FooterLink = ({href, children}) => (
-  <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-[0.8rem] font-light uppercase tracking-widest text-[#acaba9] transition-colors duration-300 hover:text-white">
-    {children}
-  </a>
-);
-
 const contactLinks = [
   {
     icon: <FacebookIcon className="h-5 w-5 text-[#75706f]" />,
@@ -136,37 +126,6 @@ export default function Footer() {
             </div>
           </div>
         </div>
-
-        {/* <div className="grid grid-cols-2 gap-12 border-y border-white/5 py-12 md:grid-cols-4"> */}
-        {/* <div className="flex flex-col gap-4">
-            <span className="mb-2 text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f]">Navegação</span>
-            <FooterLink href="#sobre">Sobre</FooterLink>
-            <FooterLink href="#servicos">Serviços</FooterLink>
-            <FooterLink href="#depoimentos">Depoimentos</FooterLink>
-          </div> */}
-
-        {/* <div className="flex flex-col gap-4">
-            <span className="mb-2 text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f]">Social</span>
-            <FooterLink href="https://www.instagram.com/montabox_vidros/">Instagram</FooterLink>
-            <FooterLink href="https://www.facebook.com/profile.php?id=100083338509379">Facebook</FooterLink>
-            <FooterLink href="https://br.pinterest.com/montabox_vidros/">Pinterest</FooterLink>
-          </div> */}
-
-        {/* <div className="flex flex-col gap-4">
-            <span className="mb-2 text-[0.65rem] uppercase tracking-[0.3em] text-[#75706f]">Legal</span>
-            <FooterLink href="#">Privacidade</FooterLink>
-            <FooterLink href="#">Termos</FooterLink>
-          </div> */}
-
-        {/* <div className="flex flex-col items-start gap-6 md:items-end">
-            <a
-              href="https://wa.me/5516981984000"
-              className="group relative inline-flex items-center gap-3 rounded-full border border-white/10 px-6 py-3 transition-all duration-500 hover:bg-white hover:text-black">
-              <WhatsAppIcon className="h-4 w-4" />
-              <span className="text-[0.7rem] font-medium uppercase tracking-[0.2em]">Falar com Especialista</span>
-            </a>
-          </div> */}
-        {/* </div> */}
 
         <div className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-white/5 pt-8 md:flex-row">
           <div className="flex items-center gap-4">

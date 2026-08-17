@@ -9,14 +9,16 @@ module.exports = {
     extend: {
 
       // ─── FONTE ────────────────────────────────────────────────
+      // Referência: font-archivo, font-familjen (títulos), font-neuehaas (textos), font-ivy-presto
       fontFamily: {
         archivo: ['var(--font-archivo)', 'sans-serif'],
-        familjen: ['var(--font-familjen)', 'sans-serif'],  // títulos
-        neuehaas: ['var(--font-neuehaas)', 'sans-serif'],  // textos
+        familjen: ['var(--font-familjen)', 'sans-serif'],
+        neuehaas: ['var(--font-neuehaas)', 'sans-serif'],
         'ivy-presto': ['var(--font-ivy-presto)', 'serif'],
       },
+
       // ─── PALETA MONTABOX ──────────────────────────────────────
-      // Permite usar: bg-preto, text-inox, border-cinza, etc.
+      // Cores: branco (#eaeaea), inox (#acaba9), cinza (#75706f), chumbo (#2c2c2c), preto (#121212)
       colors: {
         branco: '#eaeaea',
         inox: '#acaba9',
@@ -27,6 +29,7 @@ module.exports = {
       },
 
       // ─── TIPOGRAFIA ───────────────────────────────────────────
+      // fluid-hero: clamp(3rem, 7vw, 6rem), fluid-section: clamp(1.8rem, 4vw, 3rem)
       fontSize: {
         '2xs': ['0.65rem', { lineHeight: '1' }],
         '3xs': ['0.68rem', { lineHeight: '1' }],
@@ -90,21 +93,18 @@ module.exports = {
   // ─── SAFELIST ─────────────────────────────────────────────────
   // Garante que classes com valores arbitrários não sejam purgadas
   safelist: [
-    // Cores arbitrárias usadas no projeto
     'bg-[#121212]',
     'bg-[#121212]/70',
     'bg-[#2c2c2c]',
     'bg-[#75706f]/20',
     'bg-[#acaba9]/30',
     'bg-[#acaba9]/40',
-    'bg-[linear - gradient(0deg, #FFFFFF_0 %, #D2D2D2_100 %)]',
     'bg-white/5',
     'border-white/5',
     'border-white/10',
     'text-[#75706f]',
     'text-[#acaba9]',
     'text-[#eaeaea]',
-    // Tipografia arbitrária
     'text-[0.45rem]',
     'text-[0.65rem]',
     'text-[0.68rem]',
@@ -115,7 +115,6 @@ module.exports = {
     'text-[0.95rem]',
     'text-[clamp(1.8rem,4vw,3rem)]',
     'text-[clamp(3rem,7vw,6rem)]',
-    // Leading e tracking arbitrários
     'leading-[1.02]',
     'leading-[1.85]',
     'tracking-[0.18em]',
@@ -123,7 +122,6 @@ module.exports = {
     'tracking-[0.3em]',
     'tracking-[0.32em]',
     'pl-[0.08em]',
-    // Dimensões arbitrárias
     'h-[300px]',
     'h-[420px]',
     'h-[480px]',
@@ -132,11 +130,9 @@ module.exports = {
     'w-[420px]',
     'w-[480px]',
     'w-[200vw]',
-    // Posicionamento arbitrário
     'left-[60%]',
     'top-[40%]',
     '-inset-[50%]',
-    // Outros
     'backdrop-blur-[6px]',
     'duration-[400ms]',
     'hover:border-white/20',
