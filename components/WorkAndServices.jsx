@@ -233,7 +233,7 @@ export default function WorkAndServices() {
           <div className={blockClass}>
             <div 
               ref={el => cardInnerRefs.current[IMAGES.length + 1] = el}
-              className="flex flex-col items-center w-full will-change-transform -translate-y-[120px]"
+              className="flex flex-col items-center w-full will-change-transform -translate-y-[200px]"
             >
               <div className="relative w-[95%] aspect-[640/439] flex flex-col justify-center items-center text-center bg-transparent">
                 <h3 className="text-xl md:text-2xl font-bold uppercase text-white font-familjen mb-4 leading-tight tracking-tight">
