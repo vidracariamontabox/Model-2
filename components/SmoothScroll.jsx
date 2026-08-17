@@ -11,13 +11,14 @@ export default function SmoothScroll({ children }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Inicializa o Lenis com foco em fluidez elástica
+    // CALIBRAGEM TRIONN: Simulando o peso do Locomotive Scroll
     const lenis = new Lenis({
-      lerp: 0.1, // Valor clássico para suavidade elástica
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
+      lerp: 0.05,            // Reduzido para máxima elasticidade e fluidez (era 0.1)
+      wheelMultiplier: 0.7,  // "Pesa" o scroll, exigindo mais controle e evitando saltos (era 1.0)
+      touchMultiplier: 1.5,
+      infinite: false,
       smoothWheel: true,
-      smoothTouch: false,
+      smoothTouch: true,     // Habilitado para manter a consistência no mobile
     });
 
     lenisRef.current = lenis;
@@ -25,7 +26,7 @@ export default function SmoothScroll({ children }) {
     // Sincroniza o ScrollTrigger com o Lenis
     lenis.on("scroll", ScrollTrigger.update);
 
-    // Usa o ticker do GSAP para rodar o Lenis
+    // Usa o ticker do GSAP para rodar o Lenis com prioridade
     function update(time) {
       lenis.raf(time * 1000);
     }

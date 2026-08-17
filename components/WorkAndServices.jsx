@@ -45,6 +45,7 @@ export default function WorkAndServices() {
       return track.scrollWidth - window.innerWidth;
     };
 
+    // Configuração inicial: Pula Intro (0) e Primeira Foto (1)
     inners.forEach((inner, i) => {
       if (i > 1) {
         gsap.set(inner, { y: 550, opacity: 1 });
@@ -229,15 +230,8 @@ export default function WorkAndServices() {
           <div className={blockClass}>
             <div 
               ref={el => cardInnerRefs.current[IMAGES.length + 1] = el}
-              className="flex flex-col items-center w-full will-change-transform"
+              className="flex flex-col items-center w-full will-change-transform -translate-y-[120px]"
             >
-              {/* 
-                  ALINHAMENTO DE PRECISÃO:
-                  Para alinhar a frase "Confira nossa coleção..." com o centro da imagem vizinha:
-                  1. O container tem o mesmo aspect-ratio (640/439) e escala (95%).
-                  2. Usamos flex-col com justify-center para que o CONTEÚDO central seja o eixo.
-                  3. A frase está no meio do bloco, alinhando-se com o meio da foto ao lado.
-              */}
               <div className="relative w-[95%] aspect-[640/439] flex flex-col justify-center items-center text-center bg-transparent">
                 <h3 className="text-xl md:text-2xl font-bold uppercase text-white font-familjen mb-4 leading-tight tracking-tight">
                   Visite nosso <br /> <span className="text-[#acaba9]">Instagram</span>
@@ -253,8 +247,6 @@ export default function WorkAndServices() {
                   Seguir no Instagram →
                 </a>
               </div>
-              {/* Mantemos o espaço invisível abaixo para que o bloco central (acima) suba e alinhe com as fotos */}
-              <div className="mt-6 h-[60px] w-full invisible" />
             </div>
           </div>
 
