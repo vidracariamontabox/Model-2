@@ -13,8 +13,8 @@ export default function SmoothScroll({ children }) {
 
     // CALIBRAGEM TRIONN: Aumentando o peso para fluidez cinematográfica
     const lenis = new Lenis({
-      lerp: 0.04,            // Mais lento e elástico (era 0.05)
-      wheelMultiplier: 0.5,  // Ainda mais pesado para evitar correria (era 0.7)
+      lerp: 0.05,            // Ajustado para maior leveza no scroll geral
+      wheelMultiplier: 0.6,  // Ajustado para 0.6 conforme solicitado
       touchMultiplier: 1.5,
       infinite: false,
       smoothWheel: true,

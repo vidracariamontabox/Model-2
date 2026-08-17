@@ -125,7 +125,7 @@ export default function WorkAndServices() {
   }, { scope: containerRef });
 
   // Ajuste Definivo: Linhas mais claras (white/20) e fundo transparente para o gradiente do wrapper
-  const blockClass = "flex-shrink-0 w-[calc(100%-3rem)] md:w-[45vw] h-full flex items-center justify-center px-0 md:px-10 border-r border-white/20";
+  const blockClass = "flex-shrink-0 w-[calc(100%-3rem)] md:w-[45vw] h-full flex items-center justify-center px-0 md:px-10 border-r border-white/10";
 
   return (
     <section 
