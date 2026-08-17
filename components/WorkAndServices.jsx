@@ -96,13 +96,8 @@ export default function WorkAndServices() {
           const cardLeftInViewport = card.offsetLeft + currentX;
           const cardWidth = card.offsetWidth;
           
-          // FÓRMULA TRIONN REFINADA:
-          // 'r' é a posição do centro do card em relação à largura da viewport.
           const r = (cardLeftInViewport + cardWidth / 2) / viewportWidth;
           
-          // Para caberem 2 cards lado a lado, o card deve atingir y=0 
-          // quando ainda estiver na metade direita da tela (r ≈ 0.75).
-          // Começa a subir em r=1.3 e termina em r=0.7.
           let yOffset = 0;
           if (r > 1.3) {
             yOffset = 550;
@@ -132,8 +127,8 @@ export default function WorkAndServices() {
 
   }, { scope: containerRef });
 
-  // Valores exatos da Trionn (Fase 20)
-  const blockClass = "flex-shrink-0 w-[calc(100%-3rem)] md:w-[50%] md:max-w-[50cqw] h-full flex items-center justify-center px-0 md:px-10 lg:px-16 xl:px-20 border-r border-white/5 bg-black";
+  // Ajuste de Espaçamento: Retornando para 80px (md:px-10) constante
+  const blockClass = "flex-shrink-0 w-[calc(100%-3rem)] md:w-[50%] md:max-w-[50cqw] h-full flex items-center justify-center px-0 md:px-10 border-r border-white/5 bg-black";
 
   return (
     <section 
@@ -258,6 +253,8 @@ export default function WorkAndServices() {
                   Seguir no Instagram →
                 </a>
               </div>
+              {/* Spacer para alinhar a "imagem" do Instagram com as imagens das obras (que têm texto abaixo) */}
+              <div className="mt-6 h-[60px] w-full invisible" />
             </div>
           </div>
 
