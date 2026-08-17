@@ -74,6 +74,7 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 | 16 — Refino de Transição e Visibilidade | **CONCLUÍDA** | Manus | 16/08 | **Ajuste Fino:** Removido efeito de surgimento em Services (exceto título), corrigida largura do trilho para o Instagram e sincronizada a revelação horizontal. |
 | 17 — Ajustes de Ritmo e Entrada | **CONCLUÍDA** | Manus | 16/08 | **Refino de UX:** Reduzido delay inicial, antecipada a entrada dos cards (bottom-up) para permitir múltiplos cards visíveis e reestruturado card do Instagram como bloco padrão do trilho. |
 | 18 — Refino de Proporção e Movimento | **CONCLUÍDA** | Manus | 16/08 | **Alta Fidelidade:** Aspect-ratio ajustado para 640x439, espaçamento aumentado em 10% e curva de animação bottom-up remodelada para ser mais explosiva no início. |
+| 19 — Grade Rígida 50/50 | **CONCLUÍDA** | Manus | 16/08 | **Fidelidade Matemática:** Implementada grade de 50vw para todos os blocos e fórmula de animação cúbica exata da Trionn. |
 
 ---
 

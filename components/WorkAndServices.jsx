@@ -59,13 +59,13 @@ export default function WorkAndServices() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: () => `+=${track.scrollWidth + window.innerHeight * 2.5}`, 
+        end: () => `+=${track.scrollWidth + window.innerHeight * 2}`, 
         pin: true,
         pinSpacing: true,
         scrub: 0.5,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          setIsServicesRevealed(self.progress > 0.88);
+          setIsServicesRevealed(self.progress > 0.85);
         }
       }
     });
@@ -89,15 +89,23 @@ export default function WorkAndServices() {
           if (!card) return;
           
           const cardLeftInViewport = card.offsetLeft + currentX;
+          const cardWidth = card.offsetWidth;
           
-          // MATEMÁTICA REFINADA:
-          // progress 0 = card começa a entrar na tela (borda direita)
-          // progress 1 = card no centro da tela
-          const progress = gsap.utils.clamp(0, 1, (viewportWidth - cardLeftInViewport) / (viewportWidth * 0.9));
+          // FÓRMULA TRIONN: r é a posição relativa ao viewport (0 a 1+)
+          // A Trionn usa o centro do card para calcular o progresso
+          const r = (cardLeftInViewport + cardWidth / 2) / viewportWidth;
           
-          // CURVA EXPLOSIVA: Sobe rápido no início e suaviza no final
-          // Usando uma curva que atinge ~50% do caminho muito cedo
-          const yOffset = 550 * (1 - Math.pow(progress, 2.5)); 
+          // Lógica de subida: começa a subir em r=1.2 e termina em r=0.5
+          let yOffset = 0;
+          if (r > 1.2) {
+            yOffset = 550;
+          } else if (r > 0.5) {
+            // Curva cúbica da Trionn: y = 550 * (1 - progress^3)
+            const progress = (1.2 - r) / 0.7;
+            yOffset = 550 * (1 - Math.pow(progress, 3));
+          } else {
+            yOffset = 0;
+          }
           
           gsap.set(inner, { y: yOffset, force3D: true });
         });
@@ -131,15 +139,15 @@ export default function WorkAndServices() {
       <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden m-0 p-0">
         <div ref={trackRef} className="flex h-full items-center will-change-transform m-0 p-0">
           
-          {/* BLOCO 1: INTRO (50vw) */}
-          <div className="flex-shrink-0 w-screen md:w-[50vw] h-full flex flex-col justify-center px-12 md:px-20 border-r border-white/5 bg-black">
+          {/* BLOCO 1: INTRO (50vw) - Grade Rígida */}
+          <div className="flex-shrink-0 w-[50vw] h-full flex flex-col justify-center px-12 md:px-20 border-r border-white/5 bg-black">
             <div ref={el => cardInnerRefs.current[0] = el} className="max-w-md will-change-transform">
               <p className="mb-8 text-[0.68rem] font-light tracking-[0.28em] uppercase text-[#75706f] font-neuehaas">
                 Quem somos
               </p>
               
               <div className="flex flex-col mb-8">
-                <h2 className="text-[clamp(1.8rem,4vw,3rem)] uppercase font-bold tracking-tight leading-[1.02] text-[#eaeaea] font-familjen">
+                <h2 className="text-[clamp(1.8rem,3vw,2.5rem)] uppercase font-bold tracking-tight leading-[1.02] text-[#eaeaea] font-familjen">
                   <HoverBlur>Montabox</HoverBlur>
                 </h2>
                 <BlurTextReveal
@@ -147,25 +155,25 @@ export default function WorkAndServices() {
                   animationType="words"
                   stagger={0.1}
                   delay={0.2}
-                  className="block overflow-hidden pl-[0.08em] text-[0.95rem] uppercase font-bold tracking-tight text-[#d8d8d8] font-familjen"
+                  className="block overflow-hidden pl-[0.08em] text-[0.9rem] uppercase font-bold tracking-tight text-[#d8d8d8] font-familjen"
                 />
               </div>
 
               <div className="mt-8 mb-8 h-px bg-[#75706f]/20 w-full" />
               
-              <p className="font-light text-[0.95rem] leading-[1.85] text-[#acaba9] mb-10 font-neuehaas">
+              <p className="font-light text-[0.85rem] leading-[1.85] text-[#acaba9] mb-10 font-neuehaas">
                 Especializada em projetos grandes, residenciais e comerciais, entregamos soluções que unem estética refinada e engenharia de alta performance.
               </p>
 
               <div className="grid grid-cols-1 gap-6">
                 <div className="flex flex-col gap-1">
-                  <span className="text-[clamp(1.2rem,2vw,2rem)] font-bold tracking-tight text-[#eaeaea] font-familjen">
+                  <span className="text-[clamp(1.2rem,1.5vw,1.8rem)] font-bold tracking-tight text-[#eaeaea] font-familjen">
                     35+
                   </span>
                   <span className="text-[0.55rem] font-light tracking-[0.18em] uppercase text-[#75706f] font-neuehaas">anos de mercado</span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-[clamp(1.2rem,2vw,2rem)] font-bold tracking-tight text-[#eaeaea] font-familjen">
+                  <span className="text-[clamp(1.2rem,1.5vw,1.8rem)] font-bold tracking-tight text-[#eaeaea] font-familjen">
                     7.040+
                   </span>
                   <span className="text-[0.55rem] font-light tracking-[0.18em] uppercase text-[#75706f] font-neuehaas">projetos concluídos</span>
@@ -177,25 +185,23 @@ export default function WorkAndServices() {
                   text="Selected Work"
                   animationType="chars"
                   stagger={0.05}
-                  className="font-familjen text-2xl md:text-3xl font-bold tracking-tighter text-white uppercase"
+                  className="font-familjen text-xl md:text-2xl font-bold tracking-tighter text-white uppercase"
                 />
               </div>
             </div>
           </div>
 
-          {/* BLOCOS DE OBRAS */}
+          {/* BLOCOS DE OBRAS (50vw) - Grade Rígida */}
           {IMAGES.map((img, i) => (
             <div 
               key={i} 
-              // Espaçamento aumentado em 10% (de 40px para 44px)
-              className="flex-shrink-0 h-full flex items-center justify-center px-[44px] border-r border-white/5 bg-black"
+              className="flex-shrink-0 w-[50vw] h-full flex items-center justify-center px-10 border-r border-white/5 bg-black"
             >
               <div 
                 ref={el => cardInnerRefs.current[i + 1] = el}
-                className="flex flex-col items-center will-change-transform"
+                className="flex flex-col items-center w-full will-change-transform px-10"
               >
-                {/* Aspect Ratio ajustado para 640/439 */}
-                <div className="relative h-[70vh] aspect-[640/439] max-w-[90vw] group overflow-hidden bg-zinc-900 border border-white/5 rounded-[5px]">
+                <div className="relative w-full aspect-[640/439] group overflow-hidden bg-zinc-900 border border-white/5 rounded-[5px]">
                   <Image 
                     src={img.src} 
                     alt={img.alt} 
@@ -205,7 +211,7 @@ export default function WorkAndServices() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40" />
                 </div>
 
-                <div className="mt-6 w-full px-2 text-left">
+                <div className="mt-6 w-full text-left">
                   <span className="block text-[8px] uppercase tracking-[0.25em] text-white/40 mb-1 font-neuehaas font-bold">
                     {img.year} — Case Study
                   </span>
@@ -220,13 +226,13 @@ export default function WorkAndServices() {
             </div>
           ))}
 
-          {/* BLOCO FINAL: Instagram */}
-          <div className="flex-shrink-0 h-full flex items-center justify-center px-[44px] border-l border-white/5 bg-black">
+          {/* BLOCO FINAL: Instagram (50vw) - Grade Rígida */}
+          <div className="flex-shrink-0 w-[50vw] h-full flex items-center justify-center px-10 border-l border-white/5 bg-black">
             <div 
               ref={el => cardInnerRefs.current[IMAGES.length + 1] = el}
-              className="flex flex-col items-center will-change-transform"
+              className="flex flex-col items-center w-full will-change-transform"
             >
-              <div className="relative h-[70vh] aspect-[640/439] max-w-[90vw] flex flex-col justify-center items-center text-center bg-transparent">
+              <div className="relative w-full aspect-[640/439] flex flex-col justify-center items-center text-center bg-transparent">
                 <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen mb-8 leading-tight tracking-tight">
                   Visite nosso <br /> <span className="text-[#acaba9]">Instagram</span>
                 </h3>
@@ -241,7 +247,6 @@ export default function WorkAndServices() {
                   Seguir no Instagram →
                 </a>
               </div>
-              <div className="mt-6 w-full h-[60px]" />
             </div>
           </div>
 
