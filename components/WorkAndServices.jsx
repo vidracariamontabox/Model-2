@@ -75,10 +75,8 @@ export default function WorkAndServices() {
       }
     });
 
-    // 1. Reading Delay no About
     tl.to({}, { duration: 0.2 });
 
-    // 2. Scroll Horizontal e Animação Bottom-Up Sincronizada
     tl.to(track, {
       x: () => -getScrollAmount(),
       ease: "none",
@@ -113,7 +111,6 @@ export default function WorkAndServices() {
       }
     });
 
-    // 3. Efeito Cortina Horizontal
     tl.to(wrapper, {
       xPercent: -100,
       ease: "power2.inOut",
@@ -127,8 +124,8 @@ export default function WorkAndServices() {
 
   }, { scope: containerRef });
 
-  // Ajuste de Espaçamento: Retornando para 80px (md:px-10) constante
-  const blockClass = "flex-shrink-0 w-[calc(100%-3rem)] md:w-[50%] md:max-w-[50cqw] h-full flex items-center justify-center px-0 md:px-10 border-r border-white/5 bg-black";
+  // Ajuste Definivo: 45vw para garantir que 2 caibam com folga (considerando os 80px de gap)
+  const blockClass = "flex-shrink-0 w-[calc(100%-3rem)] md:w-[45vw] h-full flex items-center justify-center px-0 md:px-10 border-r border-white/5 bg-black";
 
   return (
     <section 
@@ -207,7 +204,8 @@ export default function WorkAndServices() {
                 ref={el => cardInnerRefs.current[i + 1] = el}
                 className="flex flex-col items-center w-full will-change-transform"
               >
-                <div className="relative w-full aspect-[640/439] group overflow-hidden bg-zinc-900 border border-white/5 rounded-[5px]">
+                {/* Redução de 15% na escala visual mantendo o aspect ratio */}
+                <div className="relative w-[85%] aspect-[640/439] group overflow-hidden bg-zinc-900 border border-white/5 rounded-[5px]">
                   <Image 
                     src={img.src} 
                     alt={img.alt} 
@@ -217,7 +215,7 @@ export default function WorkAndServices() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40" />
                 </div>
 
-                <div className="mt-6 w-full text-left">
+                <div className="mt-6 w-[85%] text-left">
                   <span className="block text-[8px] uppercase tracking-[0.25em] text-white/40 mb-1 font-neuehaas font-bold">
                     {img.year} — Case Study
                   </span>
@@ -238,7 +236,7 @@ export default function WorkAndServices() {
               ref={el => cardInnerRefs.current[IMAGES.length + 1] = el}
               className="flex flex-col items-center w-full will-change-transform"
             >
-              <div className="relative w-full aspect-[640/439] flex flex-col justify-center items-center text-center bg-transparent">
+              <div className="relative w-[85%] aspect-[640/439] flex flex-col justify-center items-center text-center bg-transparent">
                 <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen mb-8 leading-tight tracking-tight">
                   Visite nosso <br /> <span className="text-[#acaba9]">Instagram</span>
                 </h3>
@@ -253,7 +251,6 @@ export default function WorkAndServices() {
                   Seguir no Instagram →
                 </a>
               </div>
-              {/* Spacer para alinhar a "imagem" do Instagram com as imagens das obras (que têm texto abaixo) */}
               <div className="mt-6 h-[60px] w-full invisible" />
             </div>
           </div>
