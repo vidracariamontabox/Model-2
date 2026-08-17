@@ -77,6 +77,7 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 | 19 — Grade Rígida 50/50 | **CONCLUÍDA** | Manus | 16/08 | **Fidelidade Matemática:** Implementada grade de 50vw para todos os blocos e fórmula de animação cúbica exata da Trionn. |
 | 20 — Grid 50/50 (Valores Exatos Trionn) | **CONCLUÍDA** | Manus | 16/08 | **Fidelidade Total:** Aplicada largura exata `md:w-[50%]` com padding responsivo da Trionn em todos os blocos, garantindo dois cards visíveis simultaneamente. |
 | 21 — Sincronia Y/X e Visibilidade Dupla | **CONCLUÍDA** | Manus | 16/08 | **Correção de Timing:** Ajustada a fórmula de `yOffset` para que o card suba mais cedo (r=1.3 a 0.7), permitindo que dois cards fiquem visíveis lado a lado. Otimizado `setState` no ScrollTrigger. |
+| 22 — Refino Estético e Fluidez | **CONCLUÍDA** | Manus | 17/08 | **Alta Fidelidade:** Aplicado gradiente Black-to-Gray, linhas verticais mais claras (white/20), alterado texto para "Principais projetos" e scroll Lenis desacelerado (lerp 0.04). |
 
 ---
 

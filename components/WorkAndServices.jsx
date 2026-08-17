@@ -124,7 +124,8 @@ export default function WorkAndServices() {
 
   }, { scope: containerRef });
 
-  const blockClass = "flex-shrink-0 w-[calc(100%-3rem)] md:w-[45vw] h-full flex items-center justify-center px-0 md:px-10 border-r border-white/5 bg-black";
+  // Ajuste Definivo: Linhas mais claras (white/20) e fundo transparente para o gradiente do wrapper
+  const blockClass = "flex-shrink-0 w-[calc(100%-3rem)] md:w-[45vw] h-full flex items-center justify-center px-0 md:px-10 border-r border-white/20";
 
   return (
     <section 
@@ -133,13 +134,15 @@ export default function WorkAndServices() {
       style={{ containerType: "inline-size" }}
     >
       
+      {/* Services Camada Inferior */}
       <div className="absolute inset-0 z-10 overflow-hidden">
         <div className="h-full w-full">
           <Services isRevealed={isServicesRevealed} />
         </div>
       </div>
 
-      <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden m-0 p-0">
+      {/* About/Work Camada Superior com Gradiente Preto -> Cinza Escuro */}
+      <div ref={wrapperRef} className="relative w-full h-full bg-gradient-to-r from-black via-[#0a0a0a] to-[#1a1a1a] z-20 will-change-transform overflow-hidden m-0 p-0">
         <div ref={trackRef} className="flex h-full items-center will-change-transform m-0 p-0">
           
           {/* INTRO */}
@@ -185,7 +188,7 @@ export default function WorkAndServices() {
 
               <div className="mt-16">
                 <BlurTextReveal
-                  text="Selected Work"
+                  text="Principais projetos"
                   animationType="chars"
                   stagger={0.05}
                   className="font-familjen text-xl md:text-2xl font-bold tracking-tighter text-white uppercase"

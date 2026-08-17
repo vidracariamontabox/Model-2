@@ -11,14 +11,14 @@ export default function SmoothScroll({ children }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // CALIBRAGEM TRIONN: Simulando o peso do Locomotive Scroll
+    // CALIBRAGEM TRIONN: Aumentando o peso para fluidez cinematográfica
     const lenis = new Lenis({
-      lerp: 0.05,            // Reduzido para máxima elasticidade e fluidez (era 0.1)
-      wheelMultiplier: 0.7,  // "Pesa" o scroll, exigindo mais controle e evitando saltos (era 1.0)
+      lerp: 0.04,            // Mais lento e elástico (era 0.05)
+      wheelMultiplier: 0.5,  // Ainda mais pesado para evitar correria (era 0.7)
       touchMultiplier: 1.5,
       infinite: false,
       smoothWheel: true,
-      smoothTouch: true,     // Habilitado para manter a consistência no mobile
+      smoothTouch: true,
     });
 
     lenisRef.current = lenis;
