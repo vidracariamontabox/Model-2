@@ -40,6 +40,9 @@ export default function WorkAndServices() {
     const wrapper = wrapperRef.current;
     const inners = cardInnerRefs.current.filter(Boolean);
     
+    // TRIONN MATH: O scroll horizontal total é baseado no número de blocos de 50vw
+    // Temos Intro (1) + Imagens (8) + Instagram (1) = 10 blocos de 50vw = 500vw total
+    // O deslocamento horizontal é 500vw - 100vw = 400vw
     const getScrollAmount = () => {
       return track.scrollWidth - window.innerWidth;
     };
@@ -55,23 +58,25 @@ export default function WorkAndServices() {
 
     ScrollTrigger.refresh();
 
+    // TRIONN TIMING: Eles usam uma duração de 200% da altura da viewport para o trilho horizontal
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: () => `+=${track.scrollWidth + window.innerHeight * 2}`, 
+        end: () => `+=${window.innerHeight * 4}`, // Aumentado para dar mais espaço ao scroll
         pin: true,
         pinSpacing: true,
-        scrub: 0.5,
+        scrub: 0.8, // Mais inércia para parecer fluido
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          setIsServicesRevealed(self.progress > 0.85);
+          // Revelação começa no final da timeline
+          setIsServicesRevealed(self.progress > 0.88);
         }
       }
     });
 
     // 1. Reading Delay no About
-    tl.to({}, { duration: 0.25 });
+    tl.to({}, { duration: 0.2 });
 
     // 2. Scroll Horizontal e Animação Bottom-Up
     tl.to(track, {
@@ -83,7 +88,7 @@ export default function WorkAndServices() {
         const viewportWidth = window.innerWidth;
         
         inners.forEach((inner, i) => {
-          if (i <= 1) return;
+          if (i <= 1) return; // Pula Intro e primeira foto
 
           const card = inner.parentElement;
           if (!card) return;
@@ -91,16 +96,15 @@ export default function WorkAndServices() {
           const cardLeftInViewport = card.offsetLeft + currentX;
           const cardWidth = card.offsetWidth;
           
-          // FÓRMULA TRIONN: r é a posição relativa ao viewport (0 a 1+)
-          // A Trionn usa o centro do card para calcular o progresso
+          // FÓRMULA TRIONN EXATA:
+          // A posição relativa (r) do centro do card em relação ao viewport
           const r = (cardLeftInViewport + cardWidth / 2) / viewportWidth;
           
-          // Lógica de subida: começa a subir em r=1.2 e termina em r=0.5
+          // y = r > 1.2 ? 550 : r > 0.5 ? 550 * (1 - (1 - Math.pow(1 - (1.2 - r) / 0.7, 3))) : 0
           let yOffset = 0;
           if (r > 1.2) {
             yOffset = 550;
           } else if (r > 0.5) {
-            // Curva cúbica da Trionn: y = 550 * (1 - progress^3)
             const progress = (1.2 - r) / 0.7;
             yOffset = 550 * (1 - Math.pow(progress, 3));
           } else {
@@ -112,12 +116,11 @@ export default function WorkAndServices() {
       }
     });
 
-    tl.to({}, { duration: 0.5 });
-
+    // 3. Efeito Cortina Horizontal
     tl.to(wrapper, {
       xPercent: -100,
       ease: "power2.inOut",
-      duration: 1.5
+      duration: 1
     });
 
     return () => {
@@ -130,16 +133,18 @@ export default function WorkAndServices() {
   return (
     <section ref={containerRef} className="relative w-full h-dvh bg-black overflow-hidden m-0 p-0">
       
+      {/* Services Camada Inferior */}
       <div className="absolute inset-0 z-10 overflow-hidden">
-        <div className={`h-full w-full transition-opacity duration-500 ${isServicesRevealed ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-100"}`}>
+        <div className="h-full w-full">
           <Services isRevealed={isServicesRevealed} />
         </div>
       </div>
 
+      {/* About/Work Camada Superior */}
       <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden m-0 p-0">
         <div ref={trackRef} className="flex h-full items-center will-change-transform m-0 p-0">
           
-          {/* BLOCO 1: INTRO (50vw) - Grade Rígida */}
+          {/* INTRO: 50vw fixo */}
           <div className="flex-shrink-0 w-[50vw] h-full flex flex-col justify-center px-12 md:px-20 border-r border-white/5 bg-black">
             <div ref={el => cardInnerRefs.current[0] = el} className="max-w-md will-change-transform">
               <p className="mb-8 text-[0.68rem] font-light tracking-[0.28em] uppercase text-[#75706f] font-neuehaas">
@@ -191,11 +196,11 @@ export default function WorkAndServices() {
             </div>
           </div>
 
-          {/* BLOCOS DE OBRAS (50vw) - Grade Rígida */}
+          {/* OBRAS: Cada uma com 50vw fixo, sem gap adicional */}
           {IMAGES.map((img, i) => (
             <div 
               key={i} 
-              className="flex-shrink-0 w-[50vw] h-full flex items-center justify-center px-10 border-r border-white/5 bg-black"
+              className="flex-shrink-0 w-[50vw] h-full flex items-center justify-center border-r border-white/5 bg-black"
             >
               <div 
                 ref={el => cardInnerRefs.current[i + 1] = el}
@@ -226,11 +231,11 @@ export default function WorkAndServices() {
             </div>
           ))}
 
-          {/* BLOCO FINAL: Instagram (50vw) - Grade Rígida */}
-          <div className="flex-shrink-0 w-[50vw] h-full flex items-center justify-center px-10 border-l border-white/5 bg-black">
+          {/* INSTAGRAM: 50vw fixo */}
+          <div className="flex-shrink-0 w-[50vw] h-full flex items-center justify-center bg-black border-l border-white/5">
             <div 
               ref={el => cardInnerRefs.current[IMAGES.length + 1] = el}
-              className="flex flex-col items-center w-full will-change-transform"
+              className="flex flex-col items-center w-full will-change-transform px-10"
             >
               <div className="relative w-full aspect-[640/439] flex flex-col justify-center items-center text-center bg-transparent">
                 <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen mb-8 leading-tight tracking-tight">
