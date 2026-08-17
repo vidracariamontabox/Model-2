@@ -45,7 +45,6 @@ export default function WorkAndServices() {
       return track.scrollWidth - window.innerWidth;
     };
 
-    // Configuração inicial: Pula Intro (0) e Primeira Foto (1)
     inners.forEach((inner, i) => {
       if (i > 1) {
         gsap.set(inner, { y: 550, opacity: 1 });
@@ -124,7 +123,6 @@ export default function WorkAndServices() {
 
   }, { scope: containerRef });
 
-  // Grade 45vw para garantir 2 cards simultâneos com 80px de gap
   const blockClass = "flex-shrink-0 w-[calc(100%-3rem)] md:w-[45vw] h-full flex items-center justify-center px-0 md:px-10 border-r border-white/5 bg-black";
 
   return (
@@ -134,14 +132,12 @@ export default function WorkAndServices() {
       style={{ containerType: "inline-size" }}
     >
       
-      {/* Services Camada Inferior */}
       <div className="absolute inset-0 z-10 overflow-hidden">
         <div className="h-full w-full">
           <Services isRevealed={isServicesRevealed} />
         </div>
       </div>
 
-      {/* About/Work Camada Superior */}
       <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden m-0 p-0">
         <div ref={trackRef} className="flex h-full items-center will-change-transform m-0 p-0">
           
@@ -204,7 +200,6 @@ export default function WorkAndServices() {
                 ref={el => cardInnerRefs.current[i + 1] = el}
                 className="flex flex-col items-center w-full will-change-transform"
               >
-                {/* Aumento de 10% (de 85% para 95%) */}
                 <div className="relative w-[95%] aspect-[640/439] group overflow-hidden bg-zinc-900 border border-white/5 rounded-[5px]">
                   <Image 
                     src={img.src} 
@@ -236,23 +231,30 @@ export default function WorkAndServices() {
               ref={el => cardInnerRefs.current[IMAGES.length + 1] = el}
               className="flex flex-col items-center w-full will-change-transform"
             >
-              {/* Removido justify-center e adicionado justify-start com padding para subir o texto */}
-              <div className="relative w-[95%] aspect-[640/439] flex flex-col justify-start items-center text-center bg-transparent pt-4 md:pt-8">
-                <h3 className="text-2xl md:text-3xl font-bold uppercase text-white font-familjen mb-8 leading-tight tracking-tight">
+              {/* 
+                  ALINHAMENTO DE PRECISÃO:
+                  Para alinhar a frase "Confira nossa coleção..." com o centro da imagem vizinha:
+                  1. O container tem o mesmo aspect-ratio (640/439) e escala (95%).
+                  2. Usamos flex-col com justify-center para que o CONTEÚDO central seja o eixo.
+                  3. A frase está no meio do bloco, alinhando-se com o meio da foto ao lado.
+              */}
+              <div className="relative w-[95%] aspect-[640/439] flex flex-col justify-center items-center text-center bg-transparent">
+                <h3 className="text-xl md:text-2xl font-bold uppercase text-white font-familjen mb-4 leading-tight tracking-tight">
                   Visite nosso <br /> <span className="text-[#acaba9]">Instagram</span>
                 </h3>
-                <p className="font-neuehaas text-[0.9rem] text-[#75706f] mb-12 max-w-xs leading-relaxed">
+                <p className="font-neuehaas text-[0.85rem] text-[#75706f] mb-8 max-w-xs leading-relaxed">
                   Confira nossa coleção completa de experiências e projetos executados.
                 </p>
                 <a 
                   href="https://www.instagram.com/vidracariamontabox/" 
                   target="_blank" 
-                  className="px-8 py-4 border border-white/20 rounded-tr-[99px] rounded-bl-[99px] rounded-br-[99px] bg-transparent text-white font-neuehaas text-[0.65rem] tracking-[0.16em] uppercase hover:bg-white hover:text-black transition-all duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]"
+                  className="px-6 py-3 border border-white/20 rounded-tr-[99px] rounded-bl-[99px] rounded-br-[99px] bg-transparent text-white font-neuehaas text-[0.6rem] tracking-[0.16em] uppercase hover:bg-white hover:text-black transition-all duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]"
                 >
                   Seguir no Instagram →
                 </a>
               </div>
-              {/* Removido o spacer fixo que empurrava o conteúdo para baixo */}
+              {/* Mantemos o espaço invisível abaixo para que o bloco central (acima) suba e alinhe com as fotos */}
+              <div className="mt-6 h-[60px] w-full invisible" />
             </div>
           </div>
 
