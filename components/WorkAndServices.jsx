@@ -28,6 +28,7 @@ export default function WorkAndServices() {
   const trackRef = useRef(null);
   const cardInnerRefs = useRef([]);
   const [isServicesRevealed, setIsServicesRevealed] = useState(false);
+  const revealedRef = useRef(false);
 
   useEffect(() => {
     cardInnerRefs.current = new Array(IMAGES.length + 2).fill(null);
@@ -44,7 +45,7 @@ export default function WorkAndServices() {
       return track.scrollWidth - window.innerWidth;
     };
 
-    // Configuração inicial
+    // Configuração inicial: Pula Intro (0) e Primeira Foto (1)
     inners.forEach((inner, i) => {
       if (i > 1) {
         gsap.set(inner, { y: 550, opacity: 1 });
@@ -65,13 +66,19 @@ export default function WorkAndServices() {
         scrub: 0.8,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          setIsServicesRevealed(self.progress > 0.88);
+          const isRevealed = self.progress > 0.88;
+          if (isRevealed !== revealedRef.current) {
+            revealedRef.current = isRevealed;
+            setIsServicesRevealed(isRevealed);
+          }
         }
       }
     });
 
+    // 1. Reading Delay no About
     tl.to({}, { duration: 0.2 });
 
+    // 2. Scroll Horizontal e Animação Bottom-Up Sincronizada
     tl.to(track, {
       x: () => -getScrollAmount(),
       ease: "none",
@@ -89,13 +96,18 @@ export default function WorkAndServices() {
           const cardLeftInViewport = card.offsetLeft + currentX;
           const cardWidth = card.offsetWidth;
           
+          // FÓRMULA TRIONN REFINADA:
+          // 'r' é a posição do centro do card em relação à largura da viewport.
           const r = (cardLeftInViewport + cardWidth / 2) / viewportWidth;
           
+          // Para caberem 2 cards lado a lado, o card deve atingir y=0 
+          // quando ainda estiver na metade direita da tela (r ≈ 0.75).
+          // Começa a subir em r=1.3 e termina em r=0.7.
           let yOffset = 0;
-          if (r > 1.2) {
+          if (r > 1.3) {
             yOffset = 550;
-          } else if (r > 0.5) {
-            const progress = (1.2 - r) / 0.7;
+          } else if (r > 0.7) {
+            const progress = (1.3 - r) / 0.6;
             yOffset = 550 * (1 - Math.pow(progress, 3));
           } else {
             yOffset = 0;
@@ -106,6 +118,7 @@ export default function WorkAndServices() {
       }
     });
 
+    // 3. Efeito Cortina Horizontal
     tl.to(wrapper, {
       xPercent: -100,
       ease: "power2.inOut",
@@ -119,18 +132,24 @@ export default function WorkAndServices() {
 
   }, { scope: containerRef });
 
-  // Largura e Padding extraídos da Trionn (Fase 20)
+  // Valores exatos da Trionn (Fase 20)
   const blockClass = "flex-shrink-0 w-[calc(100%-3rem)] md:w-[50%] md:max-w-[50cqw] h-full flex items-center justify-center px-0 md:px-10 lg:px-16 xl:px-20 border-r border-white/5 bg-black";
 
   return (
-    <section ref={containerRef} className="relative w-full h-dvh bg-black overflow-hidden m-0 p-0">
+    <section 
+      ref={containerRef} 
+      className="relative w-full h-dvh bg-black overflow-hidden m-0 p-0"
+      style={{ containerType: "inline-size" }}
+    >
       
+      {/* Services Camada Inferior */}
       <div className="absolute inset-0 z-10 overflow-hidden">
         <div className="h-full w-full">
           <Services isRevealed={isServicesRevealed} />
         </div>
       </div>
 
+      {/* About/Work Camada Superior */}
       <div ref={wrapperRef} className="relative w-full h-full bg-black z-20 will-change-transform overflow-hidden m-0 p-0">
         <div ref={trackRef} className="flex h-full items-center will-change-transform m-0 p-0">
           
