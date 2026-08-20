@@ -79,7 +79,7 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 | 21 — Sincronia Y/X e Visibilidade Dupla | **CONCLUÍDA** | Manus | 16/08 | **Correção de Timing:** Ajustada a fórmula de `yOffset` para que o card suba mais cedo (r=1.3 a 0.7), permitindo que dois cards fiquem visíveis lado a lado. Otimizado `setState` no ScrollTrigger. |
 | 22 — Refino Estético e Fluidez | **CONCLUÍDA** | Manus | 17/08 | **Alta Fidelidade:** Aplicado gradiente Black-to-Gray, linhas verticais mais claras (white/20), alterado texto para "Principais projetos" e scroll Lenis desacelerado (lerp 0.04). |
 | 23 — Limpeza e SEO Técnico | **CONCLUÍDA** | Manus | 20/08 | **Otimização:** Removidos arquivos mortos, unificado Tailwind, implementado SEO técnico, JSON-LD, acessibilidade semântica e Botão WhatsApp Flutuante. |
-| 24 — Jornada do Alumínio (3D) | **EM PROGRESSO** | Manus | 20/08 | **Etapa 1 Concluída:** Modelo 3D da Bauxita isolado e validado em rota de teste. |
+| 24 — Jornada do Alumínio (3D) | **EM PROGRESSO** | Manus | 20/08 | **Etapa 2 Concluída:** Coreografia inicial (0-55vh) e efeito de fratura implementados. |
 
 ---
 
@@ -98,4 +98,5 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 - [x] SEO Técnico e Acessibilidade básica implementados.
 - [x] Botão WhatsApp Flutuante integrado.
 - [x] Etapa 1: Validação do modelo da pedra (Bauxita) em rota isolada.
-- [ ] Etapa 2-5: Coreografia de scroll e integração final da Jornada do Alumínio.
+- [x] Etapa 2: Coreografia inicial (scroll, inclinação e fratura).
+- [ ] Etapa 3-5: Alumina, Tecnologia, Perfil e integração final da Jornada do Alumínio.
