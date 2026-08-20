@@ -28,7 +28,7 @@ A implementação seguirá uma abordagem modular para garantir estabilidade e pe
     *   **Objetivo**: Implementar a reação da pedra ao scroll e a fratura inicial.
     *   **Estágio 1 (0-20vh)**: Texto "BAUXITA" adicionado via `BlurTextReveal`. Rotação sutil corrigida para 0.07 rad/s.
     *   **Estágio 2 (20-55vh)**: Pedra desliza horizontalmente e inclina 15°.
-    *   **Fratura**: Implementada via separação de duas metades da malha com brilho emissivo interno (#D2691E) ativado no final do scroll (50-55vh).
+    *   **Fratura**: Implementada via **divisão real da geometria** (triângulos separados por plano X=0). As metades genuínas se afastam revelando a abertura interna com brilho emissivo (#D2691E) ativado no final do scroll (50-55vh). `side={THREE.DoubleSide}` garante a visibilidade das faces internas expostas.
     *   **Tecnologia**: Integrado GSAP `ScrollTrigger` com `pin: true`.
 3.  **Etapa 3: Alumina e Tecnologia (Estágio 3)**
     *   Adicionar os elementos de "tecnologia" (linhas de scan e partículas) e o elemento Alumina.
