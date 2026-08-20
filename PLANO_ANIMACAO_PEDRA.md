@@ -24,8 +24,12 @@ A implementação seguirá uma abordagem modular para garantir estabilidade e pe
     *   **Implementação**: **Opção A (Recriada do zero)**. Geometria `Icosahedron` deformada via código para aspecto rochoso orgânico.
     *   **Estética**: Cor terracota (#8B4A3C), material fosco (`roughness: 0.9`), `flatShading` ativo para realçar facetas.
     *   **Resultado**: Build validado e código enviado para a branch `feat/bauxita-section`.
-2.  **Etapa 2: Coreografia Inicial (Estágios 1 e 2)**
-    *   Implementar o aparecimento da pedra e a lógica de scroll para o deslocamento e inclinação.
+2.  **Etapa 2: Coreografia Inicial (CONCLUÍDA)**
+    *   **Objetivo**: Implementar a reação da pedra ao scroll e a fratura inicial.
+    *   **Estágio 1 (0-20vh)**: Texto "BAUXITA" adicionado via `BlurTextReveal`. Rotação sutil corrigida para 0.07 rad/s.
+    *   **Estágio 2 (20-55vh)**: Pedra desliza horizontalmente e inclina 15°.
+    *   **Fratura**: Implementada via separação de duas metades da malha com brilho emissivo interno (#D2691E) ativado no final do scroll (50-55vh).
+    *   **Tecnologia**: Integrado GSAP `ScrollTrigger` com `pin: true`.
 3.  **Etapa 3: Alumina e Tecnologia (Estágio 3)**
     *   Adicionar os elementos de "tecnologia" (linhas de scan e partículas) e o elemento Alumina.
 4.  **Etapa 4: Finalização da Jornada (Estágios 4 e 5)**
