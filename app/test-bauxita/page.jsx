@@ -3,6 +3,7 @@
 import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -10,19 +11,56 @@ import BlurTextReveal from '@/components/ui/BlurTextReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Componente que gera e renderiza a pedra de Bauxita fraturada
+// Função para dividir a geometria em duas metades reais
+function splitGeometryByPlane(geometry, planeX = 0) {
+  // Garantir que a geometria tenha índices para a iteração por triângulos
+  const indexedGeometry = geometry.index ? geometry : BufferGeometryUtils.mergeVertices(geometry);
+  const position = indexedGeometry.attributes.position;
+  const index = indexedGeometry.index;
+  
+  const leftPositions = [];
+  const rightPositions = [];
+  
+  // Itera por triângulos (grupos de 3 índices)
+  for (let i = 0; i < index.count; i += 3) {
+    const a = index.getX(i);
+    const b = index.getX(i + 1);
+    const c = index.getX(i + 2);
+    
+    // Calcula o centro do triângulo no eixo X para decidir a qual metade pertence
+    const centerX = (position.getX(a) + position.getX(b) + position.getX(c)) / 3;
+    
+    const target = centerX < planeX ? leftPositions : rightPositions;
+    
+    // Adiciona os 3 vértices do triângulo (posição completa xyz de cada um)
+    [a, b, c].forEach((idx) => {
+      target.push(position.getX(idx), position.getY(idx), position.getZ(idx));
+    });
+  }
+  
+  const leftGeom = new THREE.BufferGeometry();
+  leftGeom.setAttribute('position', new THREE.Float32BufferAttribute(leftPositions, 3));
+  leftGeom.computeVertexNormals();
+  
+  const rightGeom = new THREE.BufferGeometry();
+  rightGeom.setAttribute('position', new THREE.Float32BufferAttribute(rightPositions, 3));
+  rightGeom.computeVertexNormals();
+  
+  return { leftGeom, rightGeom };
+}
+
+// Componente que gera e renderiza a pedra de Bauxita fraturada (Metades Reais)
 function Bauxita({ scrollProgress }) {
   const groupRef = useRef();
   const leftHalfRef = useRef();
   const rightHalfRef = useRef();
 
-  // Gera duas metades de uma geometria irregular (rochosa)
   const { leftGeom, rightGeom } = useMemo(() => {
+    // 1. Gera a geometria base deformada
     const baseGeom = new THREE.IcosahedronGeometry(2, 2);
     const position = baseGeom.attributes.position;
     const vector = new THREE.Vector3();
 
-    // Deformação da rocha
     for (let i = 0; i < position.count; i++) {
       vector.fromBufferAttribute(position, i);
       const noise = 0.8 + Math.random() * 0.4;
@@ -31,13 +69,8 @@ function Bauxita({ scrollProgress }) {
     }
     baseGeom.computeVertexNormals();
 
-    // Cria as duas metades baseadas no eixo X
-    const left = baseGeom.clone();
-    const right = baseGeom.clone();
-
-    // Filtra vértices para cada metade (simplificado usando Clipping ou BoxMasking na renderização)
-    // Para esta etapa, usaremos a mesma geometria mas com materiais que sugerem a fratura
-    return { leftGeom: left, rightGeom: right };
+    // 2. Divide em duas metades reais
+    return splitGeometryByPlane(baseGeom, 0);
   }, []);
 
   // Rotação sutil contínua (0.07 rad/s no eixo Y)
@@ -52,28 +85,27 @@ function Bauxita({ scrollProgress }) {
     if (!groupRef.current || !leftHalfRef.current || !rightHalfRef.current) return;
 
     // Estágio 2 (20-55vh): Deslocamento + Inclinação + Fratura
-    // Normalizamos o progresso para o intervalo 20-55
     const stage2Progress = Math.max(0, Math.min(1, (scrollProgress - 20) / 35));
 
-    // 1. Deslocamento horizontal (X: 0 -> 2)
+    // 1. Deslocamento horizontal (X: 0 -> 2.5)
     groupRef.current.position.x = stage2Progress * 2.5;
 
     // 2. Inclinação (~15 graus = 0.26 rad)
     groupRef.current.rotation.z = stage2Progress * 0.26;
 
-    // 3. Fratura (acontece no final do Estágio 2: 50-55vh)
+    // 3. Fratura (50-55vh)
     const fractureProgress = Math.max(0, Math.min(1, (scrollProgress - 50) / 5));
     
-    // Separação sutil das metades
-    leftHalfRef.current.position.x = -fractureProgress * 0.15;
-    leftHalfRef.current.rotation.y = -fractureProgress * 0.1;
+    // Separação real das metades
+    leftHalfRef.current.position.x = -fractureProgress * 0.2;
+    leftHalfRef.current.rotation.y = -fractureProgress * 0.15;
     
-    rightHalfRef.current.position.x = fractureProgress * 0.15;
-    rightHalfRef.current.rotation.y = fractureProgress * 0.1;
+    rightHalfRef.current.position.x = fractureProgress * 0.2;
+    rightHalfRef.current.rotation.y = fractureProgress * 0.15;
 
-    // O brilho interno (emissiveIntensity) aumenta na fratura
-    leftHalfRef.current.material.emissiveIntensity = fractureProgress * 0.5;
-    rightHalfRef.current.material.emissiveIntensity = fractureProgress * 0.5;
+    // Brilho emissivo nas faces expostas
+    leftHalfRef.current.material.emissiveIntensity = fractureProgress * 0.6;
+    rightHalfRef.current.material.emissiveIntensity = fractureProgress * 0.6;
 
   }, [scrollProgress]);
 
@@ -85,6 +117,7 @@ function Bauxita({ scrollProgress }) {
       flatShading={true}
       emissive="#D2691E"
       emissiveIntensity={0}
+      side={THREE.DoubleSide} // Garante que as faces internas sejam visíveis
     />
   );
 
@@ -105,16 +138,13 @@ export default function TestBauxitaPage() {
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useGSAP(() => {
-    // Pin da seção para os Estágios 1 e 2 (0-55vh)
-    // Usamos um valor maior de end para simular o scroll necessário
     ScrollTrigger.create({
       trigger: containerRef.current,
       start: "top top",
-      end: "+=150%", // Espaço para scroll
+      end: "+=150%",
       pin: true,
       scrub: true,
       onUpdate: (self) => {
-        // Mapeia o progresso do ScrollTrigger (0-1) para a escala 0-55vh
         setScrollProgress(self.progress * 55);
       }
     });
@@ -122,11 +152,9 @@ export default function TestBauxitaPage() {
 
   return (
     <div ref={containerRef} className="relative w-full bg-black overflow-hidden">
-      {/* Container de altura para permitir scroll */}
       <div className="h-[250vh]">
         <div className="sticky top-0 w-full h-screen flex flex-col items-center justify-center">
           
-          {/* Estágio 1: Texto BAUXITA */}
           <div className="absolute top-[20%] z-20 w-full text-center px-4 pointer-events-none">
             <BlurTextReveal
               text="BAUXITA"
@@ -136,7 +164,6 @@ export default function TestBauxitaPage() {
             />
           </div>
 
-          {/* Canvas Three.js */}
           <div className="w-full h-full">
             <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
               <ambientLight intensity={0.5} />
@@ -147,7 +174,6 @@ export default function TestBauxitaPage() {
             </Canvas>
           </div>
 
-          {/* Debug Info (Opcional, pode remover depois) */}
           <div className="absolute bottom-4 left-4 text-[10px] text-gray-800 font-mono">
             PROGRESS: {scrollProgress.toFixed(1)}vh
           </div>
