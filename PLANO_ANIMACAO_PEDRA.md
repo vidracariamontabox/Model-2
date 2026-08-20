@@ -18,12 +18,12 @@ A animação é dividida em 5 estágios principais, sincronizados com o scroll d
 
 A implementação seguirá uma abordagem modular para garantir estabilidade e performance:
 
-1.  **Etapa 1: Isolar e Validar o Modelo (Foco Atual)**
+1.  **Etapa 1: Isolar e Validar o Modelo (CONCLUÍDA)**
     *   **Objetivo**: Criar uma cena isolada com a pedra, garantindo estética e performance.
     *   **Local**: Nova rota de teste `app/test-bauxita/page.jsx`.
-    *   **Implementação**: Optar por recriar a geometria (geometria irregular deformada via código) ou adaptar o `.glb` (hospedado localmente).
-    *   **Estética**: Cor terracota/bauxita (#8B4A3C), material fosco (roughness 0.9), rotação sutil (0.05 rad/s).
-    *   **Restrição**: Sem scroll, sem quebras, sem tecnologia nesta fase.
+    *   **Implementação**: **Opção A (Recriada do zero)**. Geometria `Icosahedron` deformada via código para aspecto rochoso orgânico.
+    *   **Estética**: Cor terracota (#8B4A3C), material fosco (`roughness: 0.9`), `flatShading` ativo para realçar facetas.
+    *   **Resultado**: Build validado e código enviado para a branch `feat/bauxita-section`.
 2.  **Etapa 2: Coreografia Inicial (Estágios 1 e 2)**
     *   Implementar o aparecimento da pedra e a lógica de scroll para o deslocamento e inclinação.
 3.  **Etapa 3: Alumina e Tecnologia (Estágio 3)**
