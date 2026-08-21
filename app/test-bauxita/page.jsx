@@ -8,6 +8,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import BlurTextReveal from '@/components/ui/BlurTextReveal';
+import Image from 'next/image';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -42,7 +43,7 @@ function splitGeometryByPlane(geometry, planeX = 0) {
   return { leftGeom, rightGeom };
 }
 
-// Componente Perfil (Estágio 4)
+// Componente Perfil (Estágio 4 & Transição Estágio 5)
 function AluminumProfile({ scrollProgress }) {
   const meshRef = useRef();
 
@@ -57,19 +58,22 @@ function AluminumProfile({ scrollProgress }) {
 
     // Transição Material (Alumina -> Perfil): 85-100vh
     const transitionProgress = Math.max(0, Math.min(1, (scrollProgress - 85) / 15));
-    meshRef.current.scale.setScalar(transitionProgress);
-    meshRef.current.material.opacity = transitionProgress;
-    meshRef.current.visible = transitionProgress > 0;
     
-    // Posição inicial (onde a alumina estava, à esquerda)
-    meshRef.current.position.x = -2.5;
-
-    // Movimento de volta pra direita: 100-115vh
+    // Fade-out final (Estágio 5): 115-125vh
+    const fadeOutStage5 = Math.max(0, Math.min(1, (scrollProgress - 115) / 10));
+    
+    const finalScale = transitionProgress * (1 - fadeOutStage5);
+    meshRef.current.scale.setScalar(finalScale);
+    meshRef.current.material.opacity = transitionProgress * (1 - fadeOutStage5);
+    meshRef.current.visible = finalScale > 0;
+    
+    // Movimento
     if (scrollProgress > 100) {
       const returnProgress = Math.max(0, Math.min(1, (scrollProgress - 100) / 15));
-      meshRef.current.position.x = -2.5 + (returnProgress * 4.5); // De -2.5 para +2.0
+      meshRef.current.position.x = -2.5 + (returnProgress * 4.5);
       meshRef.current.rotation.z = returnProgress * 0.5;
     } else {
+      meshRef.current.position.x = -2.5;
       meshRef.current.rotation.z = 0;
     }
 
@@ -126,10 +130,7 @@ function Alumina({ scrollProgress }) {
   useEffect(() => {
     if (!meshRef.current) return;
 
-    // Estágio 3: 55-70vh
     const growthProgress = Math.max(0, Math.min(1, (scrollProgress - 55) / 15));
-    
-    // Transição Estágio 4: 85-100vh (Fade-out)
     const fadeOutProgress = Math.max(0, Math.min(1, (scrollProgress - 85) / 15));
     
     const finalScale = growthProgress * (1 - fadeOutProgress);
@@ -138,7 +139,6 @@ function Alumina({ scrollProgress }) {
     meshRef.current.material.opacity = growthProgress * (1 - fadeOutProgress);
     meshRef.current.visible = finalScale > 0;
 
-    // Elementos de Tecnologia: 70-85vh
     const techProgress = Math.max(0, Math.min(1, (scrollProgress - 70) / 15));
     const techFadeOut = Math.max(0, Math.min(1, (scrollProgress - 85) / 10));
     
@@ -246,20 +246,26 @@ export default function TestBauxitaPage() {
     ScrollTrigger.create({
       trigger: containerRef.current,
       start: "top top",
-      end: "+=350%", // Aumentado proporcionalmente para 115vh
+      end: "+=450%", // Aumentado para 150vh (proporção 3x viewport height)
       pin: true,
       scrub: true,
       onUpdate: (self) => {
-        setScrollProgress(self.progress * 115);
+        setScrollProgress(self.progress * 150);
       }
     });
   }, { scope: containerRef });
 
+  // Lógica da Foto Final (Estágio 5)
+  const photoProgress = Math.max(0, Math.min(1, (scrollProgress - 125) / 15));
+  const photoScale = 0.95 + (photoProgress * 0.05);
+  const photoOpacity = photoProgress;
+
   return (
     <div ref={containerRef} className="relative w-full bg-black overflow-hidden">
-      <div className="h-[450vh]">
+      <div className="h-[550vh]">
         <div className="sticky top-0 w-full h-screen flex flex-col items-center justify-center">
           
+          {/* Títulos */}
           <div className="absolute top-[20%] z-20 w-full text-center px-4 pointer-events-none">
             {scrollProgress < 55 && (
               <BlurTextReveal
@@ -278,7 +284,7 @@ export default function TestBauxitaPage() {
                 />
               </div>
             )}
-            {scrollProgress >= 105 && (
+            {scrollProgress >= 105 && scrollProgress < 130 && (
               <div className="absolute right-[10%] top-[40%] text-right">
                 <BlurTextReveal
                   text="Transformado em precisão estrutural"
@@ -289,7 +295,8 @@ export default function TestBauxitaPage() {
             )}
           </div>
 
-          <div className="w-full h-full">
+          {/* Canvas Three.js (Estágios 1-4) */}
+          <div className="w-full h-full" style={{ opacity: 1 - Math.max(0, Math.min(1, (scrollProgress - 125) / 10)) }}>
             <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
               <ambientLight intensity={0.5} />
               <directionalLight position={[5, 5, 5]} intensity={1.5} />
@@ -301,6 +308,40 @@ export default function TestBauxitaPage() {
             </Canvas>
           </div>
 
+          {/* Estágio 5: Foto da Obra */}
+          {scrollProgress >= 120 && (
+            <div 
+              className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none px-4"
+              style={{ opacity: photoOpacity }}
+            >
+              <div 
+                className="relative w-full max-w-4xl aspect-video overflow-hidden rounded-lg shadow-2xl"
+                style={{ transform: `scale(${photoScale})` }}
+              >
+                <Image 
+                  src="/images/obra-2-porta-ripado.webp" 
+                  alt="Residência Privada - Montabox" 
+                  fill
+                  className="object-cover"
+                />
+                {/* Gradiente para legibilidade do texto */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              </div>
+              
+              {/* Título Poético */}
+              {scrollProgress >= 135 && (
+                <div className="mt-8">
+                  <BlurTextReveal
+                    text="Da rocha à sua porta."
+                    className="text-4xl md:text-6xl font-bold text-[#eaeaea] tracking-tight"
+                    stagger={0.08}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Debug Info */}
           <div className="absolute bottom-4 left-4 text-[10px] text-gray-800 font-mono">
             PROGRESS: {scrollProgress.toFixed(1)}vh
           </div>
