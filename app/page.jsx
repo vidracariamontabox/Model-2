@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
@@ -17,6 +17,12 @@ const Hero = dynamic(() => import("@/components/Hero"), {
   ssr: false,
   loading: () => <div className="h-screen w-full bg-[#080808]" />
 });
+
+const BauxitaJourney = dynamic(() => import("@/components/BauxitaJourney"), { 
+  ssr: false,
+  loading: () => <div className="min-h-screen bg-black" />
+});
+
 const CTA = dynamic(() => import("@/components/CTA"), { ssr: false });
 
 export default function Page() {
@@ -28,6 +34,7 @@ export default function Page() {
         <WorkAndServices />
       </div>
       <LazyTestimonials />
+      <BauxitaJourney />
       <FAQ faqs={faqs} />
       <CTA />
       <Footer />
