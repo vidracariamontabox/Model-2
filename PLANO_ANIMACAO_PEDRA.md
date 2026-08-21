@@ -43,9 +43,12 @@ A implementação seguirá uma abordagem modular para garantir estabilidade e pe
     *   **Movimento (100-115vh)**: O perfil desloca-se da esquerda de volta para a direita da tela com rotação sutil.
     *   **Legenda**: Texto "Transformado em precisão estrutural" adicionado via `BlurTextReveal`.
     *   **Scroll**: Multiplicador de `scrollProgress` estendido para 115 e `end` do `ScrollTrigger` ajustado para `+=350%`.
-5.  **Etapa 5: Integração e Refino**
-    *   Combinar todos os estágios em uma sequência fluida.
-    *   Integrar na página principal, ajustando a posição do FAQ.
+5.  **Etapa 5: Foto da Obra e Integração (CONCLUÍDA)**
+    *   **Objetivo**: Concluir a jornada visual com a resolução na arquitetura final.
+    *   **Transição (115-125vh)**: O Perfil de Alumínio desvanece (fade-out e escala 0).
+    *   **Foto da Obra (125-145vh)**: Fade-in da imagem real (`obra-2-porta-ripado.webp`) com leve zoom-in (0.95 a 1.0).
+    *   **Título Poético (135-150vh)**: Revelação do texto "Da rocha à sua porta." em destaque.
+    *   **Resultado**: Rota de teste `/test-bauxita` completa com os 5 estágios funcionais. Próximo passo: Integração na página principal.
 
 ## 📝 Notas Técnicas
 *   **Motor**: Three.js + GSAP (ScrollTrigger).
