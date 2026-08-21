@@ -284,7 +284,7 @@ export default function TestBauxitaPage() {
                 />
               </div>
             )}
-            {scrollProgress >= 105 && scrollProgress < 130 && (
+            {scrollProgress >= 105 && scrollProgress < 118 && (
               <div className="absolute right-[10%] top-[40%] text-right">
                 <BlurTextReveal
                   text="Transformado em precisão estrutural"
