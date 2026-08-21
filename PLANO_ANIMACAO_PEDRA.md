@@ -36,8 +36,13 @@ A implementação seguirá uma abordagem modular para garantir estabilidade e pe
     *   **Tecnologia (70-85vh)**: Linha de scan vertical brilhante (#d8e8ff) e sistema de dispersão de partículas finas.
     *   **Legenda**: Texto de apoio "Refinado com precisão" adicionado via `BlurTextReveal`.
     *   **Scroll**: Multiplicador de `scrollProgress` estendido para 85 e `end` do `ScrollTrigger` ajustado para `+=250%`.
-4.  **Etapa 4: Finalização da Jornada (Estágios 4 e 5)**
-    *   Implementar a transição para o perfil de alumínio e a revelação da foto da obra.
+4.  **Etapa 4: Perfil de Alumínio (CONCLUÍDA)**
+    *   **Objetivo**: Transformar o elemento mineral em um produto industrial acabado.
+    *   **Transição (85-100vh)**: A Alumina desvanece enquanto o Perfil de Alumínio (`BoxGeometry` alongada) surge na mesma posição.
+    *   **Material**: Inox polido (#C4C8CC), `metalness: 0.9`, `roughness: 0.2`, sem `flatShading` para suavidade.
+    *   **Movimento (100-115vh)**: O perfil desloca-se da esquerda de volta para a direita da tela com rotação sutil.
+    *   **Legenda**: Texto "Transformado em precisão estrutural" adicionado via `BlurTextReveal`.
+    *   **Scroll**: Multiplicador de `scrollProgress` estendido para 115 e `end` do `ScrollTrigger` ajustado para `+=350%`.
 5.  **Etapa 5: Integração e Refino**
     *   Combinar todos os estágios em uma sequência fluida.
     *   Integrar na página principal, ajustando a posição do FAQ.

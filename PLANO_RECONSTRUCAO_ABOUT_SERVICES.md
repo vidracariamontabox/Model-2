@@ -79,7 +79,7 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 | 21 — Sincronia Y/X e Visibilidade Dupla | **CONCLUÍDA** | Manus | 16/08 | **Correção de Timing:** Ajustada a fórmula de `yOffset` para que o card suba mais cedo (r=1.3 a 0.7), permitindo que dois cards fiquem visíveis lado a lado. Otimizado `setState` no ScrollTrigger. |
 | 22 — Refino Estético e Fluidez | **CONCLUÍDA** | Manus | 17/08 | **Alta Fidelidade:** Aplicado gradiente Black-to-Gray, linhas verticais mais claras (white/20), alterado texto para "Principais projetos" e scroll Lenis desacelerado (lerp 0.04). |
 | 23 — Limpeza e SEO Técnico | **CONCLUÍDA** | Manus | 20/08 | **Otimização:** Removidos arquivos mortos, unificado Tailwind, implementado SEO técnico, JSON-LD, acessibilidade semântica e Botão WhatsApp Flutuante. |
-| 24 — Jornada do Alumínio (3D) | **EM PROGRESSO** | Manus | 20/08 | **Etapa 3 Concluída:** Alumina revelada, linha de scan e partículas de tecnologia integradas (55-85vh). |
+| 24 — Jornada do Alumínio (3D) | **EM PROGRESSO** | Manus | 20/08 | **Etapa 4 Concluída:** Transição para o perfil de alumínio polido e retorno para a direita (85-115vh). |
 
 ---
 
@@ -100,4 +100,5 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 - [x] Etapa 1: Validação do modelo da pedra (Bauxita) em rota isolada.
 - [x] Etapa 2: Coreografia inicial (scroll, inclinação e fratura).
 - [x] Etapa 3: Alumina e elementos de tecnologia (scan/partículas).
-- [ ] Etapa 4-5: Perfil, Foto da Obra e integração final da Jornada do Alumínio.
+- [x] Etapa 4: Perfil de Alumínio e transição material.
+- [ ] Etapa 5: Foto da Obra e integração final da Jornada do Alumínio.
