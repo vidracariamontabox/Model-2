@@ -50,7 +50,7 @@ A implementação seguirá uma abordagem modular para garantir estabilidade e pe
     *   **Título Poético (135-150vh)**: Revelação do texto "Da rocha à sua porta." em destaque.
     *   **Resultado**: Rota de teste `/test-bauxita` completa com os 5 estágios funcionais.
     *   **Ajuste de UX**: Corrigido timing de visibilidade do texto do Estágio 4 (limite 118vh) para evitar sobreposição com a foto do Estágio 5.
-    *   **Próximo passo**: Integração na página principal.
+    *   **Integração (CONCLUÍDA)**: Seção integrada na página principal (`app/page.jsx`) entre Depoimentos e FAQ. Carregamento dinâmico implementado para performance.
 
 ## 📝 Notas Técnicas
 *   **Motor**: Three.js + GSAP (ScrollTrigger).
