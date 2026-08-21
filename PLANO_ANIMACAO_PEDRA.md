@@ -30,8 +30,12 @@ A implementação seguirá uma abordagem modular para garantir estabilidade e pe
     *   **Estágio 2 (20-55vh)**: Pedra desliza horizontalmente e inclina 15°.
     *   **Fratura**: Implementada via **divisão real da geometria** (triângulos separados por plano X=0). As metades genuínas se afastam revelando a abertura interna com brilho emissivo (#D2691E) ativado no final do scroll (50-55vh). `side={THREE.DoubleSide}` garante a visibilidade das faces internas expostas.
     *   **Tecnologia**: Integrado GSAP `ScrollTrigger` com `pin: true`.
-3.  **Etapa 3: Alumina e Tecnologia (Estágio 3)**
-    *   Adicionar os elementos de "tecnologia" (linhas de scan e partículas) e o elemento Alumina.
+3.  **Etapa 3: Alumina e Tecnologia (CONCLUÍDA)**
+    *   **Objetivo**: Introduzir o elemento refinado e a estética tecnológica.
+    *   **Alumina (55-70vh)**: Esfera metálica irregular (#E8E0D5) que nasce da fratura, cresce e se desloca para a esquerda.
+    *   **Tecnologia (70-85vh)**: Linha de scan vertical brilhante (#d8e8ff) e sistema de dispersão de partículas finas.
+    *   **Legenda**: Texto de apoio "Refinado com precisão" adicionado via `BlurTextReveal`.
+    *   **Scroll**: Multiplicador de `scrollProgress` estendido para 85 e `end` do `ScrollTrigger` ajustado para `+=250%`.
 4.  **Etapa 4: Finalização da Jornada (Estágios 4 e 5)**
     *   Implementar a transição para o perfil de alumínio e a revelação da foto da obra.
 5.  **Etapa 5: Integração e Refino**
