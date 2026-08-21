@@ -60,10 +60,10 @@ export default function WorkAndServices() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: () => `+=${window.innerHeight * 4}`, 
+        end: () => `+=${window.innerHeight * 6}`, // Aumentado de 4 para 6 para tornar o scroll horizontal mais lento e cinematográfico
         pin: true,
         pinSpacing: true,
-        scrub: 0.8,
+        scrub: 1.2, // Aumentado de 0.8 para 1.2 para dar mais peso e inércia ao movimento horizontal
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           const isRevealed = self.progress > 0.88;
