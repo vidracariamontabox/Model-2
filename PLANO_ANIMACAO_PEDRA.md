@@ -48,7 +48,9 @@ A implementação seguirá uma abordagem modular para garantir estabilidade e pe
     *   **Transição (115-125vh)**: O Perfil de Alumínio desvanece (fade-out e escala 0).
     *   **Foto da Obra (125-145vh)**: Fade-in da imagem real (`obra-2-porta-ripado.webp`) com leve zoom-in (0.95 a 1.0).
     *   **Título Poético (135-150vh)**: Revelação do texto "Da rocha à sua porta." em destaque.
-    *   **Resultado**: Rota de teste `/test-bauxita` completa com os 5 estágios funcionais. Próximo passo: Integração na página principal.
+    *   **Resultado**: Rota de teste `/test-bauxita` completa com os 5 estágios funcionais.
+    *   **Ajuste de UX**: Corrigido timing de visibilidade do texto do Estágio 4 (limite 118vh) para evitar sobreposição com a foto do Estágio 5.
+    *   **Próximo passo**: Integração na página principal.
 
 ## 📝 Notas Técnicas
 *   **Motor**: Three.js + GSAP (ScrollTrigger).
