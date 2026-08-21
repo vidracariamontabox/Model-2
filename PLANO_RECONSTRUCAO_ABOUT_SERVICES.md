@@ -80,6 +80,7 @@ Esta seção anula qualquer suposição anterior sobre animações baseadas em t
 | 22 — Refino Estético e Fluidez | **CONCLUÍDA** | Manus | 17/08 | **Alta Fidelidade:** Aplicado gradiente Black-to-Gray, linhas verticais mais claras (white/20), alterado texto para "Principais projetos" e scroll Lenis desacelerado (lerp 0.04). |
 | 23 — Limpeza e SEO Técnico | **CONCLUÍDA** | Manus | 20/08 | **Otimização:** Removidos arquivos mortos, unificado Tailwind, implementado SEO técnico, JSON-LD, acessibilidade semântica e Botão WhatsApp Flutuante. |
 | 24 — Jornada do Alumínio (3D) | **CONCLUÍDA** | Manus | 20/08 | **Integração Final:** Seção 3D integrada na página principal entre Depoimentos e FAQ. Todos os 5 estágios funcionais. |
+| 25 — Calibragem de Scroll Cinematográfico | **CONCLUÍDA** | Manus | 21/08 | **Refino de UX:** Aumentado o peso do scroll global (lerp 0.05) e desacelerado o carrossel horizontal (end multiplier 6x) para máxima fluidez Trionn. |
 
 ---
 
