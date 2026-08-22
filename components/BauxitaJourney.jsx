@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useRef, useMemo, useEffect, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -11,37 +13,6 @@ import BlurTextReveal from '@/components/ui/BlurTextReveal';
 import Image from 'next/image';
 
 gsap.registerPlugin(ScrollTrigger);
-
-// Função para dividir a geometria em duas metades reais
-function splitGeometryByPlane(geometry, planeX = 0) {
-  const indexedGeometry = geometry.index ? geometry : BufferGeometryUtils.mergeVertices(geometry);
-  const position = indexedGeometry.attributes.position;
-  const index = indexedGeometry.index;
-  
-  const leftPositions = [];
-  const rightPositions = [];
-  
-  for (let i = 0; i < index.count; i += 3) {
-    const a = index.getX(i);
-    const b = index.getX(i + 1);
-    const c = index.getX(i + 2);
-    const centerX = (position.getX(a) + position.getX(b) + position.getX(c)) / 3;
-    const target = centerX < planeX ? leftPositions : rightPositions;
-    [a, b, c].forEach((idx) => {
-      target.push(position.getX(idx), position.getY(idx), position.getZ(idx));
-    });
-  }
-  
-  const leftGeom = new THREE.BufferGeometry();
-  leftGeom.setAttribute('position', new THREE.Float32BufferAttribute(leftPositions, 3));
-  leftGeom.computeVertexNormals();
-  
-  const rightGeom = new THREE.BufferGeometry();
-  rightGeom.setAttribute('position', new THREE.Float32BufferAttribute(rightPositions, 3));
-  rightGeom.computeVertexNormals();
-  
-  return { leftGeom, rightGeom };
-}
 
 // Componente Perfil (Estágio 4 & Transição Estágio 5)
 function AluminumProfile({ scrollProgress }) {
@@ -175,65 +146,80 @@ function Alumina({ scrollProgress }) {
   );
 }
 
-// Componente Bauxita (Estágios 1 e 2)
+// Componente Bauxita (Estágios 1 e 2) usando a pedra GLB real da referência
 function Bauxita({ scrollProgress }) {
   const groupRef = useRef();
-  const leftHalfRef = useRef();
-  const rightHalfRef = useRef();
-
-  const { leftGeom, rightGeom } = useMemo(() => {
-    const baseGeom = new THREE.IcosahedronGeometry(2, 2);
-    const position = baseGeom.attributes.position;
-    const vector = new THREE.Vector3();
-    for (let i = 0; i < position.count; i++) {
-      vector.fromBufferAttribute(position, i);
-      const noise = 0.8 + Math.random() * 0.4;
-      vector.multiplyScalar(noise);
-      position.setXYZ(i, vector.x, vector.y, vector.z);
-    }
-    baseGeom.computeVertexNormals();
-    return splitGeometryByPlane(baseGeom, 0);
-  }, []);
-
-  useFrame((state, delta) => {
-    if (groupRef.current && groupRef.current.visible) groupRef.current.rotation.y += delta * 0.07;
+  const { gl } = useThree();
+  const gltf = useLoader(GLTFLoader, '/assets/rock1-opt.glb', (loader) => {
+    const ktx2Loader = new KTX2Loader()
+      .setTranscoderPath('/three/basis/')
+      .detectSupport(gl);
+    loader.setKTX2Loader(ktx2Loader);
+    loader.setMeshoptDecoder(MeshoptDecoder);
   });
 
+  const rockObject = useMemo(() => {
+    const clone = gltf.scene.clone(true);
+    const bounds = new THREE.Box3().setFromObject(clone);
+    const center = new THREE.Vector3();
+    const size = new THREE.Vector3();
+
+    bounds.getCenter(center);
+    bounds.getSize(size);
+    clone.position.sub(center);
+
+    const maxDimension = Math.max(size.x, size.y, size.z) || 1;
+    clone.scale.setScalar(3.6 / maxDimension);
+
+    clone.traverse((child) => {
+      if (!child.isMesh || !child.material) return;
+
+      const materials = Array.isArray(child.material) ? child.material : [child.material];
+      const preparedMaterials = materials.map((material) => {
+        const prepared = material.clone();
+        if (prepared.color) prepared.color.set('#8B4A3C');
+        if ('roughness' in prepared) prepared.roughness = 0.82;
+        if ('metalness' in prepared) prepared.metalness = 0.08;
+        prepared.transparent = true;
+        prepared.needsUpdate = true;
+        return prepared;
+      });
+
+      child.material = Array.isArray(child.material) ? preparedMaterials : preparedMaterials[0];
+    });
+
+    return clone;
+  }, [gltf]);
+
   useEffect(() => {
-    if (!groupRef.current || !leftHalfRef.current || !rightHalfRef.current) return;
+    if (!groupRef.current) return;
 
     const stage2Progress = Math.max(0, Math.min(1, (scrollProgress - 20) / 35));
     groupRef.current.position.x = stage2Progress * 2.5;
     groupRef.current.rotation.z = stage2Progress * 0.26;
 
+    // Mantém a sensação de quebra como uma deformação breve do próprio modelo,
+    // sem voltar à geometria procedural de triângulos.
     const fractureProgress = Math.max(0, Math.min(1, (scrollProgress - 50) / 5));
-    leftHalfRef.current.position.x = -fractureProgress * 0.2;
-    leftHalfRef.current.rotation.y = -fractureProgress * 0.15;
-    rightHalfRef.current.position.x = fractureProgress * 0.2;
-    rightHalfRef.current.rotation.y = fractureProgress * 0.15;
-    
-    leftHalfRef.current.material.emissiveIntensity = fractureProgress * 0.6;
-    rightHalfRef.current.material.emissiveIntensity = fractureProgress * 0.6;
+    groupRef.current.rotation.y = fractureProgress * 0.12;
+    groupRef.current.scale.x = 1 - fractureProgress * 0.06;
 
     const fadeOutProgress = Math.max(0, Math.min(1, (scrollProgress - 55) / 15));
-    groupRef.current.visible = fadeOutProgress < 1;
+    const opacity = 1 - fadeOutProgress;
+    groupRef.current.visible = opacity > 0;
     groupRef.current.traverse((child) => {
-      if (child.isMesh) {
-        child.material.opacity = 1 - fadeOutProgress;
-        child.material.transparent = true;
-      }
+      if (!child.isMesh || !child.material) return;
+      const materials = Array.isArray(child.material) ? child.material : [child.material];
+      materials.forEach((material) => {
+        material.opacity = opacity;
+        material.transparent = true;
+      });
     });
-
   }, [scrollProgress]);
 
   return (
     <group ref={groupRef}>
-      <mesh ref={leftHalfRef} geometry={leftGeom}>
-        <meshStandardMaterial color="#8B4A3C" roughness={0.9} metalness={0.1} flatShading emissive="#D2691E" emissiveIntensity={0} side={THREE.DoubleSide} transparent />
-      </mesh>
-      <mesh ref={rightHalfRef} geometry={rightGeom}>
-        <meshStandardMaterial color="#8B4A3C" roughness={0.9} metalness={0.1} flatShading emissive="#D2691E" emissiveIntensity={0} side={THREE.DoubleSide} transparent />
-      </mesh>
+      <primitive object={rockObject} />
     </group>
   );
 }
@@ -294,7 +280,11 @@ export default function BauxitaJourney() {
           </div>
 
           <div className="w-full h-full" style={{ opacity: 1 - Math.max(0, Math.min(1, (scrollProgress - 125) / 10)) }}>
-            <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
+            <Canvas
+              camera={{ position: [0, 0, 6], fov: 45 }}
+              gl={{ alpha: false, antialias: true, powerPreference: 'high-performance' }}
+              onCreated={({ gl }) => gl.setClearColor('#000000', 1)}
+            >
               <ambientLight intensity={0.5} />
               <directionalLight position={[5, 5, 5]} intensity={1.5} />
               <pointLight position={[-5, -5, -5]} intensity={0.5} color="#A0522D" />

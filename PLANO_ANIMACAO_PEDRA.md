@@ -53,6 +53,10 @@ A implementação seguirá uma abordagem modular para garantir estabilidade e pe
     *   **Integração (CONCLUÍDA)**: Seção integrada na página principal (`app/page.jsx`) entre Depoimentos e FAQ. Carregamento dinâmico implementado para performance.
 
 ## 📝 Notas Técnicas
+
+*   **Modelo real integrado**: `public/assets/rock1-opt.glb`, baixado do CDN de referência e usado tanto na página principal quanto na rota isolada.
+*   **Compressão suportada**: KTX2/Basis em `public/three/basis/` e Meshopt via decoder do Three.js.
+*   **Movimento**: A pedra não possui rotação autônoma; posição, inclinação, escala e fade são atualizados pelo progresso do `ScrollTrigger`.
 *   **Motor**: Three.js + GSAP (ScrollTrigger).
 *   **Performance**: Utilizar o Transcoder Basis para texturas se necessário.
 *   **Assets**: O modelo `.glb` deve ser tratado com atenção à sua origem/propriedade.

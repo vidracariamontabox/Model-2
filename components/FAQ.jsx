@@ -125,6 +125,7 @@ export default function FAQ({faqs}) {
         <p className="text-[0.7rem] tracking-[0.3em] uppercase text-[#acaba9]">FAQ</p>
         <h2>
           <BlurTextReveal
+            as="span"
             text="Perguntas frequentes"
             animationType="words"
             stagger={0.12}
