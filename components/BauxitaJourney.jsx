@@ -64,24 +64,67 @@ function AluminumProfile({ scrollProgress }) {
 }
 
 // Componente Alumina (Estágio 3 & Transição Estágio 4)
+// Usa o mesmo GLB da Bauxita, clonado e desformado — sem flatShading
 function Alumina({ scrollProgress }) {
-  const meshRef = useRef();
+  const groupRef = useRef();
   const scanLineRef = useRef();
   const particlesRef = useRef();
+  const { gl } = useThree();
 
-  const aluminaGeom = useMemo(() => {
-    const geometry = new THREE.IcosahedronGeometry(1, 3);
-    const position = geometry.attributes.position;
-    const vector = new THREE.Vector3();
-    for (let i = 0; i < position.count; i++) {
-      vector.fromBufferAttribute(position, i);
-      const noise = 0.95 + Math.random() * 0.1;
-      vector.multiplyScalar(noise);
-      position.setXYZ(i, vector.x, vector.y, vector.z);
-    }
-    geometry.computeVertexNormals();
-    return geometry;
-  }, []);
+  const gltf = useLoader(GLTFLoader, '/assets/rock1-opt.glb', (loader) => {
+    const ktx2Loader = new KTX2Loader()
+      .setTranscoderPath('/three/basis/')
+      .detectSupport(gl);
+    loader.setKTX2Loader(ktx2Loader);
+    loader.setMeshoptDecoder(MeshoptDecoder);
+  });
+
+  const aluminaObject = useMemo(() => {
+    const clone = gltf.scene.clone(true);
+    const bounds = new THREE.Box3().setFromObject(clone);
+    const center = new THREE.Vector3();
+    const size = new THREE.Vector3();
+
+    bounds.getCenter(center);
+    bounds.getSize(size);
+    clone.position.sub(center);
+
+    // Proporção próxima ao IcosahedronGeometry(1, 3) — raio ~1 (diâmetro ~2)
+    const maxDimension = Math.max(size.x, size.y, size.z) || 1;
+    clone.scale.setScalar(2 / maxDimension);
+
+    clone.traverse((child) => {
+      if (!child.isMesh || !child.geometry) return;
+
+      // Clona a geometria para não afetar a Bauxita (mesmo GLB em cache)
+      child.geometry = child.geometry.clone();
+      const position = child.geometry.attributes.position;
+      if (!position) return;
+
+      const vector = new THREE.Vector3();
+      for (let i = 0; i < position.count; i++) {
+        vector.fromBufferAttribute(position, i);
+        // Deformação suave e aleatória — massa irregular, não a mesma pedra
+        const noise = 0.88 + Math.random() * 0.24;
+        vector.multiplyScalar(noise);
+        position.setXYZ(i, vector.x, vector.y, vector.z);
+      }
+      position.needsUpdate = true;
+      child.geometry.computeVertexNormals(); // normais suaves — sem facetas
+
+      const prepared = new THREE.MeshStandardMaterial({
+        color: '#E8E0D5',
+        roughness: 0.85,
+        metalness: 0.05,
+        transparent: true,
+        opacity: 1,
+        flatShading: false,
+      });
+      child.material = prepared;
+    });
+
+    return clone;
+  }, [gltf]);
 
   const particlesGeom = useMemo(() => {
     const geometry = new THREE.BufferGeometry();
@@ -94,46 +137,59 @@ function Alumina({ scrollProgress }) {
   }, []);
 
   useFrame((state, delta) => {
-    if (meshRef.current && meshRef.current.visible) meshRef.current.rotation.y += delta * 0.2;
-    if (particlesRef.current && particlesRef.current.visible) particlesRef.current.rotation.y += delta * 0.1;
+    if (groupRef.current && groupRef.current.visible) {
+      groupRef.current.rotation.y += delta * 0.2;
+    }
+    if (particlesRef.current && particlesRef.current.visible) {
+      particlesRef.current.rotation.y += delta * 0.1;
+    }
   });
 
   useEffect(() => {
-    if (!meshRef.current) return;
+    if (!groupRef.current) return;
 
     const growthProgress = Math.max(0, Math.min(1, (scrollProgress - 55) / 15));
     const fadeOutProgress = Math.max(0, Math.min(1, (scrollProgress - 85) / 15));
-    
+
     const finalScale = growthProgress * (1 - fadeOutProgress);
-    meshRef.current.scale.setScalar(finalScale);
-    meshRef.current.position.x = 2.5 - (growthProgress * 5);
-    meshRef.current.material.opacity = growthProgress * (1 - fadeOutProgress);
-    meshRef.current.visible = finalScale > 0;
+    const opacity = growthProgress * (1 - fadeOutProgress);
+
+    groupRef.current.scale.setScalar(finalScale);
+    groupRef.current.position.x = 2.5 - (growthProgress * 5);
+    groupRef.current.visible = finalScale > 0;
+
+    groupRef.current.traverse((child) => {
+      if (!child.isMesh || !child.material) return;
+      const materials = Array.isArray(child.material) ? child.material : [child.material];
+      materials.forEach((material) => {
+        material.opacity = opacity;
+        material.transparent = true;
+      });
+    });
 
     const techProgress = Math.max(0, Math.min(1, (scrollProgress - 70) / 15));
     const techFadeOut = Math.max(0, Math.min(1, (scrollProgress - 85) / 10));
-    
+
     if (scanLineRef.current) {
-      scanLineRef.current.position.x = meshRef.current.position.x;
+      scanLineRef.current.position.x = groupRef.current.position.x;
       scanLineRef.current.position.y = 1.5 - (techProgress * 3);
       scanLineRef.current.material.opacity = (Math.sin(techProgress * Math.PI) * 0.8) * (1 - techFadeOut);
       scanLineRef.current.visible = scanLineRef.current.material.opacity > 0;
     }
 
     if (particlesRef.current) {
-      particlesRef.current.position.x = meshRef.current.position.x;
+      particlesRef.current.position.x = groupRef.current.position.x;
       particlesRef.current.material.opacity = (techProgress * 0.5) * (1 - techFadeOut);
       particlesRef.current.visible = particlesRef.current.material.opacity > 0;
     }
-
   }, [scrollProgress]);
 
   return (
     <group>
-      <mesh ref={meshRef} geometry={aluminaGeom} transparent visible={false}>
-        <meshStandardMaterial color="#E8E0D5" roughness={0.85} metalness={0.05} flatShading transparent />
-      </mesh>
-      
+      <group ref={groupRef} visible={false}>
+        <primitive object={aluminaObject} />
+      </group>
+
       <mesh ref={scanLineRef} position={[0, 0, 0.5]} transparent visible={false}>
         <planeGeometry args={[2.5, 0.02]} />
         <meshBasicMaterial color="#d8e8ff" transparent />
