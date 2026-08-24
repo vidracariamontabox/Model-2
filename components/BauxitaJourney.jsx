@@ -286,16 +286,11 @@ export default function BauxitaJourney() {
   useGSAP(() => {
     if (!containerRef.current) return;
 
-    // Um único mecanismo de fixação: pin do GSAP (sem sticky CSS).
-    // pinSpacing cria o espaço de scroll; anticipatePin reduz o salto com Lenis.
     const st = ScrollTrigger.create({
       trigger: containerRef.current,
       start: 'top top',
       end: '+=450%',
-      pin: true,
-      pinSpacing: true,
       scrub: true,
-      anticipatePin: 1,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         setScrollProgress(self.progress * 150);
@@ -327,6 +322,7 @@ export default function BauxitaJourney() {
             className="text-6xl md:text-9xl font-bold tracking-[0.2em] text-white uppercase"
             stagger={0.1}
             play={scrollProgress < 50}
+            style={{ marginTop: `${(scrollProgress / 150) * 20}vh` }}
           />
         )}
         {scrollProgress >= 70 && scrollProgress < 100 && (
