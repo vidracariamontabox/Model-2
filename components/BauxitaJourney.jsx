@@ -190,7 +190,6 @@ function Alumina({ scrollProgress }) {
 
   return (
     <group>
-      {/* visibilidade só via useEffect — evita React resetar visible={false} a cada frame */}
       <group ref={groupRef}>
         <primitive object={aluminaObject} />
       </group>
@@ -286,18 +285,22 @@ export default function BauxitaJourney() {
   useGSAP(() => {
     if (!containerRef.current) return;
 
+    // Pin restaurado: a jornada fica fixa na tela durante o scroll.
+    // Título usa marginTop (não sticky extra) para evitar salto visual.
     const st = ScrollTrigger.create({
       trigger: containerRef.current,
       start: 'top top',
       end: '+=450%',
+      pin: true,
+      pinSpacing: true,
       scrub: true,
+      anticipatePin: 1,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         setScrollProgress(self.progress * 150);
       },
     });
 
-    // Recalcula após layout/fonts/imagens (evita pin “atrasado”)
     requestAnimationFrame(() => ScrollTrigger.refresh());
 
     return () => {
@@ -309,8 +312,10 @@ export default function BauxitaJourney() {
   const photoScale = 0.95 + photoProgress * 0.05;
   const photoOpacity = photoProgress;
 
+  // Título: deslocamento suave com o progresso (ideia do IDE), sem segundo pin/sticky
+  const titleMarginTop = `${(scrollProgress / 150) * 20}vh`;
+
   return (
-    // h-screen apenas — a distância de scroll vem do pinSpacing (end +=450%)
     <div
       ref={containerRef}
       className="relative w-full h-screen bg-black overflow-hidden"
@@ -322,7 +327,7 @@ export default function BauxitaJourney() {
             className="text-6xl md:text-9xl font-bold tracking-[0.2em] text-white uppercase"
             stagger={0.1}
             play={scrollProgress < 50}
-            style={{ marginTop: `${(scrollProgress / 150) * 20}vh` }}
+            style={{ marginTop: titleMarginTop }}
           />
         )}
         {scrollProgress >= 70 && scrollProgress < 100 && (
