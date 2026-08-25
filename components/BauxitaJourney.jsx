@@ -243,12 +243,7 @@ function Bauxita({ scrollProgress }) {
     const meshColorData = [];
 
     clone.traverse((child) => {
-      if (!child.isMesh || !child.geometry) return;
-
-      // Material novo: vertexColors + emissive confiáveis (mesmo padrão da Alumina)
-      const src = Array.isArray(child.material) ? child.material[0] : child.material;
-      const roughness = src && 'roughness' in src ? src.roughness : 0.82;
-      const metalness = src && 'metalness' in src ? src.metalness : 0.08;
+      if (!child.isMesh || !child.geometry || !child.material) return;
 
       child.geometry = child.geometry.clone();
       const position = child.geometry.attributes.position;
@@ -272,16 +267,20 @@ function Bauxita({ scrollProgress }) {
 
       child.geometry.setAttribute('color', new THREE.Float32BufferAttribute(redColors.slice(), 3));
 
-      child.material = new THREE.MeshStandardMaterial({
-        color: '#ffffff',
-        vertexColors: true,
-        roughness: typeof roughness === 'number' ? roughness : 0.82,
-        metalness: typeof metalness === 'number' ? metalness : 0.08,
-        transparent: true,
-        opacity: 1,
-        emissive: new THREE.Color('#D2691E'),
-        emissiveIntensity: 0,
-      });
+      // Clona o material ORIGINAL do GLB (preserva map/normalMap/roughnessMap)
+      // e só acrescenta vertexColors + emissivo da crosta por cima.
+      const src = Array.isArray(child.material) ? child.material[0] : child.material;
+      const prepared = src.clone();
+      prepared.color.set('#ffffff'); // map + vertexColor comandam o tom
+      prepared.vertexColors = true;
+      if ('roughness' in prepared) prepared.roughness = 0.82;
+      if ('metalness' in prepared) prepared.metalness = 0.08;
+      prepared.transparent = true;
+      prepared.opacity = 1;
+      if ('emissive' in prepared) prepared.emissive = new THREE.Color('#D2691E');
+      prepared.emissiveIntensity = 0;
+      prepared.needsUpdate = true;
+      child.material = prepared;
 
       meshColorData.push({
         mesh: child,
