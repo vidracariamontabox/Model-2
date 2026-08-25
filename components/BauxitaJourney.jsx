@@ -25,13 +25,13 @@ function setupGltfLoader(loader, gl) {
 const RED_RGB = [0x8b / 255, 0x4a / 255, 0x3c / 255];
 // Patches determinísticos: manchas minerais irregulares, nunca círculos perfeitos.
 const MINERAL_PATCHES = [
-  {x: -0.62, y: 0.32, z: 0.18, radius: 0.26, strength: 0.92},
-  {x: -0.28, y: -0.18, z: 0.46, radius: 0.2, strength: 0.8},
-  {x: 0.12, y: 0.5, z: -0.28, radius: 0.3, strength: 0.86},
-  {x: 0.48, y: 0.12, z: 0.36, radius: 0.24, strength: 0.9},
-  {x: 0.58, y: -0.42, z: -0.18, radius: 0.29, strength: 0.78},
-  {x: -0.42, y: -0.52, z: -0.38, radius: 0.22, strength: 0.88},
-  {x: 0.04, y: -0.12, z: -0.62, radius: 0.18, strength: 0.72},
+  { x: -0.62, y: 0.32, z: 0.18, radius: 0.26, strength: 0.92 },
+  { x: -0.28, y: -0.18, z: 0.46, radius: 0.2, strength: 0.8 },
+  { x: 0.12, y: 0.5, z: -0.28, radius: 0.3, strength: 0.86 },
+  { x: 0.48, y: 0.12, z: 0.36, radius: 0.24, strength: 0.9 },
+  { x: 0.58, y: -0.42, z: -0.18, radius: 0.29, strength: 0.78 },
+  { x: -0.42, y: -0.52, z: -0.38, radius: 0.22, strength: 0.88 },
+  { x: 0.04, y: -0.12, z: -0.62, radius: 0.18, strength: 0.72 },
 ];
 
 function hash01(x, y, z) {
@@ -237,152 +237,149 @@ function Alumina({ scrollProgress }) {
   );
 }
 
-// Extração Bayer — sequência visual leve entre a Bauxita e a Alumina.
-function BayerExtraction({ scrollProgress }) {
+// Extração Mineral — fluxo de partículas Bauxita → Alumina via curva Bézier
+function MineralStream({ scrollProgress }) {
   const scrollRef = useRef(scrollProgress);
   useEffect(() => {
     scrollRef.current = scrollProgress;
   }, [scrollProgress]);
 
-  const dissolutionRef = useRef();
-  const dissolutionGeomRef = useRef();
-  const crystalRef = useRef();
+  const FLOW_COUNT = 180;
+  const FOG_COUNT = 70;
 
-  const dissolutionData = useMemo(() => Array.from({ length: 55 }, (_, i) => {
-    const rng = (s) => {
-      const value = Math.sin(i * 13.7 + s * 31.1) * 43758.5;
-      return value - Math.floor(value);
-    };
-    const theta = rng(1) * Math.PI * 2;
-    const phi = rng(2) * Math.PI;
+  const flowRef = useRef();
+  const flowGeom = useRef();
+  const fogRef = useRef();
+  const fogGeom = useRef();
+
+  // Arco elegante: Bauxita (direita) → Alumina (esquerda), arqueado para cima
+  const curve = useMemo(() => new THREE.CubicBezierCurve3(
+    new THREE.Vector3(2.4, 0.1, 0.0),
+    new THREE.Vector3(1.6, 2.0, 0.5),
+    new THREE.Vector3(-1.6, 1.8, -0.3),
+    new THREE.Vector3(-2.4, 0.1, 0.0),
+  ), []);
+
+  // Dados determinísticos do fluxo principal (fase, velocidade, jitter)
+  const flowData = useMemo(() => Array.from({ length: FLOW_COUNT }, (_, i) => {
+    const h = (s) => { const v = Math.sin(i * 13.7 + s * 31.1) * 43758.5; return v - Math.floor(v); };
     return {
-      dx: Math.sin(phi) * Math.cos(theta),
-      dy: Math.sin(phi) * Math.sin(theta),
-      dz: Math.cos(phi),
-      x: (rng(3) - 0.5) * 0.8,
-      y: (rng(4) - 0.5) * 0.6,
-      z: (rng(5) - 0.5) * 0.5,
-      speed: 0.8 + rng(6) * 1.2,
-      size: 0.04 + rng(7) * 0.08,
+      phase: i / FLOW_COUNT,
+      speed: 0.10 + h(1) * 0.16,
+      jx: (h(2) - 0.5) * 0.22,
+      jy: (h(3) - 0.5) * 0.18,
+      jz: (h(4) - 0.5) * 0.28,
+      fx: 1.4 + h(5) * 2.2,
+      fy: 1.1 + h(6) * 1.9,
     };
   }), []);
 
-  const crystalData = useMemo(() => Array.from({ length: 45 }, (_, i) => {
-    const rng = (s) => {
-      const value = Math.sin(i * 17.3 + s * 41.7) * 43758.5;
-      return value - Math.floor(value);
-    };
+  // Dados determinísticos da névoa difusa (jitter maior, velocidade menor)
+  const fogData = useMemo(() => Array.from({ length: FOG_COUNT }, (_, i) => {
+    const h = (s) => { const v = Math.sin(i * 17.3 + s * 41.7) * 43758.5; return v - Math.floor(v); };
     return {
-      fx: (rng(2) - 0.5) * 1.4,
-      fy: (rng(3) - 0.5) * 1.0,
-      fz: (rng(4) - 0.5) * 0.7,
-      ox: (rng(5) - 0.5) * 4.0,
-      oy: (rng(6) - 0.5) * 3.0,
-      oz: (rng(7) - 0.5) * 2.0,
-      size: 0.06 + rng(8) * 0.12,
-      delay: rng(9) * 0.4,
-      phase: rng(10) * Math.PI * 2,
+      phase: i / FOG_COUNT,
+      speed: 0.04 + h(1) * 0.07,
+      jx: (h(2) - 0.5) * 0.72,
+      jy: (h(3) - 0.5) * 0.60,
+      jz: (h(4) - 0.5) * 0.80,
     };
   }), []);
 
-  const dissolutionPositions = useMemo(
-    () => new Float32Array(dissolutionData.flatMap(({ x, y, z }) => [x, y, z])),
-    [dissolutionData],
-  );
-  const crystalGeometry = useMemo(() => new THREE.OctahedronGeometry(1, 0), []);
-  const crystalMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-    color: '#F0ECE4',
-    roughness: 0.55,
-    metalness: 0.10,
-    transparent: true,
-    depthWrite: false,
-  }), []);
+  // Buffers mutáveis — alocados uma vez, nunca recriados no loop
+  const flowPos = useMemo(() => new Float32Array(FLOW_COUNT * 3), []);
+  const flowCol = useMemo(() => new Float32Array(FLOW_COUNT * 3), []);
+  const fogPos = useMemo(() => new Float32Array(FOG_COUNT * 3), []);
 
-  const matrix = useMemo(() => new THREE.Matrix4(), []);
-  const position = useMemo(() => new THREE.Vector3(), []);
-  const quaternion = useMemo(() => new THREE.Quaternion(), []);
-  const scale = useMemo(() => new THREE.Vector3(), []);
-  const euler = useMemo(() => new THREE.Euler(), []);
-
-  useEffect(() => () => {
-    crystalGeometry.dispose();
-    crystalMaterial.dispose();
-  }, [crystalGeometry, crystalMaterial]);
+  // Objetos auxiliares reutilizáveis (sem alocação dentro do loop)
+  const tmpVec = useMemo(() => new THREE.Vector3(), []);
+  const tmpCol = useMemo(() => new THREE.Color(), []);
+  const bauxCol = useMemo(() => new THREE.Color('#8B4A3C'), []);
+  const alumCol = useMemo(() => new THREE.Color('#E8E0D5'), []);
 
   useFrame((state) => {
     const p = scrollRef.current;
-    const dissolution = THREE.MathUtils.clamp((p - 45) / 17, 0, 1);
-    const crystal = THREE.MathUtils.clamp((p - 68) / 15, 0, 1);
-    const allFade = 1 - THREE.MathUtils.clamp((p - 83) / 7, 0, 1);
 
-    if (dissolutionGeomRef.current?.attributes.position) {
-      const arr = dissolutionGeomRef.current.attributes.position.array;
-      dissolutionData.forEach((d, i) => {
-        const expand = Math.pow(dissolution * d.speed, 0.7);
-        arr[i * 3] = d.x + d.dx * expand * 2.5;
-        arr[i * 3 + 1] = d.y + d.dy * expand * 2.5;
-        arr[i * 3 + 2] = d.z + d.dz * expand * 2.5;
-      });
-      dissolutionGeomRef.current.attributes.position.needsUpdate = true;
+    // Janela de extração: 45 → 85
+    const fadeIn = THREE.MathUtils.clamp((p - 45) / 13, 0, 1);
+    const fadeOut = 1 - THREE.MathUtils.clamp((p - 74) / 10, 0, 1);
+    const alpha = fadeIn * fadeOut;
+
+    const active = alpha > 0.01;
+
+    if (flowRef.current) {
+      flowRef.current.visible = active;
+      if (active) flowRef.current.material.opacity = alpha * 0.90;
+    }
+    if (fogRef.current) {
+      fogRef.current.visible = active;
+      if (active) fogRef.current.material.opacity = alpha * 0.26;
+    }
+    if (!active) return;
+
+    const t = state.clock.elapsedTime;
+
+    // — Fluxo principal: posição na curva + jitter oscilatório —
+    for (let i = 0; i < FLOW_COUNT; i++) {
+      const d = flowData[i];
+      const loopT = (t * d.speed + d.phase) % 1.0;
+
+      curve.getPoint(loopT, tmpVec);
+
+      flowPos[i * 3] = tmpVec.x + d.jx * Math.sin(t * d.fx + d.phase * 6.2832);
+      flowPos[i * 3 + 1] = tmpVec.y + d.jy * Math.cos(t * d.fy + d.phase * 6.2832);
+      flowPos[i * 3 + 2] = tmpVec.z + d.jz;
+
+      // Gradiente terracota (bauxita) → cinza-claro (alumina) ao longo do arco
+      tmpCol.lerpColors(bauxCol, alumCol, loopT);
+      flowCol[i * 3] = tmpCol.r;
+      flowCol[i * 3 + 1] = tmpCol.g;
+      flowCol[i * 3 + 2] = tmpCol.b;
     }
 
-    if (dissolutionRef.current) {
-      const dissolveFade = dissolution < 0.48
-        ? THREE.MathUtils.smoothstep(dissolution, 0, 0.48)
-        : 1 - THREE.MathUtils.smoothstep(dissolution, 0.48, 1);
-      dissolutionRef.current.material.opacity = dissolveFade * 0.9 * allFade;
-      dissolutionRef.current.visible = dissolveFade > 0.01 && allFade > 0.01;
+    if (flowGeom.current) {
+      flowGeom.current.attributes.position.needsUpdate = true;
+      flowGeom.current.attributes.color.needsUpdate = true;
     }
 
-    if (crystalRef.current) {
-      crystalRef.current.visible = crystal > 0.01 && allFade > 0.01;
-      crystalRef.current.material.opacity = crystal * allFade * 0.95;
+    // — Névoa dispersa: mesmo arco, jitter amplo, velocidade lenta —
+    for (let i = 0; i < FOG_COUNT; i++) {
+      const d = fogData[i];
+      const loopT = (t * d.speed + d.phase) % 1.0;
 
-      if (crystal > 0.01) {
-        crystalData.forEach((c, i) => {
-          const growth = THREE.MathUtils.clamp(
-            (crystal - c.delay) / (1 - c.delay + 0.001),
-            0,
-            1,
-          );
-          const eased = 1 - Math.pow(1 - growth, 3);
+      curve.getPoint(loopT, tmpVec);
 
-          position.set(
-            THREE.MathUtils.lerp(c.ox, c.fx, eased),
-            THREE.MathUtils.lerp(c.oy, c.fy, eased),
-            THREE.MathUtils.lerp(c.oz, c.fz, eased),
-          );
-          euler.set(
-            state.clock.elapsedTime * 0.04 + c.phase,
-            c.phase * 0.7,
-            state.clock.elapsedTime * 0.03,
-          );
-          quaternion.setFromEuler(euler);
+      fogPos[i * 3] = tmpVec.x + d.jx * Math.sin(t * 0.65 + d.phase * 6.2832);
+      fogPos[i * 3 + 1] = tmpVec.y + d.jy * Math.cos(t * 0.50 + d.phase * 6.2832);
+      fogPos[i * 3 + 2] = tmpVec.z + d.jz;
+    }
 
-          const crystalScale = c.size * eased;
-          scale.set(crystalScale, crystalScale, crystalScale);
-          matrix.compose(position, quaternion, scale);
-          crystalRef.current.setMatrixAt(i, matrix);
-        });
-        crystalRef.current.instanceMatrix.needsUpdate = true;
-      }
+    if (fogGeom.current) {
+      fogGeom.current.attributes.position.needsUpdate = true;
     }
   });
 
   return (
     <group>
-      <points ref={dissolutionRef} visible={false}>
-        <bufferGeometry ref={dissolutionGeomRef}>
+      {/* Fluxo principal com gradiente de cor bauxita → alumina */}
+      <points ref={flowRef} visible={false}>
+        <bufferGeometry ref={flowGeom}>
           <bufferAttribute
             attach="attributes-position"
-            count={dissolutionData.length}
-            array={dissolutionPositions}
+            count={FLOW_COUNT}
+            array={flowPos}
+            itemSize={3}
+          />
+          <bufferAttribute
+            attach="attributes-color"
+            count={FLOW_COUNT}
+            array={flowCol}
             itemSize={3}
           />
         </bufferGeometry>
         <pointsMaterial
-          color="#C04A20"
-          size={0.09}
+          vertexColors
+          size={0.065}
           transparent
           opacity={0}
           depthWrite={false}
@@ -390,11 +387,25 @@ function BayerExtraction({ scrollProgress }) {
         />
       </points>
 
-      <instancedMesh
-        ref={crystalRef}
-        args={[crystalGeometry, crystalMaterial, crystalData.length]}
-        visible={false}
-      />
+      {/* Névoa etérea — partículas difusas ao redor do jato */}
+      <points ref={fogRef} visible={false}>
+        <bufferGeometry ref={fogGeom}>
+          <bufferAttribute
+            attach="attributes-position"
+            count={FOG_COUNT}
+            array={fogPos}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <pointsMaterial
+          color="#EDE6D8"
+          size={0.030}
+          transparent
+          opacity={0}
+          depthWrite={false}
+          sizeAttenuation
+        />
+      </points>
     </group>
   );
 }
@@ -550,7 +561,7 @@ export default function BauxitaJourney() {
           <pointLight position={[-5, -5, -5]} intensity={0.6} color="#A0522D" />
 
           <Bauxita scrollProgress={scrollProgress} />
-          <BayerExtraction scrollProgress={scrollProgress} />
+          <MineralStream scrollProgress={scrollProgress} />
           <Alumina scrollProgress={scrollProgress} />
           <AluminumProfile scrollProgress={scrollProgress} />
         </Canvas>
