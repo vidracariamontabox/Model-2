@@ -63,3 +63,46 @@ A implementação seguirá uma abordagem modular para garantir estabilidade e pe
 *   **Assets**: O modelo `.glb` deve ser tratado com atenção à sua origem/propriedade.
 *   **UI**: Utilizar `BlurTextReveal` para manter a consistência com o restante do site.
 *   **Crosta mista (atualização 24/08/2026):** a transição Bauxita → Alumina passou a usar cor por vértice na própria malha da Bauxita durante a janela de fratura (~48–70vh) — mistura de tons cinza/alumina bruta com fragmentos residuais de óxido de ferro (reaproveitando `#A0522D`, já usado no `pointLight` da cena) — em vez do fade de cor sólida anterior. O emissivo `#D2691E` (já citado na Etapa 2) passou a ser animado de fato via `emissiveIntensity`. Sem divisão geométrica real: é blend de cor + emissivo sobre a mesma malha, sem malha adicional. Material preparado como `MeshStandardMaterial` novo com `vertexColors: true` (mesmo padrão confiável da Alumina), em vez de depender só do material clonado do GLB.
+
+## 🔄 Atualização de Direção — Crosta Mineral Porosa (25/08/2026)
+
+A estratégia da pedra foi alterada para preservar o modelo avermelhado que apresentou o melhor design e remover a necessidade de uma fratura explícita para introduzir a Alumina. Não será feito rollback completo do projeto: a implementação manterá o asset, a iluminação, o enquadramento e a proporção de giro controlada pelo scroll.
+
+### Aparência desejada
+
+A Bauxita continuará com a base avermelhada/terracota, recebendo inclusões cinza distribuídas pela superfície. Essas inclusões não devem formar círculos, linhas retas ou uma textura pontilhada uniforme. Cada região será criada como uma mancha irregular, com centros, raios, intensidade e bordas variados, inspirada na referência visual fornecida: crosta porosa, agregados minerais e extremidades ásperas.
+
+### Implementação prevista
+
+1. A cor base avermelhada será mantida como estado de repouso.
+2. As regiões cinzas serão geradas por influência espacial de múltiplos centros sobre os vértices da malha, usando ruído e limiares suaves para produzir manchas orgânicas.
+3. Os vértices próximos às inclusões receberão pequenos deslocamentos ao longo das normais, com intensidade limitada, criando puxões e porosidades sem alterar a silhueta geral de forma exagerada.
+4. As deformações serão determinísticas por semente, para que a pedra não mude aleatoriamente a cada montagem ou refresh.
+5. A rotação da pedra continuará sendo controlada pelo `scrollProgress` na mesma proporção já existente. O movimento lateral também será preservado salvo ajuste mínimo necessário para o novo volume.
+6. A antiga rotação/contração de fratura será desativada. Entre aproximadamente 55 e 70vh, a pedra fará uma saída contínua enquanto a Alumina entra, sem afastamento de metades ou abertura de rachadura.
+
+### Limites da alteração
+
+Esta atualização se concentra somente na aparência e na transição da pedra para a próxima etapa. O perfil de alumínio, a foto final, o texto, a estrutura do ScrollTrigger e as demais seções não devem ser alterados nesta fase.
+
+### Critérios de aceite
+
+A pedra deve continuar centralizada no início, manter o giro proporcional ao scroll, apresentar manchas cinzas irregulares claramente visíveis e possuir pequenas extremidades porosas sem parecer uma esfera granulada. A passagem para a Alumina deve parecer um fade/transformação contínuo, sem efeito de quebra obrigatório e sem desalinhamento do objeto.
+
+### Observação para futuras IAs
+
+Ao continuar este trabalho, não substituir o `rock1-opt.glb` sem necessidade e não retornar à fratura geométrica. A intenção é evoluir a superfície do modelo atual com vertex colors e deformação localizada, preservando o restante da coreografia.
+
+## Referência visual
+
+A referência visual anexada ao pedido de 25/08/2026 representa uma pedra mineral compacta, predominantemente cinza, com agregados terracota, planos ásperos, pequenos fragmentos e bordas porosas. Ela deve ser usada como referência de distribuição irregular, contraste mineral e micro-relevo, não como instrução para reconstruir uma malha cúbica completa.
+
+## Estado da atualização
+
+- [x] Estratégia aprovada: aproveitar a pedra vermelha existente.
+- [x] Fratura explícita retirada do escopo desta etapa.
+- [x] Manchas cinzas orgânicas definidas como abordagem visual.
+- [x] Puxões e porosidades localizadas definidos como deformação de baixa intensidade.
+- [ ] Implementação da geometria e dos vertex colors.
+- [ ] Validação do giro no scroll e do encaixe com a Alumina.
+- [ ] Build e push na branch `main`.

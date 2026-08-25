@@ -23,17 +23,35 @@ function setupGltfLoader(loader, gl) {
 }
 
 const RED_RGB = [0x8b / 255, 0x4a / 255, 0x3c / 255];
-const CRUST_TONES = [
-  [0x6b / 255, 0x65 / 255, 0x60 / 255], // cinza escuro ~45%
-  [0x8c / 255, 0x85 / 255, 0x79 / 255], // cinza médio ~35%
-  [0xa0 / 255, 0x52 / 255, 0x2d / 255], // fragmento #A0522D ~20%
+// Patches determinísticos: manchas minerais irregulares, nunca círculos perfeitos.
+const MINERAL_PATCHES = [
+  {x: -0.62, y: 0.32, z: 0.18, radius: 0.26, strength: 0.92},
+  {x: -0.28, y: -0.18, z: 0.46, radius: 0.2, strength: 0.8},
+  {x: 0.12, y: 0.5, z: -0.28, radius: 0.3, strength: 0.86},
+  {x: 0.48, y: 0.12, z: 0.36, radius: 0.24, strength: 0.9},
+  {x: 0.58, y: -0.42, z: -0.18, radius: 0.29, strength: 0.78},
+  {x: -0.42, y: -0.52, z: -0.38, radius: 0.22, strength: 0.88},
+  {x: 0.04, y: -0.12, z: -0.62, radius: 0.18, strength: 0.72},
 ];
 
-function pickCrustTone() {
-  const r = Math.random();
-  if (r < 0.45) return CRUST_TONES[0];
-  if (r < 0.8) return CRUST_TONES[1];
-  return CRUST_TONES[2];
+function hash01(x, y, z) {
+  const value = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453;
+  return value - Math.floor(value);
+}
+
+function getPatchInfluence(nx, ny, nz) {
+  let influence = 0;
+  MINERAL_PATCHES.forEach((patch) => {
+    const dx = (nx - patch.x) * 1.15;
+    const dy = (ny - patch.y) * 0.95;
+    const dz = (nz - patch.z) * 1.1;
+    const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    const irregularity = 0.78 + hash01(nx * 3.1, ny * 5.7, nz * 8.9) * 0.34;
+    const radius = patch.radius * irregularity;
+    const local = 1 - THREE.MathUtils.smoothstep(distance, radius * 0.92, radius);
+    influence = Math.max(influence, local * patch.strength);
+  });
+  return THREE.MathUtils.clamp(influence, 0, 1);
 }
 
 // Componente Perfil (Estágio 4 & Transição Estágio 5)
@@ -251,27 +269,53 @@ function Bauxita({ scrollProgress }) {
 
       const count = position.count;
       const redColors = new Float32Array(count * 3);
-      const crustColors = new Float32Array(count * 3);
+      const mineralColors = new Float32Array(count * 3);
+      const geometryBounds = new THREE.Box3().setFromBufferAttribute(position);
+      const geometryCenter = geometryBounds.getCenter(new THREE.Vector3());
+      const geometrySize = geometryBounds.getSize(new THREE.Vector3());
+      child.geometry.computeVertexNormals();
+      const updatedNormal = child.geometry.attributes.normal;
+      const vertex = new THREE.Vector3();
+      const vertexNormal = new THREE.Vector3();
 
       for (let i = 0; i < count; i++) {
         const i3 = i * 3;
+        vertex.fromBufferAttribute(position, i);
+        const nx = geometrySize.x ? (vertex.x - geometryCenter.x) / (geometrySize.x * 0.5) : 0;
+        const ny = geometrySize.y ? (vertex.y - geometryCenter.y) / (geometrySize.y * 0.5) : 0;
+        const nz = geometrySize.z ? (vertex.z - geometryCenter.z) / (geometrySize.z * 0.5) : 0;
+        const patchInfluence = getPatchInfluence(nx, ny, nz);
+        const roughNoise = hash01(vertex.x * 4.7, vertex.y * 8.3, vertex.z * 6.1);
+        const porousEdge = patchInfluence * (0.55 + roughNoise * 0.75);
+        const grayTone = 0.48 + roughNoise * 0.18;
+
         redColors[i3] = RED_RGB[0];
         redColors[i3 + 1] = RED_RGB[1];
         redColors[i3 + 2] = RED_RGB[2];
+        mineralColors[i3] = THREE.MathUtils.lerp(RED_RGB[0], grayTone, patchInfluence);
+        mineralColors[i3 + 1] = THREE.MathUtils.lerp(RED_RGB[1], grayTone * 0.98, patchInfluence);
+        mineralColors[i3 + 2] = THREE.MathUtils.lerp(RED_RGB[2], grayTone * 0.94, patchInfluence);
 
-        const tone = pickCrustTone();
-        crustColors[i3] = tone[0];
-        crustColors[i3 + 1] = tone[1];
-        crustColors[i3 + 2] = tone[2];
+        if (updatedNormal && porousEdge > 0.16) {
+          vertexNormal.fromBufferAttribute(updatedNormal, i).normalize();
+          const pull = (porousEdge - 0.16) * 0.018;
+          position.setXYZ(
+            i,
+            vertex.x + vertexNormal.x * pull,
+            vertex.y + vertexNormal.y * pull,
+            vertex.z + vertexNormal.z * pull,
+          );
+        }
       }
 
-      child.geometry.setAttribute('color', new THREE.Float32BufferAttribute(redColors.slice(), 3));
+      position.needsUpdate = true;
+      child.geometry.computeVertexNormals();
+      child.geometry.setAttribute('color', new THREE.Float32BufferAttribute(mineralColors, 3));
 
-      // Clona o material ORIGINAL do GLB (preserva map/normalMap/roughnessMap)
-      // e só acrescenta vertexColors + emissivo da crosta por cima.
+      // Mantém os mapas originais e aplica a crosta mineral via vertex colors.
       const src = Array.isArray(child.material) ? child.material[0] : child.material;
       const prepared = src.clone();
-      prepared.color.set('#ffffff'); // map + vertexColor comandam o tom
+      prepared.color.set('#ffffff');
       prepared.vertexColors = true;
       if ('roughness' in prepared) prepared.roughness = 0.82;
       if ('metalness' in prepared) prepared.metalness = 0.08;
@@ -285,7 +329,7 @@ function Bauxita({ scrollProgress }) {
       meshColorData.push({
         mesh: child,
         redColors,
-        crustColors,
+        mineralColors,
       });
     });
 
@@ -300,15 +344,10 @@ function Bauxita({ scrollProgress }) {
     groupRef.current.position.x = stage2Progress * 2.5;
     groupRef.current.rotation.z = stage2Progress * 0.26;
 
-    const fractureProgress = Math.max(0, Math.min(1, (scrollProgress - 50) / 5));
-    groupRef.current.rotation.y = fractureProgress * 0.12;
-    groupRef.current.scale.x = 1 - fractureProgress * 0.06;
-
-    // Crosta mista: 48–58vh sobe, 58–70vh decai com o fade
-    const crustProgress = Math.max(0, Math.min(1, (scrollProgress - 48) / 10));
-    const crustFadeBack = Math.max(0, Math.min(1, (scrollProgress - 58) / 12));
-    const crustMix = crustProgress * (1 - crustFadeBack);
-    const emissiveIntensity = Math.sin(crustMix * Math.PI) * 0.7;
+    // A pedra não se parte mais: preserva apenas o giro/declive original do scroll.
+    // A crosta cinza já existe no repouso e acompanha a pedra até o fade da Alumina.
+    groupRef.current.rotation.y = 0;
+    groupRef.current.scale.x = 1;
 
     const fadeOutProgress = Math.max(0, Math.min(1, (scrollProgress - 55) / 15));
     const opacity = 1 - fadeOutProgress;
@@ -323,32 +362,12 @@ function Bauxita({ scrollProgress }) {
         material.opacity = opacity;
         material.transparent = true;
         if ('emissiveIntensity' in material) {
-          material.emissiveIntensity = emissiveIntensity;
+          material.emissiveIntensity = 0;
         }
       });
     });
 
-    // Guarda de performance: só interpola cores na janela da crosta
-    if (crustMix > 0.01) {
-      meshColorData.forEach(({ mesh, redColors, crustColors }) => {
-        const colorAttr = mesh.geometry?.attributes?.color;
-        if (!colorAttr || !colorAttr.array) return;
 
-        const arr = colorAttr.array;
-        for (let i = 0; i < redColors.length; i++) {
-          arr[i] = redColors[i] + (crustColors[i] - redColors[i]) * crustMix;
-        }
-        colorAttr.needsUpdate = true;
-      });
-    } else if (scrollProgress < 48) {
-      // Garante vermelho puro no repouso / início
-      meshColorData.forEach(({ mesh, redColors }) => {
-        const colorAttr = mesh.geometry?.attributes?.color;
-        if (!colorAttr || !colorAttr.array) return;
-        colorAttr.array.set(redColors);
-        colorAttr.needsUpdate = true;
-      });
-    }
   }, [scrollProgress, rockObject]);
 
   return (
