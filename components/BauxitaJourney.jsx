@@ -25,13 +25,19 @@ function setupGltfLoader(loader, gl) {
 const RED_RGB = [0x8b / 255, 0x4a / 255, 0x3c / 255];
 // Patches determinísticos: manchas minerais irregulares, nunca círculos perfeitos.
 const MINERAL_PATCHES = [
-  {x: -0.62, y: 0.32, z: 0.18, radius: 0.26, strength: 0.92},
-  {x: -0.28, y: -0.18, z: 0.46, radius: 0.2, strength: 0.8},
-  {x: 0.12, y: 0.5, z: -0.28, radius: 0.3, strength: 0.86},
-  {x: 0.48, y: 0.12, z: 0.36, radius: 0.24, strength: 0.9},
-  {x: 0.58, y: -0.42, z: -0.18, radius: 0.29, strength: 0.78},
-  {x: -0.42, y: -0.52, z: -0.38, radius: 0.22, strength: 0.88},
-  {x: 0.04, y: -0.12, z: -0.62, radius: 0.18, strength: 0.72},
+  // Distribuídas nos eixos para que a rotação revele inclusões em todas as faces.
+  {x: -0.72, y: 0.36, z: 0.22, radius: 0.3, strength: 0.98},
+  {x: -0.48, y: 0.04, z: 0.64, radius: 0.24, strength: 0.92},
+  {x: -0.25, y: -0.42, z: 0.36, radius: 0.27, strength: 0.9},
+  {x: -0.1, y: 0.66, z: -0.3, radius: 0.3, strength: 0.94},
+  {x: 0.18, y: 0.32, z: 0.72, radius: 0.26, strength: 0.96},
+  {x: 0.46, y: 0.08, z: 0.38, radius: 0.31, strength: 0.98},
+  {x: 0.68, y: -0.36, z: -0.2, radius: 0.3, strength: 0.9},
+  {x: 0.32, y: -0.64, z: 0.18, radius: 0.25, strength: 0.94},
+  {x: -0.48, y: -0.62, z: -0.4, radius: 0.26, strength: 0.96},
+  {x: 0.02, y: -0.2, z: -0.74, radius: 0.24, strength: 0.92},
+  {x: -0.72, y: -0.16, z: -0.36, radius: 0.22, strength: 0.84},
+  {x: 0.58, y: 0.52, z: -0.34, radius: 0.25, strength: 0.88},
 ];
 
 function hash01(x, y, z) {
@@ -237,7 +243,7 @@ function Alumina({ scrollProgress }) {
   );
 }
 
-// Bauxita — GLB real
+// Bauxita — forma intacta de 3edeca95 + inclusões minerais no material
 function Bauxita({ scrollProgress }) {
   const groupRef = useRef();
   const { gl } = useThree();
@@ -259,12 +265,43 @@ function Bauxita({ scrollProgress }) {
     clone.scale.setScalar(3.6 / maxDimension);
 
     clone.traverse((child) => {
-      if (!child.isMesh || !child.material) return;
+      if (!child.isMesh || !child.geometry || !child.material) return;
+
+      // O modelo, a silhueta, a orientação e as posições dos vértices permanecem intactos.
+      // Somente uma cor por vértice é adicionada para simular as inclusões minerais.
+      const sourcePosition = child.geometry.attributes.position;
+      const colors = new Float32Array(sourcePosition.count * 3);
+      const vertex = new THREE.Vector3();
+      const localBounds = new THREE.Box3().setFromBufferAttribute(sourcePosition);
+      const localCenter = localBounds.getCenter(new THREE.Vector3());
+      const localHalfSize = localBounds.getSize(new THREE.Vector3()).multiplyScalar(0.5);
+
+      for (let i = 0; i < sourcePosition.count; i++) {
+        vertex.fromBufferAttribute(sourcePosition, i);
+        const nx = localHalfSize.x ? (vertex.x - localCenter.x) / localHalfSize.x : 0;
+        const ny = localHalfSize.y ? (vertex.y - localCenter.y) / localHalfSize.y : 0;
+        const nz = localHalfSize.z ? (vertex.z - localCenter.z) / localHalfSize.z : 0;
+        const patchInfluence = getPatchInfluence(nx, ny, nz);
+        const edgeNoise = hash01(vertex.x * 7.3, vertex.y * 4.1, vertex.z * 9.7);
+        const hardEdge = THREE.MathUtils.smoothstep(patchInfluence, 0.22, 0.5);
+        const grayTone = 0.5 + edgeNoise * 0.24;
+        const redTone = 0.9 + edgeNoise * 0.1;
+        const i3 = i * 3;
+
+        // A borda irregular é obtida por limiar + ruído, evitando círculos perfeitos.
+        colors[i3] = THREE.MathUtils.lerp(RED_RGB[0] * redTone, grayTone, hardEdge);
+        colors[i3 + 1] = THREE.MathUtils.lerp(RED_RGB[1] * redTone, grayTone * 0.98, hardEdge);
+        colors[i3 + 2] = THREE.MathUtils.lerp(RED_RGB[2] * redTone, grayTone * 0.94, hardEdge);
+      }
+
+      child.geometry = child.geometry.clone();
+      child.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
       const materials = Array.isArray(child.material) ? child.material : [child.material];
       const preparedMaterials = materials.map((material) => {
         const prepared = material.clone();
-        if (prepared.color) prepared.color.set('#8B4A3C');
+        prepared.color.set('#ffffff');
+        prepared.vertexColors = true;
         if ('roughness' in prepared) prepared.roughness = 0.82;
         if ('metalness' in prepared) prepared.metalness = 0.08;
         prepared.transparent = true;
@@ -281,6 +318,7 @@ function Bauxita({ scrollProgress }) {
   useEffect(() => {
     if (!groupRef.current) return;
 
+    // Mantém exatamente o deslocamento e o giro da versão de referência.
     const stage2Progress = Math.max(0, Math.min(1, (scrollProgress - 20) / 35));
     groupRef.current.position.x = stage2Progress * 2.5;
     groupRef.current.rotation.z = stage2Progress * 0.26;
