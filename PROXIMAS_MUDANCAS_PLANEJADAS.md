@@ -32,10 +32,14 @@ Seção nova, entre Testimonials e FAQ, contando a transformação da matéria-p
 | 4 | Jornada tem 5 "ciclos"/estágios de scroll hoje (Bauxita → quebra → Alumina → tecnologia → perfil → foto) — William quer reduzir para 3 | ⏳ Pendente |
 | 5 | Elementos "Alumina" e "Perfil de Alumínio" ainda giram continuamente sozinhos (rotação idle) — precisa remover, o movimento deve ser 100% controlado pelo scroll, sem giro autônomo | ⏳ Pendente |
 | 6 | Lacuna vazia grande entre o fim da foto final e o FAQ (sobra de scroll "morto" onde nada acontece antes do FAQ liberar) — tende a se resolver junto com o item 4 | ⏳ Pendente (ligado ao item 4) |
+| 7 | Crosta mista na fratura: Bauxita muda para cor por vértice (cinza + fragmentos ferruginosos) + emissivo #D2691E antes do fade, no lugar do fade de cor sólida atual | ✅ Resolvido — commit `43a24ea` (Grok): vertex colors + emissiveIntensity na própria malha |
+| 8 | Validar visualmente: a fratura deve parecer "revelação do que tem dentro", não "objeto A some / objeto B aparece" | ⏳ Pendente (validação manual no Preview) |
 
 **Referência técnica:** a pedra principal (Bauxita) já usa o modelo 3D real extraído do site peachweb (`rock1-opt.glb`), carregado localmente no projeto — não depende mais de CDN externo. A mecânica de scroll é feita via GSAP ScrollTrigger com pin, não via Theatre.js (que é o que o site de referência usa) — decisão tomada pra não introduzir uma dependência nova nem exigir autoria manual de keyframes.
 
 **Nota do item 2 (24/08/2026):** em `components/BauxitaJourney.jsx`, o componente `Alumina` passou a reutilizar `/assets/rock1-opt.glb` (cache do `useLoader`), com geometria clonada, deformação por noise (`0.88–1.12`), `computeVertexNormals()` e material `#E8E0D5` **sem** `flatShading`. Animação de growth/fade/posição mantida. Bauxita e AluminumProfile não foram alterados nesse commit.
+
+**Nota do item 7 (25/08/2026):** crosta mista na função `Bauxita` — `MeshStandardMaterial` com `vertexColors`, blend `#8B4A3C` → tons cinza/`#A0522D`, emissivo `#D2691E` com `sin(crustMix * π) * 0.7` na janela ~48–70vh. Alumina e pin inalterados.
 
 ---
 
