@@ -22,43 +22,6 @@ function setupGltfLoader(loader, gl) {
   loader.setMeshoptDecoder(MeshoptDecoder);
 }
 
-const RED_RGB = [0x8b / 255, 0x4a / 255, 0x3c / 255];
-// Patches determinísticos: manchas minerais irregulares, nunca círculos perfeitos.
-const MINERAL_PATCHES = [
-  // Distribuídas nos eixos para que a rotação revele inclusões em todas as faces.
-  {x: -0.72, y: 0.36, z: 0.22, radius: 0.3, strength: 0.98},
-  {x: -0.48, y: 0.04, z: 0.64, radius: 0.24, strength: 0.92},
-  {x: -0.25, y: -0.42, z: 0.36, radius: 0.27, strength: 0.9},
-  {x: -0.1, y: 0.66, z: -0.3, radius: 0.3, strength: 0.94},
-  {x: 0.18, y: 0.32, z: 0.72, radius: 0.26, strength: 0.96},
-  {x: 0.46, y: 0.08, z: 0.38, radius: 0.31, strength: 0.98},
-  {x: 0.68, y: -0.36, z: -0.2, radius: 0.3, strength: 0.9},
-  {x: 0.32, y: -0.64, z: 0.18, radius: 0.25, strength: 0.94},
-  {x: -0.48, y: -0.62, z: -0.4, radius: 0.26, strength: 0.96},
-  {x: 0.02, y: -0.2, z: -0.74, radius: 0.24, strength: 0.92},
-  {x: -0.72, y: -0.16, z: -0.36, radius: 0.22, strength: 0.84},
-  {x: 0.58, y: 0.52, z: -0.34, radius: 0.25, strength: 0.88},
-];
-
-function hash01(x, y, z) {
-  const value = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453;
-  return value - Math.floor(value);
-}
-
-function getPatchInfluence(nx, ny, nz) {
-  let influence = 0;
-  MINERAL_PATCHES.forEach((patch) => {
-    const dx = (nx - patch.x) * 1.15;
-    const dy = (ny - patch.y) * 0.95;
-    const dz = (nz - patch.z) * 1.1;
-    const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    const irregularity = 0.78 + hash01(nx * 3.1, ny * 5.7, nz * 8.9) * 0.34;
-    const radius = patch.radius * irregularity;
-    const local = 1 - THREE.MathUtils.smoothstep(distance, radius * 0.92, radius);
-    influence = Math.max(influence, local * patch.strength);
-  });
-  return THREE.MathUtils.clamp(influence, 0, 1);
-}
 
 // Componente Perfil (Estágio 4 & Transição Estágio 5)
 function AluminumProfile({ scrollProgress }) {
@@ -243,9 +206,69 @@ function Alumina({ scrollProgress }) {
   );
 }
 
-// Bauxita — forma intacta de 3edeca95 + inclusões minerais no material
+/**
+ * Fragmentos minerais 3D sobre a superfície da Bauxita.
+ * São objetos independentes e não alteram a geometria nem o material da pedra.
+ */
+function MineralFragments({ opacity }) {
+  const fragments = useMemo(() => {
+    const rng = (seed) => {
+      const x = Math.sin(seed * 9301 + 49297) * 233280;
+      return x - Math.floor(x);
+    };
+
+    const result = [];
+    const count = 48;
+
+    for (let i = 0; i < count; i++) {
+      const r = (s) => rng(i * 7 + s);
+      const w = 0.03 + r(0) * 0.10;
+      const h = 0.04 + r(1) * 0.13;
+      const d = 0.03 + r(2) * 0.08;
+      const px = (r(3) - 0.5) * 2.8;
+      const py = r(4) * 1.2 - 0.2;
+      const pz = (r(5) - 0.5) * 1.4;
+      const rx = r(6) * Math.PI;
+      const ry = r(7) * Math.PI;
+      const rz = r(8) * Math.PI;
+      const grayLevel = 0.38 + r(9) * 0.28;
+      const color = new THREE.Color(grayLevel, grayLevel * 0.97, grayLevel * 0.94);
+
+      result.push({ w, h, d, px, py, pz, rx, ry, rz, color });
+    }
+
+    return result;
+  }, []);
+
+  if (opacity <= 0.02) return null;
+
+  return (
+    <group>
+      {fragments.map((fragment, index) => (
+        <mesh
+          key={index}
+          position={[fragment.px, fragment.py, fragment.pz]}
+          rotation={[fragment.rx, fragment.ry, fragment.rz]}
+        >
+          <boxGeometry args={[fragment.w, fragment.h, fragment.d]} />
+          <meshStandardMaterial
+            color={fragment.color}
+            metalness={0.6}
+            roughness={0.4}
+            transparent
+            opacity={opacity}
+            depthWrite={false}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+// Bauxita — forma original de 3edeca95 + fragmentos minerais 3D
 function Bauxita({ scrollProgress }) {
   const groupRef = useRef();
+  const [fragmentsOpacity, setFragmentsOpacity] = useState(1);
   const { gl } = useThree();
   const gltf = useLoader(GLTFLoader, '/assets/rock1-opt.glb', (loader) => {
     setupGltfLoader(loader, gl);
@@ -265,51 +288,20 @@ function Bauxita({ scrollProgress }) {
     clone.scale.setScalar(3.6 / maxDimension);
 
     clone.traverse((child) => {
-      if (!child.isMesh || !child.geometry || !child.material) return;
-
-      // O modelo, a silhueta, a orientação e as posições dos vértices permanecem intactos.
-      // Somente uma cor por vértice é adicionada para simular as inclusões minerais.
-      const sourcePosition = child.geometry.attributes.position;
-      const colors = new Float32Array(sourcePosition.count * 3);
-      const vertex = new THREE.Vector3();
-      const localBounds = new THREE.Box3().setFromBufferAttribute(sourcePosition);
-      const localCenter = localBounds.getCenter(new THREE.Vector3());
-      const localHalfSize = localBounds.getSize(new THREE.Vector3()).multiplyScalar(0.5);
-
-      for (let i = 0; i < sourcePosition.count; i++) {
-        vertex.fromBufferAttribute(sourcePosition, i);
-        const nx = localHalfSize.x ? (vertex.x - localCenter.x) / localHalfSize.x : 0;
-        const ny = localHalfSize.y ? (vertex.y - localCenter.y) / localHalfSize.y : 0;
-        const nz = localHalfSize.z ? (vertex.z - localCenter.z) / localHalfSize.z : 0;
-        const patchInfluence = getPatchInfluence(nx, ny, nz);
-        const edgeNoise = hash01(vertex.x * 7.3, vertex.y * 4.1, vertex.z * 9.7);
-        const hardEdge = THREE.MathUtils.smoothstep(patchInfluence, 0.22, 0.5);
-        const grayTone = 0.5 + edgeNoise * 0.24;
-        const redTone = 0.9 + edgeNoise * 0.1;
-        const i3 = i * 3;
-
-        // A borda irregular é obtida por limiar + ruído, evitando círculos perfeitos.
-        colors[i3] = THREE.MathUtils.lerp(RED_RGB[0] * redTone, grayTone, hardEdge);
-        colors[i3 + 1] = THREE.MathUtils.lerp(RED_RGB[1] * redTone, grayTone * 0.98, hardEdge);
-        colors[i3 + 2] = THREE.MathUtils.lerp(RED_RGB[2] * redTone, grayTone * 0.94, hardEdge);
-      }
-
-      child.geometry = child.geometry.clone();
-      child.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      if (!child.isMesh || !child.material) return;
 
       const materials = Array.isArray(child.material) ? child.material : [child.material];
-      const preparedMaterials = materials.map((material) => {
-        const prepared = material.clone();
-        prepared.color.set('#ffffff');
-        prepared.vertexColors = true;
-        if ('roughness' in prepared) prepared.roughness = 0.82;
-        if ('metalness' in prepared) prepared.metalness = 0.08;
-        prepared.transparent = true;
-        prepared.needsUpdate = true;
-        return prepared;
+      const prepared = materials.map((mat) => {
+        const material = mat.clone();
+        if (material.color) material.color.set('#8B4A3C');
+        if ('roughness' in material) material.roughness = 0.82;
+        if ('metalness' in material) material.metalness = 0.08;
+        material.transparent = true;
+        material.needsUpdate = true;
+        return material;
       });
 
-      child.material = Array.isArray(child.material) ? preparedMaterials : preparedMaterials[0];
+      child.material = Array.isArray(child.material) ? prepared : prepared[0];
     });
 
     return clone;
@@ -318,7 +310,6 @@ function Bauxita({ scrollProgress }) {
   useEffect(() => {
     if (!groupRef.current) return;
 
-    // Mantém exatamente o deslocamento e o giro da versão de referência.
     const stage2Progress = Math.max(0, Math.min(1, (scrollProgress - 20) / 35));
     groupRef.current.position.x = stage2Progress * 2.5;
     groupRef.current.rotation.z = stage2Progress * 0.26;
@@ -329,6 +320,7 @@ function Bauxita({ scrollProgress }) {
 
     const fadeOutProgress = Math.max(0, Math.min(1, (scrollProgress - 55) / 15));
     const opacity = 1 - fadeOutProgress;
+    setFragmentsOpacity(opacity);
     groupRef.current.visible = opacity > 0.02;
     groupRef.current.traverse((child) => {
       if (!child.isMesh || !child.material) return;
@@ -343,6 +335,7 @@ function Bauxita({ scrollProgress }) {
   return (
     <group ref={groupRef}>
       <primitive object={rockObject} />
+      <MineralFragments opacity={fragmentsOpacity} />
     </group>
   );
 }
@@ -421,9 +414,10 @@ export default function BauxitaJourney() {
           gl={{ alpha: false, antialias: true, powerPreference: 'high-performance' }}
           onCreated={({ gl }) => gl.setClearColor('#000000', 1)}
         >
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[5, 5, 5]} intensity={1.5} />
-          <pointLight position={[-5, -5, -5]} intensity={0.5} color="#A0522D" />
+          <ambientLight intensity={1.2} />
+          <directionalLight position={[5, 5, 5]} intensity={2.0} />
+          <directionalLight position={[-3, 3, -5]} intensity={0.8} color="#ffffff" />
+          <pointLight position={[-5, -5, -5]} intensity={0.6} color="#A0522D" />
 
           <Bauxita scrollProgress={scrollProgress} />
           <Alumina scrollProgress={scrollProgress} />
