@@ -237,117 +237,55 @@ function Alumina({ scrollProgress }) {
   );
 }
 
-// Bauxita — GLB real + crosta mista (vertex colors + emissivo) na fratura
+// Bauxita — pedra procedural facetada + inclusões minerais cinzas
 function Bauxita({ scrollProgress }) {
   const groupRef = useRef();
-  const { gl } = useThree();
-  const gltf = useLoader(GLTFLoader, '/assets/rock1-opt.glb', (loader) => {
-    setupGltfLoader(loader, gl);
+
+  const rockGeometry = useMemo(() => {
+    const geometry = new THREE.IcosahedronGeometry(2, 2);
+    const position = geometry.attributes.position;
+    const vertex = new THREE.Vector3();
+    const normal = new THREE.Vector3();
+    const colors = new Float32Array(position.count * 3);
+
+    // Esta é a pedra facetada das primeiras versões, não o GLB arredondado.
+    for (let i = 0; i < position.count; i++) {
+      vertex.fromBufferAttribute(position, i);
+      const noise = 0.8 + hash01(vertex.x, vertex.y, vertex.z) * 0.4;
+      vertex.multiplyScalar(noise);
+      normal.copy(vertex).normalize();
+
+      const nx = vertex.x / 2;
+      const ny = vertex.y / 2;
+      const nz = vertex.z / 2;
+      const patchInfluence = getPatchInfluence(nx, ny, nz);
+      const roughNoise = hash01(vertex.x * 4.7, vertex.y * 8.3, vertex.z * 6.1);
+      const porousEdge = patchInfluence * (0.55 + roughNoise * 0.75);
+      const grayTone = 0.56 + roughNoise * 0.2;
+      const i3 = i * 3;
+
+      // Pequenos puxões nas inclusões simulam porosidade sem arredondar a silhueta.
+      const pull = Math.max(0, porousEdge - 0.16) * 0.12;
+      vertex.addScaledVector(normal, pull);
+      position.setXYZ(i, vertex.x, vertex.y, vertex.z);
+
+      colors[i3] = THREE.MathUtils.lerp(RED_RGB[0], grayTone, patchInfluence);
+      colors[i3 + 1] = THREE.MathUtils.lerp(RED_RGB[1], grayTone * 0.98, patchInfluence);
+      colors[i3 + 2] = THREE.MathUtils.lerp(RED_RGB[2], grayTone * 0.94, patchInfluence);
+    }
+
+    position.needsUpdate = true;
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    geometry.computeVertexNormals();
+    return geometry;
+  }, []);
+
+  useFrame((state, delta) => {
+    if (groupRef.current && groupRef.current.visible) {
+      // Giro autônomo mantido na mesma proporção das primeiras versões.
+      groupRef.current.rotation.y += delta * 0.07;
+    }
   });
-
-  const rockObject = useMemo(() => {
-    const clone = gltf.scene.clone(true);
-    const bounds = new THREE.Box3().setFromObject(clone);
-    const center = new THREE.Vector3();
-    const size = new THREE.Vector3();
-
-    bounds.getCenter(center);
-    bounds.getSize(size);
-    clone.position.sub(center);
-
-    const maxDimension = Math.max(size.x, size.y, size.z) || 1;
-    clone.scale.setScalar(3.6 / maxDimension);
-
-    const meshColorData = [];
-
-    clone.traverse((child) => {
-      if (!child.isMesh || !child.geometry || !child.material) return;
-
-      child.geometry = child.geometry.clone();
-      const sourcePosition = child.geometry.attributes.position;
-      if (!sourcePosition) return;
-
-      // O GLB usa KHR_mesh_quantization/InterleavedBufferAttribute.
-      // Nunca escrever floats diretamente no buffer quantizado, pois isso zera os vértices.
-      const count = sourcePosition.count;
-      const decodedPositions = new Float32Array(count * 3);
-      for (let i = 0; i < count; i++) {
-        const i3 = i * 3;
-        decodedPositions[i3] = sourcePosition.getX(i);
-        decodedPositions[i3 + 1] = sourcePosition.getY(i);
-        decodedPositions[i3 + 2] = sourcePosition.getZ(i);
-      }
-      const position = new THREE.BufferAttribute(decodedPositions, 3);
-      child.geometry.setAttribute('position', position);
-
-      const redColors = new Float32Array(count * 3);
-      const mineralColors = new Float32Array(count * 3);
-      const geometryBounds = new THREE.Box3().setFromBufferAttribute(position);
-      const geometryCenter = geometryBounds.getCenter(new THREE.Vector3());
-      const geometrySize = geometryBounds.getSize(new THREE.Vector3());
-      child.geometry.computeVertexNormals();
-      const updatedNormal = child.geometry.attributes.normal;
-      const vertex = new THREE.Vector3();
-      const vertexNormal = new THREE.Vector3();
-
-      for (let i = 0; i < count; i++) {
-        const i3 = i * 3;
-        vertex.fromBufferAttribute(position, i);
-        const nx = geometrySize.x ? (vertex.x - geometryCenter.x) / (geometrySize.x * 0.5) : 0;
-        const ny = geometrySize.y ? (vertex.y - geometryCenter.y) / (geometrySize.y * 0.5) : 0;
-        const nz = geometrySize.z ? (vertex.z - geometryCenter.z) / (geometrySize.z * 0.5) : 0;
-        const patchInfluence = getPatchInfluence(nx, ny, nz);
-        const roughNoise = hash01(vertex.x * 4.7, vertex.y * 8.3, vertex.z * 6.1);
-        const porousEdge = patchInfluence * (0.55 + roughNoise * 0.75);
-        const grayTone = 0.48 + roughNoise * 0.18;
-
-        redColors[i3] = RED_RGB[0];
-        redColors[i3 + 1] = RED_RGB[1];
-        redColors[i3 + 2] = RED_RGB[2];
-        mineralColors[i3] = THREE.MathUtils.lerp(RED_RGB[0], grayTone, patchInfluence);
-        mineralColors[i3 + 1] = THREE.MathUtils.lerp(RED_RGB[1], grayTone * 0.98, patchInfluence);
-        mineralColors[i3 + 2] = THREE.MathUtils.lerp(RED_RGB[2], grayTone * 0.94, patchInfluence);
-
-        if (updatedNormal && porousEdge > 0.16) {
-          vertexNormal.fromBufferAttribute(updatedNormal, i).normalize();
-          const pull = (porousEdge - 0.16) * 0.018;
-          position.setXYZ(
-            i,
-            vertex.x + vertexNormal.x * pull,
-            vertex.y + vertexNormal.y * pull,
-            vertex.z + vertexNormal.z * pull,
-          );
-        }
-      }
-
-      position.needsUpdate = true;
-      child.geometry.computeVertexNormals();
-      child.geometry.setAttribute('color', new THREE.Float32BufferAttribute(mineralColors, 3));
-
-      // Mantém os mapas originais e aplica a crosta mineral via vertex colors.
-      const src = Array.isArray(child.material) ? child.material[0] : child.material;
-      const prepared = src.clone();
-      prepared.color.set('#ffffff');
-      prepared.vertexColors = true;
-      if ('roughness' in prepared) prepared.roughness = 0.82;
-      if ('metalness' in prepared) prepared.metalness = 0.08;
-      prepared.transparent = true;
-      prepared.opacity = 1;
-      if ('emissive' in prepared) prepared.emissive = new THREE.Color('#D2691E');
-      prepared.emissiveIntensity = 0;
-      prepared.needsUpdate = true;
-      child.material = prepared;
-
-      meshColorData.push({
-        mesh: child,
-        redColors,
-        mineralColors,
-      });
-    });
-
-    clone.userData.meshColorData = meshColorData;
-    return clone;
-  }, [gltf]);
 
   useEffect(() => {
     if (!groupRef.current) return;
@@ -356,35 +294,31 @@ function Bauxita({ scrollProgress }) {
     groupRef.current.position.x = stage2Progress * 2.5;
     groupRef.current.rotation.z = stage2Progress * 0.26;
 
-    // A pedra não se parte mais: preserva apenas o giro/declive original do scroll.
-    // A crosta cinza já existe no repouso e acompanha a pedra até o fade da Alumina.
-    groupRef.current.rotation.y = 0;
-    groupRef.current.scale.x = 1;
-
+    // Sem quebra: a pedra apenas conclui seu movimento e faz fade para a Alumina.
     const fadeOutProgress = Math.max(0, Math.min(1, (scrollProgress - 55) / 15));
     const opacity = 1 - fadeOutProgress;
     groupRef.current.visible = opacity > 0.02;
-
-    const meshColorData = rockObject?.userData?.meshColorData || [];
-
-    groupRef.current.traverse((child) => {
-      if (!child.isMesh || !child.material) return;
-      const materials = Array.isArray(child.material) ? child.material : [child.material];
-      materials.forEach((material) => {
-        material.opacity = opacity;
-        material.transparent = true;
-        if ('emissiveIntensity' in material) {
-          material.emissiveIntensity = 0;
-        }
-      });
-    });
-
-
-  }, [scrollProgress, rockObject]);
+    if (groupRef.current.children[0]?.material) {
+      groupRef.current.children[0].material.opacity = opacity;
+      groupRef.current.children[0].material.transparent = true;
+    }
+  }, [scrollProgress]);
 
   return (
     <group ref={groupRef}>
-      <primitive object={rockObject} />
+      <mesh geometry={rockGeometry}>
+        <meshStandardMaterial
+          color="#8B4A3C"
+          vertexColors
+          roughness={0.9}
+          metalness={0.1}
+          flatShading
+          emissive="#D2691E"
+          emissiveIntensity={0}
+          side={THREE.DoubleSide}
+          transparent
+        />
+      </mesh>
     </group>
   );
 }

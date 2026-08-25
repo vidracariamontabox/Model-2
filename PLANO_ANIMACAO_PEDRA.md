@@ -70,7 +70,7 @@ A estratégia da pedra foi alterada para preservar o modelo avermelhado que apre
 
 ### Aparência desejada
 
-A Bauxita continuará com a base avermelhada/terracota, recebendo inclusões cinza distribuídas pela superfície. Essas inclusões não devem formar círculos, linhas retas ou uma textura pontilhada uniforme. Cada região será criada como uma mancha irregular, com centros, raios, intensidade e bordas variados, inspirada na referência visual fornecida: crosta porosa, agregados minerais e extremidades ásperas.
+A Bauxita continuará com a base avermelhada/terracota, recebendo inclusões cinza distribuídas pela superfície. A geometria de referência é a pedra facetada e irregular dos primeiros protótipos (`b7ecc64`/`aa56bda`), e não o volume arredondado do GLB usado nas iterações posteriores. Essas inclusões não devem formar círculos, linhas retas ou uma textura pontilhada uniforme. Cada região será criada como uma mancha irregular, com centros, raios, intensidade e bordas variados, inspirada na referência visual fornecida: crosta porosa, agregados minerais e extremidades ásperas.
 
 ### Implementação prevista
 
@@ -79,7 +79,9 @@ A Bauxita continuará com a base avermelhada/terracota, recebendo inclusões cin
 3. Os vértices próximos às inclusões receberão pequenos deslocamentos ao longo das normais, com intensidade limitada, criando puxões e porosidades sem alterar a silhueta geral de forma exagerada.
 4. As deformações serão determinísticas por semente, para que a pedra não mude aleatoriamente a cada montagem ou refresh.
 5. A rotação da pedra continuará sendo controlada pelo `scrollProgress` na mesma proporção já existente. O movimento lateral também será preservado salvo ajuste mínimo necessário para o novo volume.
-6. A antiga rotação/contração de fratura será desativada. Entre aproximadamente 55 e 70vh, a pedra fará uma saída contínua enquanto a Alumina entra, sem afastamento de metades ou abertura de rachadura.
+6. As normais/facetas da geometria de referência devem ser preservadas; não recalcular normais de maneira suave depois dos puxões, porque isso transforma a pedra em um volume liso e arredondado.
+7. A geometria procedural facetada deve ser a fonte visual da Bauxita; o `rock1-opt.glb` não deve ser usado como Bauxita arredondada nesta etapa.
+8. A antiga rotação/contração de fratura será desativada. Entre aproximadamente 55 e 70vh, a pedra fará uma saída contínua enquanto a Alumina entra, sem afastamento de metades ou abertura de rachadura.
 
 ### Limites da alteração
 
