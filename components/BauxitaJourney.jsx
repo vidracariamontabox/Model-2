@@ -341,8 +341,6 @@ export default function BauxitaJourney() {
   const photoScale = 0.95 + photoProgress * 0.05;
   const photoOpacity = photoProgress;
 
-  const titleMarginTop = `${(scrollProgress / 150) * 20}vh`;
-
   return (
     <div
       ref={containerRef}
@@ -350,13 +348,9 @@ export default function BauxitaJourney() {
     >
       <div className="absolute top-[20%] z-20 w-full text-center px-4 pointer-events-none">
         {scrollProgress < 55 && (
-          <BlurTextReveal
-            text="BAUXITA"
-            className="text-6xl md:text-9xl font-bold tracking-[0.2em] text-white uppercase"
-            stagger={0.1}
-            play={scrollProgress < 50}
-            style={{ marginTop: titleMarginTop }}
-          />
+          <h1 className="block pl-[4%] text-left text-5xl md:text-8xl font-bold tracking-[0.16em] text-white uppercase">
+            BAUXITA
+          </h1>
         )}
         {scrollProgress >= 70 && scrollProgress < 100 && (
           <div className="absolute left-[10%] top-[40%] text-left">
