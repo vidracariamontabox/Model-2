@@ -239,71 +239,70 @@ function Alumina({ scrollProgress }) {
 
 // Extração Bayer — sequência visual leve entre a Bauxita e a Alumina.
 function BayerExtraction({ scrollProgress }) {
-  const sedimentRef = useRef();
-  const liquorRef = useRef();
+  const scrollRef = useRef(scrollProgress);
+  useEffect(() => {
+    scrollRef.current = scrollProgress;
+  }, [scrollProgress]);
+
+  const dissolutionRef = useRef();
+  const dissolutionGeomRef = useRef();
   const crystalRef = useRef();
-  const vaporRef = useRef();
 
-  const sedimentData = useMemo(() => Array.from({ length: 34 }, (_, index) => {
-    const seed = index + 1;
-    const random = (offset) => {
-      const value = Math.sin(seed * 17.17 + offset * 31.31) * 43758.5453;
+  const dissolutionData = useMemo(() => Array.from({ length: 55 }, (_, i) => {
+    const rng = (s) => {
+      const value = Math.sin(i * 13.7 + s * 31.1) * 43758.5;
       return value - Math.floor(value);
     };
+    const theta = rng(1) * Math.PI * 2;
+    const phi = rng(2) * Math.PI;
     return {
-      x: (random(1) - 0.5) * 2.2,
-      y: (random(2) - 0.5) * 1.4,
-      z: (random(3) - 0.5) * 0.8,
-      drift: (random(4) - 0.5) * 0.25,
-      speed: 0.55 + random(5) * 0.75,
+      dx: Math.sin(phi) * Math.cos(theta),
+      dy: Math.sin(phi) * Math.sin(theta),
+      dz: Math.cos(phi),
+      x: (rng(3) - 0.5) * 0.8,
+      y: (rng(4) - 0.5) * 0.6,
+      z: (rng(5) - 0.5) * 0.5,
+      speed: 0.8 + rng(6) * 1.2,
+      size: 0.04 + rng(7) * 0.08,
     };
   }), []);
 
-  const crystalData = useMemo(() => Array.from({ length: 22 }, (_, index) => {
-    const seed = index + 101;
-    const random = (offset) => {
-      const value = Math.sin(seed * 19.19 + offset * 27.27) * 43758.5453;
+  const crystalData = useMemo(() => Array.from({ length: 45 }, (_, i) => {
+    const rng = (s) => {
+      const value = Math.sin(i * 17.3 + s * 41.7) * 43758.5;
       return value - Math.floor(value);
     };
     return {
-      x: (random(1) - 0.5) * 1.8,
-      y: (random(2) - 0.5) * 1.25,
-      z: (random(3) - 0.5) * 0.65,
-      size: 0.035 + random(4) * 0.075,
-      phase: random(5) * Math.PI * 2,
+      fx: (rng(2) - 0.5) * 1.4,
+      fy: (rng(3) - 0.5) * 1.0,
+      fz: (rng(4) - 0.5) * 0.7,
+      ox: (rng(5) - 0.5) * 4.0,
+      oy: (rng(6) - 0.5) * 3.0,
+      oz: (rng(7) - 0.5) * 2.0,
+      size: 0.06 + rng(8) * 0.12,
+      delay: rng(9) * 0.4,
+      phase: rng(10) * Math.PI * 2,
     };
   }), []);
 
-  const vaporData = useMemo(() => Array.from({ length: 16 }, (_, index) => {
-    const seed = index + 201;
-    const random = (offset) => {
-      const value = Math.sin(seed * 23.23 + offset * 41.41) * 43758.5453;
-      return value - Math.floor(value);
-    };
-    return {
-      x: (random(1) - 0.5) * 1.5,
-      y: random(2) * 0.7,
-      z: (random(3) - 0.5) * 0.5,
-      size: 0.025 + random(4) * 0.045,
-    };
-  }), []);
-
-  const sedimentPositions = useMemo(
-    () => new Float32Array(sedimentData.flatMap(({ x, y, z }) => [x, y, z])),
-    [sedimentData],
+  const dissolutionPositions = useMemo(
+    () => new Float32Array(dissolutionData.flatMap(({ x, y, z }) => [x, y, z])),
+    [dissolutionData],
   );
-  const vaporPositions = useMemo(
-    () => new Float32Array(vaporData.flatMap(({ x, y, z }) => [x, y, z])),
-    [vaporData],
-  );
-  const crystalGeometry = useMemo(() => new THREE.DodecahedronGeometry(1, 0), []);
+  const crystalGeometry = useMemo(() => new THREE.OctahedronGeometry(1, 0), []);
   const crystalMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-    color: '#E8E4DC',
-    roughness: 0.46,
-    metalness: 0.12,
+    color: '#F0ECE4',
+    roughness: 0.55,
+    metalness: 0.10,
     transparent: true,
     depthWrite: false,
   }), []);
+
+  const matrix = useMemo(() => new THREE.Matrix4(), []);
+  const position = useMemo(() => new THREE.Vector3(), []);
+  const quaternion = useMemo(() => new THREE.Quaternion(), []);
+  const scale = useMemo(() => new THREE.Vector3(), []);
+  const euler = useMemo(() => new THREE.Euler(), []);
 
   useEffect(() => () => {
     crystalGeometry.dispose();
@@ -311,101 +310,94 @@ function BayerExtraction({ scrollProgress }) {
   }, [crystalGeometry, crystalMaterial]);
 
   useFrame((state) => {
-    const p = scrollProgress;
-    const digestion = THREE.MathUtils.clamp((p - 45) / 12, 0, 1);
-    const clarification = THREE.MathUtils.clamp((p - 55) / 13, 0, 1);
-    const precipitation = THREE.MathUtils.clamp((p - 66) / 19, 0, 1);
-    const calcination = THREE.MathUtils.clamp((p - 77) / 8, 0, 1);
-    const fade = 1 - THREE.MathUtils.clamp((p - 83) / 7, 0, 1);
+    const p = scrollRef.current;
+    const dissolution = THREE.MathUtils.clamp((p - 45) / 17, 0, 1);
+    const crystal = THREE.MathUtils.clamp((p - 68) / 15, 0, 1);
+    const allFade = 1 - THREE.MathUtils.clamp((p - 83) / 7, 0, 1);
 
-    if (sedimentRef.current) {
-      sedimentRef.current.material.opacity = digestion * fade;
-      sedimentRef.current.visible = digestion > 0.01 && fade > 0.01;
-      sedimentRef.current.material.size = 0.075;
-      sedimentRef.current.position.y = clarification * -0.85;
-      sedimentRef.current.position.x = digestion * 0.55;
+    if (dissolutionGeomRef.current?.attributes.position) {
+      const arr = dissolutionGeomRef.current.attributes.position.array;
+      dissolutionData.forEach((d, i) => {
+        const expand = Math.pow(dissolution * d.speed, 0.7);
+        arr[i * 3] = d.x + d.dx * expand * 2.5;
+        arr[i * 3 + 1] = d.y + d.dy * expand * 2.5;
+        arr[i * 3 + 2] = d.z + d.dz * expand * 2.5;
+      });
+      dissolutionGeomRef.current.attributes.position.needsUpdate = true;
     }
 
-    if (liquorRef.current) {
-      liquorRef.current.material.opacity = clarification * 0.24 * fade;
-      liquorRef.current.visible = clarification > 0.01 && fade > 0.01;
-      liquorRef.current.position.x = -0.15 + clarification * 0.3;
-      liquorRef.current.scale.set(0.82 + clarification * 0.18, 0.35 + clarification * 0.65, 0.82 + clarification * 0.18);
+    if (dissolutionRef.current) {
+      const dissolveFade = dissolution < 0.48
+        ? THREE.MathUtils.smoothstep(dissolution, 0, 0.48)
+        : 1 - THREE.MathUtils.smoothstep(dissolution, 0.48, 1);
+      dissolutionRef.current.material.opacity = dissolveFade * 0.9 * allFade;
+      dissolutionRef.current.visible = dissolveFade > 0.01 && allFade > 0.01;
     }
 
     if (crystalRef.current) {
-      crystalRef.current.visible = precipitation > 0.01 && fade > 0.01;
-      crystalRef.current.material.opacity = precipitation * fade * 0.92;
-      crystalRef.current.position.y = -clarification * 0.42;
-      crystalData.forEach((crystal, index) => {
-        const growth = THREE.MathUtils.clamp((precipitation - index / crystalData.length * 0.5) * 1.7, 0, 1);
-        const scale = crystal.size * growth;
-        const matrix = new THREE.Matrix4();
-        matrix.compose(
-            new THREE.Vector3(
-              crystal.x * (1 - precipitation * 0.26),
-              crystal.y * (0.45 + clarification * 0.55) * (1 - precipitation * 0.18),
-              crystal.z * (1 - precipitation * 0.26),
-            ),
-          new THREE.Quaternion().setFromEuler(new THREE.Euler(
-            state.clock.elapsedTime * 0.08 + crystal.phase,
-            crystal.phase,
-            state.clock.elapsedTime * 0.05,
-          )),
-          new THREE.Vector3(scale, scale, scale),
-        );
-        crystalRef.current.setMatrixAt(index, matrix);
-      });
-      crystalRef.current.instanceMatrix.needsUpdate = true;
-    }
+      crystalRef.current.visible = crystal > 0.01 && allFade > 0.01;
+      crystalRef.current.material.opacity = crystal * allFade * 0.95;
 
-    if (vaporRef.current) {
-      vaporRef.current.material.opacity = calcination * fade * 0.24;
-      vaporRef.current.visible = calcination > 0.01 && fade > 0.01;
-      vaporRef.current.position.y = calcination * 0.55;
+      if (crystal > 0.01) {
+        crystalData.forEach((c, i) => {
+          const growth = THREE.MathUtils.clamp(
+            (crystal - c.delay) / (1 - c.delay + 0.001),
+            0,
+            1,
+          );
+          const eased = 1 - Math.pow(1 - growth, 3);
+
+          position.set(
+            THREE.MathUtils.lerp(c.ox, c.fx, eased),
+            THREE.MathUtils.lerp(c.oy, c.fy, eased),
+            THREE.MathUtils.lerp(c.oz, c.fz, eased),
+          );
+          euler.set(
+            state.clock.elapsedTime * 0.04 + c.phase,
+            c.phase * 0.7,
+            state.clock.elapsedTime * 0.03,
+          );
+          quaternion.setFromEuler(euler);
+
+          const crystalScale = c.size * eased;
+          scale.set(crystalScale, crystalScale, crystalScale);
+          matrix.compose(position, quaternion, scale);
+          crystalRef.current.setMatrixAt(i, matrix);
+        });
+        crystalRef.current.instanceMatrix.needsUpdate = true;
+      }
     }
   });
 
   return (
     <group>
-      <points ref={sedimentRef}>
-        <bufferGeometry>
+      <points ref={dissolutionRef} visible={false}>
+        <bufferGeometry ref={dissolutionGeomRef}>
           <bufferAttribute
             attach="attributes-position"
-            count={sedimentData.length}
-            array={sedimentPositions}
+            count={dissolutionData.length}
+            array={dissolutionPositions}
             itemSize={3}
           />
         </bufferGeometry>
-        <pointsMaterial color="#A5482F" size={0.075} transparent opacity={0} depthWrite={false} />
+        <pointsMaterial
+          color="#C04A20"
+          size={0.09}
+          transparent
+          opacity={0}
+          depthWrite={false}
+          sizeAttenuation
+        />
       </points>
-
-      <mesh ref={liquorRef} position={[0, -0.05, -0.45]} visible={false}>
-        <cylinderGeometry args={[0.78, 0.94, 1.8, 24, 1, true]} />
-        <meshBasicMaterial color="#D28A43" transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
-      </mesh>
 
       <instancedMesh
         ref={crystalRef}
         args={[crystalGeometry, crystalMaterial, crystalData.length]}
         visible={false}
       />
-
-      <points ref={vaporRef} visible={false}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={vaporData.length}
-            array={vaporPositions}
-            itemSize={3}
-          />
-        </bufferGeometry>
-        <pointsMaterial color="#F4F0E8" size={0.08} transparent opacity={0} depthWrite={false} />
-      </points>
     </group>
   );
 }
-
 // Bauxita — GLB real
 function Bauxita({ scrollProgress }) {
   const groupRef = useRef();
