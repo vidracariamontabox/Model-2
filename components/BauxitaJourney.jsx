@@ -264,10 +264,22 @@ function Bauxita({ scrollProgress }) {
       if (!child.isMesh || !child.geometry || !child.material) return;
 
       child.geometry = child.geometry.clone();
-      const position = child.geometry.attributes.position;
-      if (!position) return;
+      const sourcePosition = child.geometry.attributes.position;
+      if (!sourcePosition) return;
 
-      const count = position.count;
+      // O GLB usa KHR_mesh_quantization/InterleavedBufferAttribute.
+      // Nunca escrever floats diretamente no buffer quantizado, pois isso zera os vértices.
+      const count = sourcePosition.count;
+      const decodedPositions = new Float32Array(count * 3);
+      for (let i = 0; i < count; i++) {
+        const i3 = i * 3;
+        decodedPositions[i3] = sourcePosition.getX(i);
+        decodedPositions[i3 + 1] = sourcePosition.getY(i);
+        decodedPositions[i3 + 2] = sourcePosition.getZ(i);
+      }
+      const position = new THREE.BufferAttribute(decodedPositions, 3);
+      child.geometry.setAttribute('position', position);
+
       const redColors = new Float32Array(count * 3);
       const mineralColors = new Float32Array(count * 3);
       const geometryBounds = new THREE.Box3().setFromBufferAttribute(position);
