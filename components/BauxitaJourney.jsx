@@ -237,88 +237,101 @@ function Alumina({ scrollProgress }) {
   );
 }
 
-// Bauxita — pedra procedural facetada + inclusões minerais cinzas
+// Bauxita — forma preservada do commit 3edeca95 + inclusões minerais
 function Bauxita({ scrollProgress }) {
   const groupRef = useRef();
+  const { gl } = useThree();
+  const gltf = useLoader(GLTFLoader, '/assets/rock1-opt.glb', (loader) => {
+    setupGltfLoader(loader, gl);
+  });
 
-  const rockGeometry = useMemo(() => {
-    const geometry = new THREE.IcosahedronGeometry(2, 2);
-    const position = geometry.attributes.position;
-    const vertex = new THREE.Vector3();
-    const normal = new THREE.Vector3();
-    const colors = new Float32Array(position.count * 3);
+  const rockObject = useMemo(() => {
+    const clone = gltf.scene.clone(true);
+    const bounds = new THREE.Box3().setFromObject(clone);
+    const center = new THREE.Vector3();
+    const size = new THREE.Vector3();
+    bounds.getCenter(center);
+    bounds.getSize(size);
+    clone.position.sub(center);
 
-    // Esta é a pedra facetada das primeiras versões, não o GLB arredondado.
-    for (let i = 0; i < position.count; i++) {
-      vertex.fromBufferAttribute(position, i);
-      const noise = 0.8 + hash01(vertex.x, vertex.y, vertex.z) * 0.4;
-      vertex.multiplyScalar(noise);
-      normal.copy(vertex).normalize();
+    const maxDimension = Math.max(size.x, size.y, size.z) || 1;
+    clone.scale.setScalar(3.6 / maxDimension);
 
-      const nx = vertex.x / 2;
-      const ny = vertex.y / 2;
-      const nz = vertex.z / 2;
-      const patchInfluence = getPatchInfluence(nx, ny, nz);
-      const roughNoise = hash01(vertex.x * 4.7, vertex.y * 8.3, vertex.z * 6.1);
-      const porousEdge = patchInfluence * (0.55 + roughNoise * 0.75);
-      const grayTone = 0.56 + roughNoise * 0.2;
-      const i3 = i * 3;
+    clone.traverse((child) => {
+      if (!child.isMesh || !child.geometry || !child.material) return;
 
-      // Pequenos puxões nas inclusões simulam porosidade sem arredondar a silhueta.
-      const pull = Math.max(0, porousEdge - 0.16) * 0.12;
-      vertex.addScaledVector(normal, pull);
-      position.setXYZ(i, vertex.x, vertex.y, vertex.z);
+      const sourcePosition = child.geometry.attributes.position;
+      if (!sourcePosition) return;
+      const colors = new Float32Array(sourcePosition.count * 3);
+      const vertex = new THREE.Vector3();
+      // Usa o espaço local da malha para distribuir inclusões pela superfície real.
+      const localBounds = new THREE.Box3().setFromBufferAttribute(sourcePosition);
+      const geometryCenter = localBounds.getCenter(new THREE.Vector3());
+      const halfSize = localBounds.getSize(new THREE.Vector3()).multiplyScalar(0.5);
 
-      colors[i3] = THREE.MathUtils.lerp(RED_RGB[0], grayTone, patchInfluence);
-      colors[i3 + 1] = THREE.MathUtils.lerp(RED_RGB[1], grayTone * 0.98, patchInfluence);
-      colors[i3 + 2] = THREE.MathUtils.lerp(RED_RGB[2], grayTone * 0.94, patchInfluence);
-    }
+      for (let i = 0; i < sourcePosition.count; i++) {
+        vertex.fromBufferAttribute(sourcePosition, i);
+        const nx = halfSize.x ? (vertex.x - geometryCenter.x) / halfSize.x : 0;
+        const ny = halfSize.y ? (vertex.y - geometryCenter.y) / halfSize.y : 0;
+        const nz = halfSize.z ? (vertex.z - geometryCenter.z) / halfSize.z : 0;
+        const patchInfluence = getPatchInfluence(nx, ny, nz);
+        const roughNoise = hash01(vertex.x * 4.7, vertex.y * 8.3, vertex.z * 6.1);
+        const grayTone = 0.56 + roughNoise * 0.2;
+        const i3 = i * 3;
 
-    position.needsUpdate = true;
-    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-    geometry.computeVertexNormals();
-    return geometry;
-  }, []);
+        // Inclusões angulares e orgânicas; a posição original nunca é alterada.
+        colors[i3] = THREE.MathUtils.lerp(RED_RGB[0], grayTone, patchInfluence);
+        colors[i3 + 1] = THREE.MathUtils.lerp(RED_RGB[1], grayTone * 0.98, patchInfluence);
+        colors[i3 + 2] = THREE.MathUtils.lerp(RED_RGB[2], grayTone * 0.94, patchInfluence);
+      }
+
+      child.geometry = child.geometry.clone();
+      child.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      const materials = Array.isArray(child.material) ? child.material : [child.material];
+      const preparedMaterials = materials.map((material) => {
+        const prepared = material.clone();
+        prepared.color.set('#ffffff');
+        prepared.vertexColors = true;
+        prepared.roughness = 0.82;
+        prepared.metalness = 0.08;
+        prepared.transparent = true;
+        prepared.needsUpdate = true;
+        return prepared;
+      });
+      child.material = Array.isArray(child.material) ? preparedMaterials : preparedMaterials[0];
+    });
+
+    return clone;
+  }, [gltf]);
 
   useFrame((state, delta) => {
     if (groupRef.current && groupRef.current.visible) {
-      // Giro autônomo mantido na mesma proporção das primeiras versões.
       groupRef.current.rotation.y += delta * 0.07;
     }
   });
 
   useEffect(() => {
     if (!groupRef.current) return;
-
     const stage2Progress = Math.max(0, Math.min(1, (scrollProgress - 20) / 35));
     groupRef.current.position.x = stage2Progress * 2.5;
     groupRef.current.rotation.z = stage2Progress * 0.26;
 
-    // Sem quebra: a pedra apenas conclui seu movimento e faz fade para a Alumina.
     const fadeOutProgress = Math.max(0, Math.min(1, (scrollProgress - 55) / 15));
     const opacity = 1 - fadeOutProgress;
     groupRef.current.visible = opacity > 0.02;
-    if (groupRef.current.children[0]?.material) {
-      groupRef.current.children[0].material.opacity = opacity;
-      groupRef.current.children[0].material.transparent = true;
-    }
+    groupRef.current.traverse((child) => {
+      if (!child.isMesh || !child.material) return;
+      const materials = Array.isArray(child.material) ? child.material : [child.material];
+      materials.forEach((material) => {
+        material.opacity = opacity;
+        material.transparent = true;
+      });
+    });
   }, [scrollProgress]);
 
   return (
     <group ref={groupRef}>
-      <mesh geometry={rockGeometry}>
-        <meshStandardMaterial
-          color="#8B4A3C"
-          vertexColors
-          roughness={0.9}
-          metalness={0.1}
-          flatShading
-          emissive="#D2691E"
-          emissiveIntensity={0}
-          side={THREE.DoubleSide}
-          transparent
-        />
-      </mesh>
+      <primitive object={rockObject} />
     </group>
   );
 }

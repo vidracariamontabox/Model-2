@@ -70,17 +70,17 @@ A estratégia da pedra foi alterada para preservar o modelo avermelhado que apre
 
 ### Aparência desejada
 
-A Bauxita continuará com a base avermelhada/terracota, recebendo inclusões cinza distribuídas pela superfície. A geometria de referência é a pedra facetada e irregular dos primeiros protótipos (`b7ecc64`/`aa56bda`), e não o volume arredondado do GLB usado nas iterações posteriores. Essas inclusões não devem formar círculos, linhas retas ou uma textura pontilhada uniforme. Cada região será criada como uma mancha irregular, com centros, raios, intensidade e bordas variados, inspirada na referência visual fornecida: crosta porosa, agregados minerais e extremidades ásperas.
+A Bauxita deve preservar integralmente a forma, a silhueta, a escala e a orientação da pedra do commit `3edeca95b949d56dfcf36ee5e1c58b998f6875c2`. Essa versão é a referência visual aprovada pelo usuário. A alteração desejada ocorre somente sobre o material: base avermelhada/terracota com inclusões cinza irregulares inspiradas na referência fornecida. Essas inclusões não devem formar círculos, linhas retas ou uma textura pontilhada uniforme. Cada região será criada como uma mancha irregular, com centros, raios, intensidade e bordas variados, inspirada na referência visual fornecida: crosta porosa, agregados minerais e extremidades ásperas.
 
 ### Implementação prevista
 
 1. A cor base avermelhada será mantida como estado de repouso.
 2. As regiões cinzas serão geradas por influência espacial de múltiplos centros sobre os vértices da malha, usando ruído e limiares suaves para produzir manchas orgânicas.
-3. Os vértices próximos às inclusões receberão pequenos deslocamentos ao longo das normais, com intensidade limitada, criando puxões e porosidades sem alterar a silhueta geral de forma exagerada.
-4. As deformações serão determinísticas por semente, para que a pedra não mude aleatoriamente a cada montagem ou refresh.
+3. Nenhuma posição de vértice será alterada. As inclusões serão simuladas visualmente por cores de vértice e contraste de roughness/material, preservando a silhueta aprovada.
+4. A distribuição das inclusões será determinística por semente, para que o padrão não mude aleatoriamente a cada montagem ou refresh.
 5. A rotação da pedra continuará sendo controlada pelo `scrollProgress` na mesma proporção já existente. O movimento lateral também será preservado salvo ajuste mínimo necessário para o novo volume.
-6. As normais/facetas da geometria de referência devem ser preservadas; não recalcular normais de maneira suave depois dos puxões, porque isso transforma a pedra em um volume liso e arredondado.
-7. A geometria procedural facetada deve ser a fonte visual da Bauxita; o `rock1-opt.glb` não deve ser usado como Bauxita arredondada nesta etapa.
+6. As normais/facetas e todos os vértices da geometria de referência devem ser preservados; nenhum processo de deformação ou suavização deve transformar a pedra em um volume diferente.
+7. O `rock1-opt.glb` da versão `3edeca95` deve ser mantido como fonte da forma aprovada. Não substituir a malha, não aplicar Icosahedron procedural e não alterar posições de vértices nesta etapa.
 8. A antiga rotação/contração de fratura será desativada. Entre aproximadamente 55 e 70vh, a pedra fará uma saída contínua enquanto a Alumina entra, sem afastamento de metades ou abertura de rachadura.
 
 ### Limites da alteração
