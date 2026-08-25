@@ -29,6 +29,7 @@ A implementação seguirá uma abordagem modular para garantir estabilidade e pe
     *   **Estágio 1 (0-20vh)**: Texto "BAUXITA" adicionado via `BlurTextReveal`. Rotação sutil corrigida para 0.07 rad/s.
     *   **Estágio 2 (20-55vh)**: Pedra desliza horizontalmente e inclina 15°.
     *   **Fratura**: Implementada via **divisão real da geometria** (triângulos separados por plano X=0). As metades genuínas se afastam revelando a abertura interna com brilho emissivo (#D2691E) ativado no final do scroll (50-55vh). `side={THREE.DoubleSide}` garante a visibilidade das faces internas expostas.
+    *   **Atualização (crosta mista):** cor por vértice + emissivo `#D2691E` animado (pico em ~58vh) substituem o fade de cor sólida anterior nesta janela.
     *   **Tecnologia**: Integrado GSAP `ScrollTrigger` com `pin: true`.
 3.  **Etapa 3: Alumina e Tecnologia (CONCLUÍDA)**
     *   **Objetivo**: Introduzir o elemento refinado e a estética tecnológica.
@@ -61,3 +62,4 @@ A implementação seguirá uma abordagem modular para garantir estabilidade e pe
 *   **Performance**: Utilizar o Transcoder Basis para texturas se necessário.
 *   **Assets**: O modelo `.glb` deve ser tratado com atenção à sua origem/propriedade.
 *   **UI**: Utilizar `BlurTextReveal` para manter a consistência com o restante do site.
+*   **Crosta mista (atualização 24/08/2026):** a transição Bauxita → Alumina passou a usar cor por vértice na própria malha da Bauxita durante a janela de fratura (~48–70vh) — mistura de tons cinza/alumina bruta com fragmentos residuais de óxido de ferro (reaproveitando `#A0522D`, já usado no `pointLight` da cena) — em vez do fade de cor sólida anterior. O emissivo `#D2691E` (já citado na Etapa 2) passou a ser animado de fato via `emissiveIntensity`. Sem divisão geométrica real: é blend de cor + emissivo sobre a mesma malha, sem malha adicional. Material preparado como `MeshStandardMaterial` novo com `vertexColors: true` (mesmo padrão confiável da Alumina), em vez de depender só do material clonado do GLB.
