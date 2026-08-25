@@ -22,6 +22,20 @@ function setupGltfLoader(loader, gl) {
   loader.setMeshoptDecoder(MeshoptDecoder);
 }
 
+const RED_RGB = [0x8b / 255, 0x4a / 255, 0x3c / 255];
+const CRUST_TONES = [
+  [0x6b / 255, 0x65 / 255, 0x60 / 255], // cinza escuro ~45%
+  [0x8c / 255, 0x85 / 255, 0x79 / 255], // cinza médio ~35%
+  [0xa0 / 255, 0x52 / 255, 0x2d / 255], // fragmento #A0522D ~20%
+];
+
+function pickCrustTone() {
+  const r = Math.random();
+  if (r < 0.45) return CRUST_TONES[0];
+  if (r < 0.8) return CRUST_TONES[1];
+  return CRUST_TONES[2];
+}
+
 // Componente Perfil (Estágio 4 & Transição Estágio 5)
 function AluminumProfile({ scrollProgress }) {
   const meshRef = useRef();
@@ -45,7 +59,7 @@ function AluminumProfile({ scrollProgress }) {
 
     if (scrollProgress > 100) {
       const returnProgress = Math.max(0, Math.min(1, (scrollProgress - 100) / 15));
-      meshRef.current.position.x = -2.5 + (returnProgress * 4.5);
+      meshRef.current.position.x = -2.5 + returnProgress * 4.5;
       meshRef.current.rotation.z = returnProgress * 0.5;
     } else {
       meshRef.current.position.x = -2.5;
@@ -88,7 +102,6 @@ function Alumina({ scrollProgress }) {
     bounds.getSize(size);
     clone.position.sub(center);
 
-    // Um pouco menor que a Bauxita (3.6), proporção estável na cena
     const maxDimension = Math.max(size.x, size.y, size.z) || 1;
     clone.scale.setScalar(2.4 / maxDimension);
 
@@ -206,7 +219,7 @@ function Alumina({ scrollProgress }) {
   );
 }
 
-// Bauxita — GLB real
+// Bauxita — GLB real + crosta mista (vertex colors + emissivo) na fratura
 function Bauxita({ scrollProgress }) {
   const groupRef = useRef();
   const { gl } = useThree();
@@ -227,23 +240,57 @@ function Bauxita({ scrollProgress }) {
     const maxDimension = Math.max(size.x, size.y, size.z) || 1;
     clone.scale.setScalar(3.6 / maxDimension);
 
-    clone.traverse((child) => {
-      if (!child.isMesh || !child.material) return;
+    const meshColorData = [];
 
-      const materials = Array.isArray(child.material) ? child.material : [child.material];
-      const preparedMaterials = materials.map((material) => {
-        const prepared = material.clone();
-        if (prepared.color) prepared.color.set('#8B4A3C');
-        if ('roughness' in prepared) prepared.roughness = 0.82;
-        if ('metalness' in prepared) prepared.metalness = 0.08;
-        prepared.transparent = true;
-        prepared.needsUpdate = true;
-        return prepared;
+    clone.traverse((child) => {
+      if (!child.isMesh || !child.geometry) return;
+
+      // Material novo: vertexColors + emissive confiáveis (mesmo padrão da Alumina)
+      const src = Array.isArray(child.material) ? child.material[0] : child.material;
+      const roughness = src && 'roughness' in src ? src.roughness : 0.82;
+      const metalness = src && 'metalness' in src ? src.metalness : 0.08;
+
+      child.geometry = child.geometry.clone();
+      const position = child.geometry.attributes.position;
+      if (!position) return;
+
+      const count = position.count;
+      const redColors = new Float32Array(count * 3);
+      const crustColors = new Float32Array(count * 3);
+
+      for (let i = 0; i < count; i++) {
+        const i3 = i * 3;
+        redColors[i3] = RED_RGB[0];
+        redColors[i3 + 1] = RED_RGB[1];
+        redColors[i3 + 2] = RED_RGB[2];
+
+        const tone = pickCrustTone();
+        crustColors[i3] = tone[0];
+        crustColors[i3 + 1] = tone[1];
+        crustColors[i3 + 2] = tone[2];
+      }
+
+      child.geometry.setAttribute('color', new THREE.Float32BufferAttribute(redColors.slice(), 3));
+
+      child.material = new THREE.MeshStandardMaterial({
+        color: '#ffffff',
+        vertexColors: true,
+        roughness: typeof roughness === 'number' ? roughness : 0.82,
+        metalness: typeof metalness === 'number' ? metalness : 0.08,
+        transparent: true,
+        opacity: 1,
+        emissive: new THREE.Color('#D2691E'),
+        emissiveIntensity: 0,
       });
 
-      child.material = Array.isArray(child.material) ? preparedMaterials : preparedMaterials[0];
+      meshColorData.push({
+        mesh: child,
+        redColors,
+        crustColors,
+      });
     });
 
+    clone.userData.meshColorData = meshColorData;
     return clone;
   }, [gltf]);
 
@@ -258,18 +305,52 @@ function Bauxita({ scrollProgress }) {
     groupRef.current.rotation.y = fractureProgress * 0.12;
     groupRef.current.scale.x = 1 - fractureProgress * 0.06;
 
+    // Crosta mista: 48–58vh sobe, 58–70vh decai com o fade
+    const crustProgress = Math.max(0, Math.min(1, (scrollProgress - 48) / 10));
+    const crustFadeBack = Math.max(0, Math.min(1, (scrollProgress - 58) / 12));
+    const crustMix = crustProgress * (1 - crustFadeBack);
+    const emissiveIntensity = Math.sin(crustMix * Math.PI) * 0.7;
+
     const fadeOutProgress = Math.max(0, Math.min(1, (scrollProgress - 55) / 15));
     const opacity = 1 - fadeOutProgress;
     groupRef.current.visible = opacity > 0.02;
+
+    const meshColorData = rockObject?.userData?.meshColorData || [];
+
     groupRef.current.traverse((child) => {
       if (!child.isMesh || !child.material) return;
       const materials = Array.isArray(child.material) ? child.material : [child.material];
       materials.forEach((material) => {
         material.opacity = opacity;
         material.transparent = true;
+        if ('emissiveIntensity' in material) {
+          material.emissiveIntensity = emissiveIntensity;
+        }
       });
     });
-  }, [scrollProgress]);
+
+    // Guarda de performance: só interpola cores na janela da crosta
+    if (crustMix > 0.01) {
+      meshColorData.forEach(({ mesh, redColors, crustColors }) => {
+        const colorAttr = mesh.geometry?.attributes?.color;
+        if (!colorAttr || !colorAttr.array) return;
+
+        const arr = colorAttr.array;
+        for (let i = 0; i < redColors.length; i++) {
+          arr[i] = redColors[i] + (crustColors[i] - redColors[i]) * crustMix;
+        }
+        colorAttr.needsUpdate = true;
+      });
+    } else if (scrollProgress < 48) {
+      // Garante vermelho puro no repouso / início
+      meshColorData.forEach(({ mesh, redColors }) => {
+        const colorAttr = mesh.geometry?.attributes?.color;
+        if (!colorAttr || !colorAttr.array) return;
+        colorAttr.array.set(redColors);
+        colorAttr.needsUpdate = true;
+      });
+    }
+  }, [scrollProgress, rockObject]);
 
   return (
     <group ref={groupRef}>
@@ -285,8 +366,6 @@ export default function BauxitaJourney() {
   useGSAP(() => {
     if (!containerRef.current) return;
 
-    // Pin restaurado: a jornada fica fixa na tela durante o scroll.
-    // Título usa marginTop (não sticky extra) para evitar salto visual.
     const st = ScrollTrigger.create({
       trigger: containerRef.current,
       start: 'top top',
@@ -312,7 +391,6 @@ export default function BauxitaJourney() {
   const photoScale = 0.95 + photoProgress * 0.05;
   const photoOpacity = photoProgress;
 
-  // Título: deslocamento suave com o progresso (ideia do IDE), sem segundo pin/sticky
   const titleMarginTop = `${(scrollProgress / 150) * 20}vh`;
 
   return (
