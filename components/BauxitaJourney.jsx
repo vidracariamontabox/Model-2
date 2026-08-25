@@ -288,6 +288,14 @@ function BayerExtraction({ scrollProgress }) {
     };
   }), []);
 
+  const sedimentPositions = useMemo(
+    () => new Float32Array(sedimentData.flatMap(({ x, y, z }) => [x, y, z])),
+    [sedimentData],
+  );
+  const vaporPositions = useMemo(
+    () => new Float32Array(vaporData.flatMap(({ x, y, z }) => [x, y, z])),
+    [vaporData],
+  );
   const crystalGeometry = useMemo(() => new THREE.DodecahedronGeometry(1, 0), []);
   const crystalMaterial = useMemo(() => new THREE.MeshStandardMaterial({
     color: '#E8E4DC',
@@ -334,11 +342,11 @@ function BayerExtraction({ scrollProgress }) {
         const scale = crystal.size * growth;
         const matrix = new THREE.Matrix4();
         matrix.compose(
-          new THREE.Vector3(
-            crystal.x,
-            crystal.y * (0.45 + clarification * 0.55),
-            crystal.z,
-          ),
+            new THREE.Vector3(
+              crystal.x * (1 - precipitation * 0.26),
+              crystal.y * (0.45 + clarification * 0.55) * (1 - precipitation * 0.18),
+              crystal.z * (1 - precipitation * 0.26),
+            ),
           new THREE.Quaternion().setFromEuler(new THREE.Euler(
             state.clock.elapsedTime * 0.08 + crystal.phase,
             crystal.phase,
@@ -365,7 +373,7 @@ function BayerExtraction({ scrollProgress }) {
           <bufferAttribute
             attach="attributes-position"
             count={sedimentData.length}
-            array={new Float32Array(sedimentData.flatMap(({ x, y, z }) => [x, y, z]))}
+            array={sedimentPositions}
             itemSize={3}
           />
         </bufferGeometry>
@@ -388,7 +396,7 @@ function BayerExtraction({ scrollProgress }) {
           <bufferAttribute
             attach="attributes-position"
             count={vaporData.length}
-            array={new Float32Array(vaporData.flatMap(({ x, y, z }) => [x, y, z]))}
+            array={vaporPositions}
             itemSize={3}
           />
         </bufferGeometry>
