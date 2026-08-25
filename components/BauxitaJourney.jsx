@@ -237,7 +237,7 @@ function Alumina({ scrollProgress }) {
   );
 }
 
-// Bauxita — forma preservada do commit 3edeca95 + inclusões minerais
+// Bauxita — GLB real
 function Bauxita({ scrollProgress }) {
   const groupRef = useRef();
   const { gl } = useThree();
@@ -250,6 +250,7 @@ function Bauxita({ scrollProgress }) {
     const bounds = new THREE.Box3().setFromObject(clone);
     const center = new THREE.Vector3();
     const size = new THREE.Vector3();
+
     bounds.getCenter(center);
     bounds.getSize(size);
     clone.position.sub(center);
@@ -258,63 +259,35 @@ function Bauxita({ scrollProgress }) {
     clone.scale.setScalar(3.6 / maxDimension);
 
     clone.traverse((child) => {
-      if (!child.isMesh || !child.geometry || !child.material) return;
+      if (!child.isMesh || !child.material) return;
 
-      const sourcePosition = child.geometry.attributes.position;
-      if (!sourcePosition) return;
-      const colors = new Float32Array(sourcePosition.count * 3);
-      const vertex = new THREE.Vector3();
-      // Usa o espaço local da malha para distribuir inclusões pela superfície real.
-      const localBounds = new THREE.Box3().setFromBufferAttribute(sourcePosition);
-      const geometryCenter = localBounds.getCenter(new THREE.Vector3());
-      const halfSize = localBounds.getSize(new THREE.Vector3()).multiplyScalar(0.5);
-
-      for (let i = 0; i < sourcePosition.count; i++) {
-        vertex.fromBufferAttribute(sourcePosition, i);
-        const nx = halfSize.x ? (vertex.x - geometryCenter.x) / halfSize.x : 0;
-        const ny = halfSize.y ? (vertex.y - geometryCenter.y) / halfSize.y : 0;
-        const nz = halfSize.z ? (vertex.z - geometryCenter.z) / halfSize.z : 0;
-        const patchInfluence = getPatchInfluence(nx, ny, nz);
-        const roughNoise = hash01(vertex.x * 4.7, vertex.y * 8.3, vertex.z * 6.1);
-        const grayTone = 0.56 + roughNoise * 0.2;
-        const i3 = i * 3;
-
-        // Inclusões angulares e orgânicas; a posição original nunca é alterada.
-        colors[i3] = THREE.MathUtils.lerp(RED_RGB[0], grayTone, patchInfluence);
-        colors[i3 + 1] = THREE.MathUtils.lerp(RED_RGB[1], grayTone * 0.98, patchInfluence);
-        colors[i3 + 2] = THREE.MathUtils.lerp(RED_RGB[2], grayTone * 0.94, patchInfluence);
-      }
-
-      child.geometry = child.geometry.clone();
-      child.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
       const materials = Array.isArray(child.material) ? child.material : [child.material];
       const preparedMaterials = materials.map((material) => {
         const prepared = material.clone();
-        prepared.color.set('#ffffff');
-        prepared.vertexColors = true;
-        prepared.roughness = 0.82;
-        prepared.metalness = 0.08;
+        if (prepared.color) prepared.color.set('#8B4A3C');
+        if ('roughness' in prepared) prepared.roughness = 0.82;
+        if ('metalness' in prepared) prepared.metalness = 0.08;
         prepared.transparent = true;
         prepared.needsUpdate = true;
         return prepared;
       });
+
       child.material = Array.isArray(child.material) ? preparedMaterials : preparedMaterials[0];
     });
 
     return clone;
   }, [gltf]);
 
-  useFrame((state, delta) => {
-    if (groupRef.current && groupRef.current.visible) {
-      groupRef.current.rotation.y += delta * 0.07;
-    }
-  });
-
   useEffect(() => {
     if (!groupRef.current) return;
+
     const stage2Progress = Math.max(0, Math.min(1, (scrollProgress - 20) / 35));
     groupRef.current.position.x = stage2Progress * 2.5;
     groupRef.current.rotation.z = stage2Progress * 0.26;
+
+    const fractureProgress = Math.max(0, Math.min(1, (scrollProgress - 50) / 5));
+    groupRef.current.rotation.y = fractureProgress * 0.12;
+    groupRef.current.scale.x = 1 - fractureProgress * 0.06;
 
     const fadeOutProgress = Math.max(0, Math.min(1, (scrollProgress - 55) / 15));
     const opacity = 1 - fadeOutProgress;
