@@ -313,14 +313,16 @@ function BayerExtraction({ scrollProgress }) {
     if (sedimentRef.current) {
       sedimentRef.current.material.opacity = digestion * fade;
       sedimentRef.current.visible = digestion > 0.01 && fade > 0.01;
+      sedimentRef.current.material.size = 0.075;
       sedimentRef.current.position.y = clarification * -0.85;
       sedimentRef.current.position.x = digestion * 0.55;
     }
 
     if (liquorRef.current) {
-      liquorRef.current.material.opacity = clarification * 0.13 * fade;
+      liquorRef.current.material.opacity = clarification * 0.24 * fade;
       liquorRef.current.visible = clarification > 0.01 && fade > 0.01;
-      liquorRef.current.scale.y = 0.35 + clarification * 0.65;
+      liquorRef.current.position.x = -0.15 + clarification * 0.3;
+      liquorRef.current.scale.set(0.82 + clarification * 0.18, 0.35 + clarification * 0.65, 0.82 + clarification * 0.18);
     }
 
     if (crystalRef.current) {
@@ -367,12 +369,12 @@ function BayerExtraction({ scrollProgress }) {
             itemSize={3}
           />
         </bufferGeometry>
-        <pointsMaterial color="#7B3026" size={0.055} transparent opacity={0} depthWrite={false} />
+        <pointsMaterial color="#A5482F" size={0.075} transparent opacity={0} depthWrite={false} />
       </points>
 
       <mesh ref={liquorRef} position={[0, -0.05, -0.45]} visible={false}>
         <cylinderGeometry args={[0.78, 0.94, 1.8, 24, 1, true]} />
-        <meshBasicMaterial color="#C88748" transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} />
+        <meshBasicMaterial color="#D28A43" transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
       </mesh>
 
       <instancedMesh
