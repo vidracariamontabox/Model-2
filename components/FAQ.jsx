@@ -3,6 +3,7 @@
 import {useState} from "react";
 import {motion} from "framer-motion";
 import BlurTextReveal from "./ui/BlurTextReveal";
+import FAQParticles from "./FAQParticles";
 
 function FAQItem({item, index, isOpen, onToggle}) {
   const [tilt, setTilt] = useState({rx: 0, ry: 0});
@@ -99,12 +100,14 @@ export default function FAQ({faqs}) {
   };
 
   return (
-    <section id="faq" className="relative w-full overflow-hidden bg-[#121212] px-6 sm:px-10 py-24">
+    <section id="faq" className="relative w-full overflow-hidden bg-[#080808] px-6 sm:px-10 py-24">
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}} />
+
+      <FAQParticles />
 
       <motion.div
         className="pointer-events-none absolute -top-44 -left-28 w-[480px] h-[480px] rounded-full"
-        style={{background: "rgba(172,171,169,0.14)", filter: "blur(70px)"}}
+        style={{background: "rgba(172,171,169,0.10)", filter: "blur(70px)"}}
         animate={{x: [0, 60, 0], y: [0, 40, 0]}}
         transition={{duration: 22, repeat: Infinity, ease: "easeInOut"}}
       />
