@@ -99,312 +99,292 @@ function AluminumProfile({ scrollProgress }) {
   );
 }
 
-// Alumina — mesmo GLB da Bauxita, clonado e desformado (massa orgânica clara)
+// Alumina — agregado mineral facetado, formado por fragmentos instanciados.
+// A forma final é composta por massas assimétricas para não parecer uma esfera
+// ou uma cópia clara da Bauxita. Os dados são determinísticos e os buffers
+// permanecem reutilizados durante toda a animação.
+const ALUMINA_MAIN_FRAGMENTS = [
+  { target: [0.00, 0.02, 0.02], origin: [-0.72, 1.10, 0.42], scale: [0.92, 0.72, 0.84], rotation: [0.10, 0.25, -0.08], phase: 0.10 },
+  { target: [-0.56, 0.18, 0.04], origin: [-1.50, 0.72, 0.72], scale: [0.68, 0.58, 0.78], rotation: [-0.22, 0.48, 0.14], phase: 1.30 },
+  { target: [0.52, -0.16, 0.14], origin: [1.44, 0.96, 0.48], scale: [0.74, 0.52, 0.64], rotation: [0.16, -0.42, 0.20], phase: 2.10 },
+  { target: [-0.28, -0.48, -0.12], origin: [-1.10, -1.10, -0.56], scale: [0.78, 0.48, 0.62], rotation: [0.34, 0.16, -0.26], phase: 2.80 },
+  { target: [0.34, 0.40, -0.18], origin: [0.80, 1.62, -0.44], scale: [0.62, 0.44, 0.68], rotation: [-0.28, 0.34, 0.12], phase: 3.70 },
+  { target: [0.78, 0.10, 0.18], origin: [1.80, -0.42, 0.88], scale: [0.52, 0.42, 0.58], rotation: [0.22, -0.28, 0.36], phase: 4.60 },
+  { target: [-0.74, -0.12, -0.22], origin: [-1.82, -0.34, -0.86], scale: [0.50, 0.38, 0.54], rotation: [0.18, 0.52, -0.18], phase: 5.20 },
+  { target: [0.02, 0.54, 0.24], origin: [0.10, 1.86, 0.96], scale: [0.44, 0.34, 0.48], rotation: [-0.34, -0.18, 0.28], phase: 5.90 },
+  { target: [0.00, -0.12, -0.48], origin: [0.72, -1.60, -1.10], scale: [0.46, 0.36, 0.40], rotation: [0.42, 0.26, -0.30], phase: 6.50 },
+];
+
+const ALUMINA_ACCENT_FRAGMENTS = [
+  { target: [-0.92, 0.30, 0.12], origin: [-1.80, 1.26, 0.70], scale: [0.24, 0.18, 0.22], rotation: [0.20, 0.40, 0.12], phase: 0.50 },
+  { target: [-0.36, 0.62, 0.05], origin: [-0.86, 1.86, 0.42], scale: [0.20, 0.16, 0.24], rotation: [-0.18, 0.32, -0.22], phase: 1.50 },
+  { target: [0.62, 0.44, 0.02], origin: [1.62, 1.48, 0.34], scale: [0.22, 0.15, 0.20], rotation: [0.14, -0.30, 0.28], phase: 2.40 },
+  { target: [0.98, -0.22, 0.08], origin: [1.94, -0.64, 0.66], scale: [0.18, 0.14, 0.22], rotation: [0.34, -0.16, 0.18], phase: 3.10 },
+  { target: [-0.80, -0.44, -0.06], origin: [-1.72, -1.12, -0.22], scale: [0.20, 0.14, 0.18], rotation: [-0.22, 0.28, 0.34], phase: 4.20 },
+  { target: [-0.12, -0.68, -0.20], origin: [-0.28, -1.86, -0.54], scale: [0.18, 0.13, 0.20], rotation: [0.28, 0.18, -0.26], phase: 5.00 },
+  { target: [0.48, -0.56, -0.18], origin: [1.00, -1.74, -0.66], scale: [0.18, 0.12, 0.16], rotation: [0.18, -0.24, 0.30], phase: 5.80 },
+];
+
 function Alumina({ scrollProgress }) {
   const groupRef = useRef();
-  const scanLineRef = useRef();
-  const particlesRef = useRef();
-  const { gl } = useThree();
-
-  const gltf = useLoader(GLTFLoader, '/assets/rock1-opt.glb', (loader) => {
-    setupGltfLoader(loader, gl);
-  });
-
-  const aluminaObject = useMemo(() => {
-    const clone = gltf.scene.clone(true);
-    const bounds = new THREE.Box3().setFromObject(clone);
-    const center = new THREE.Vector3();
-    const size = new THREE.Vector3();
-
-    bounds.getCenter(center);
-    bounds.getSize(size);
-    clone.position.sub(center);
-
-    const maxDimension = Math.max(size.x, size.y, size.z) || 1;
-    clone.scale.setScalar(2.4 / maxDimension);
-
-    clone.traverse((child) => {
-      if (!child.isMesh || !child.geometry) return;
-
-      child.geometry = child.geometry.clone();
-      const position = child.geometry.attributes.position;
-      if (!position) return;
-
-      const vector = new THREE.Vector3();
-      for (let i = 0; i < position.count; i++) {
-        vector.fromBufferAttribute(position, i);
-        const noise = 0.86 + Math.random() * 0.28;
-        vector.multiplyScalar(noise);
-        position.setXYZ(i, vector.x, vector.y, vector.z);
-      }
-      position.needsUpdate = true;
-      child.geometry.computeVertexNormals();
-
-      child.material = new THREE.MeshStandardMaterial({
-        color: '#E8E0D5',
-        roughness: 0.85,
-        metalness: 0.05,
-        transparent: true,
-        opacity: 1,
-        flatShading: false,
-        depthWrite: false,
-      });
-    });
-
-    return clone;
-  }, [gltf]);
-
-  const particlesGeom = useMemo(() => {
-    const geometry = new THREE.BufferGeometry();
-    const positions = [];
-    for (let i = 0; i < 50; i++) {
-      positions.push(
-        (Math.random() - 0.5) * 2.5,
-        (Math.random() - 0.5) * 2.5,
-        (Math.random() - 0.5) * 2.5,
-      );
-    }
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    return geometry;
-  }, []);
-
-  useFrame((state, delta) => {
-    if (groupRef.current && groupRef.current.visible) {
-      groupRef.current.rotation.y += delta * 0.2;
-    }
-    if (particlesRef.current && particlesRef.current.visible) {
-      particlesRef.current.rotation.y += delta * 0.1;
-    }
-  });
-
-  useEffect(() => {
-    if (!groupRef.current) return;
-
-    const growthProgress = Math.max(0, Math.min(1, (scrollProgress - 68) / 17));
-    const fadeOutProgress = Math.max(0, Math.min(1, (scrollProgress - 85) / 15));
-
-    const finalScale = growthProgress * (1 - fadeOutProgress);
-    const opacity = growthProgress * (1 - fadeOutProgress);
-    const isVisible = finalScale > 0.02;
-
-    groupRef.current.scale.setScalar(Math.max(finalScale, 0.001));
-    groupRef.current.position.x = 2.5 - growthProgress * 5;
-    groupRef.current.visible = isVisible;
-
-    groupRef.current.traverse((child) => {
-      if (!child.isMesh || !child.material) return;
-      const materials = Array.isArray(child.material) ? child.material : [child.material];
-      materials.forEach((material) => {
-        material.opacity = opacity;
-        material.transparent = true;
-        material.depthWrite = false;
-      });
-    });
-
-    const techProgress = Math.max(0, Math.min(1, (scrollProgress - 70) / 15));
-    const techFadeOut = Math.max(0, Math.min(1, (scrollProgress - 85) / 10));
-
-    if (scanLineRef.current) {
-      scanLineRef.current.position.x = groupRef.current.position.x;
-      scanLineRef.current.position.y = 1.5 - techProgress * 3;
-      scanLineRef.current.material.opacity =
-        Math.sin(techProgress * Math.PI) * 0.8 * (1 - techFadeOut);
-      scanLineRef.current.visible = scanLineRef.current.material.opacity > 0.02;
-    }
-
-    if (particlesRef.current) {
-      particlesRef.current.position.x = groupRef.current.position.x;
-      particlesRef.current.material.opacity = techProgress * 0.5 * (1 - techFadeOut);
-      particlesRef.current.visible = particlesRef.current.material.opacity > 0.02;
-    }
-  }, [scrollProgress]);
-
-  return (
-    <group>
-      <group ref={groupRef}>
-        <primitive object={aluminaObject} />
-      </group>
-
-      <mesh ref={scanLineRef} position={[0, 0, 0.5]} visible={false}>
-        <planeGeometry args={[2.5, 0.02]} />
-        <meshBasicMaterial color="#d8e8ff" transparent depthWrite={false} />
-      </mesh>
-
-      <points ref={particlesRef} geometry={particlesGeom} visible={false}>
-        <pointsMaterial color="#E8E0D5" size={0.05} transparent opacity={0} depthWrite={false} />
-      </points>
-    </group>
-  );
-}
-
-// Extração Mineral — fluxo de partículas Bauxita → Alumina via curva Bézier
-function MineralStream({ scrollProgress }) {
+  const mainRef = useRef();
+  const accentRef = useRef();
   const scrollRef = useRef(scrollProgress);
+  const matrix = useMemo(() => new THREE.Matrix4(), []);
+  const position = useMemo(() => new THREE.Vector3(), []);
+  const quaternion = useMemo(() => new THREE.Quaternion(), []);
+  const rotation = useMemo(() => new THREE.Euler(), []);
+  const scale = useMemo(() => new THREE.Vector3(), []);
+  const mainGeometry = useMemo(() => new THREE.DodecahedronGeometry(0.58, 0), []);
+  const accentGeometry = useMemo(() => new THREE.IcosahedronGeometry(0.32, 0), []);
+  const mainMaterial = useMemo(() => new THREE.MeshStandardMaterial({
+    color: '#E8E0D5',
+    roughness: 0.42,
+    metalness: 0.08,
+    flatShading: true,
+    transparent: true,
+    depthWrite: false,
+    opacity: 0,
+  }), []);
+  const accentMaterial = useMemo(() => new THREE.MeshStandardMaterial({
+    color: '#BFC4C7',
+    roughness: 0.34,
+    metalness: 0.16,
+    flatShading: true,
+    transparent: true,
+    depthWrite: false,
+    opacity: 0,
+  }), []);
+
   useEffect(() => {
     scrollRef.current = scrollProgress;
   }, [scrollProgress]);
 
-  const FLOW_COUNT = 180;
-  const FOG_COUNT = 70;
+  useEffect(() => () => {
+    mainGeometry.dispose();
+    accentGeometry.dispose();
+    mainMaterial.dispose();
+    accentMaterial.dispose();
+  }, [accentGeometry, accentMaterial, mainGeometry, mainMaterial]);
 
-  const flowRef = useRef();
-  const flowGeom = useRef();
-  const fogRef = useRef();
-  const fogGeom = useRef();
+  useFrame((state, delta) => {
+    const p = scrollRef.current;
+    const growth = THREE.MathUtils.clamp((p - 68) / 17, 0, 1);
+    const fade = 1 - THREE.MathUtils.clamp((p - 85) / 15, 0, 1);
+    const reveal = 1 - Math.pow(1 - growth, 3);
+    const alpha = reveal * fade;
+    const visible = alpha > 0.01;
+    const time = state.clock.elapsedTime;
 
-  // Arco elegante: Bauxita (direita) → Alumina (esquerda), arqueado para cima
-  const curve = useMemo(() => new THREE.CubicBezierCurve3(
-    new THREE.Vector3(2.4, 0.1, 0.0),
-    new THREE.Vector3(1.6, 2.0, 0.5),
-    new THREE.Vector3(-1.6, 1.8, -0.3),
-    new THREE.Vector3(-2.4, 0.1, 0.0),
-  ), []);
+    if (!groupRef.current) return;
+    groupRef.current.visible = visible;
+    groupRef.current.position.x = 2.5 - growth * 5;
+    groupRef.current.rotation.y = time * 0.12 + growth * 0.10;
+    groupRef.current.rotation.z = -0.04 + growth * 0.08;
+    mainMaterial.opacity = alpha * 0.96;
+    accentMaterial.opacity = alpha * 0.78;
 
-  // Dados determinísticos do fluxo principal (fase, velocidade, jitter)
-  const flowData = useMemo(() => Array.from({ length: FLOW_COUNT }, (_, i) => {
-    const h = (s) => { const v = Math.sin(i * 13.7 + s * 31.1) * 43758.5; return v - Math.floor(v); };
+    const updateInstances = (ref, data, isAccent = false) => {
+      if (!ref.current) return;
+      data.forEach((fragment, index) => {
+        const wobble = (1 - reveal) * 0.08;
+        position.set(
+          THREE.MathUtils.lerp(fragment.origin[0], fragment.target[0], reveal) + Math.sin(time * 0.72 + fragment.phase) * wobble,
+          THREE.MathUtils.lerp(fragment.origin[1], fragment.target[1], reveal) + Math.cos(time * 0.58 + fragment.phase) * wobble,
+          THREE.MathUtils.lerp(fragment.origin[2], fragment.target[2], reveal) + Math.sin(time * 0.64 + fragment.phase * 1.3) * wobble,
+        );
+        rotation.set(
+          fragment.rotation[0] + Math.sin(time * 0.35 + fragment.phase) * 0.04 * (1 - reveal),
+          fragment.rotation[1] + Math.cos(time * 0.28 + fragment.phase) * 0.04 * (1 - reveal),
+          fragment.rotation[2],
+        );
+        quaternion.setFromEuler(rotation);
+        const growthScale = (isAccent ? 0.24 : 0.18) + reveal * (isAccent ? 0.76 : 0.82);
+        scale.set(
+          fragment.scale[0] * growthScale,
+          fragment.scale[1] * growthScale,
+          fragment.scale[2] * growthScale,
+        );
+        matrix.compose(position, quaternion, scale);
+        ref.current.setMatrixAt(index, matrix);
+      });
+      ref.current.instanceMatrix.needsUpdate = true;
+    };
+
+    updateInstances(mainRef, ALUMINA_MAIN_FRAGMENTS);
+    updateInstances(accentRef, ALUMINA_ACCENT_FRAGMENTS, true);
+  });
+
+  return (
+    <group ref={groupRef} visible={false}>
+      <instancedMesh ref={mainRef} args={[mainGeometry, mainMaterial, ALUMINA_MAIN_FRAGMENTS.length]} frustumCulled={false} />
+      <instancedMesh ref={accentRef} args={[accentGeometry, accentMaterial, ALUMINA_ACCENT_FRAGMENTS.length]} frustumCulled={false} />
+    </group>
+  );
+}
+
+// Metamorfose mineral — dissolução radial, vazio e convergência.
+// A transição evita um jato contínuo: a matéria se desfaz ao redor da Bauxita,
+// desaparece por um instante e retorna como luz mineral na Alumina.
+const DISSOLUTION_COUNT = 92;
+const CONVERGENCE_COUNT = 72;
+
+function MineralStream({ scrollProgress }) {
+  const scrollRef = useRef(scrollProgress);
+  const dissolutionRef = useRef();
+  const dissolutionGeom = useRef();
+  const convergenceRef = useRef();
+  const convergenceGeom = useRef();
+
+  const dissolutionData = useMemo(() => Array.from({ length: DISSOLUTION_COUNT }, (_, i) => {
+    const hash = (salt) => {
+      const value = Math.sin((i + 1) * 17.13 + salt * 43.71) * 43758.5453;
+      return value - Math.floor(value);
+    };
+    const angle = hash(1) * Math.PI * 2;
+    const elevation = (hash(2) - 0.5) * 1.55;
+    const radial = 0.22 + hash(3) * 0.48;
     return {
-      phase: i / FLOW_COUNT,
-      speed: 0.10 + h(1) * 0.16,
-      jx: (h(2) - 0.5) * 0.22,
-      jy: (h(3) - 0.5) * 0.18,
-      jz: (h(4) - 0.5) * 0.28,
-      fx: 1.4 + h(5) * 2.2,
-      fy: 1.1 + h(6) * 1.9,
+      origin: [2.20 + (hash(4) - 0.5) * 0.74, (hash(5) - 0.5) * 1.08, (hash(6) - 0.5) * 0.80],
+      direction: [Math.cos(angle) * radial, elevation, Math.sin(angle) * radial],
+      speed: 0.78 + hash(7) * 0.44,
+      curl: (hash(8) - 0.5) * 0.26,
+      phase: hash(9) * Math.PI * 2,
+      colorMix: hash(10),
     };
   }), []);
 
-  // Dados determinísticos da névoa difusa (jitter maior, velocidade menor)
-  const fogData = useMemo(() => Array.from({ length: FOG_COUNT }, (_, i) => {
-    const h = (s) => { const v = Math.sin(i * 17.3 + s * 41.7) * 43758.5; return v - Math.floor(v); };
+  const convergenceData = useMemo(() => Array.from({ length: CONVERGENCE_COUNT }, (_, i) => {
+    const hash = (salt) => {
+      const value = Math.sin((i + 3) * 19.37 + salt * 37.91) * 43758.5453;
+      return value - Math.floor(value);
+    };
+    const targetAngle = hash(1) * Math.PI * 2;
+    const targetRadius = 0.18 + hash(2) * 1.04;
+    const target = [
+      2.5 + Math.cos(targetAngle) * targetRadius * 0.94,
+      (hash(3) - 0.5) * 1.42,
+      Math.sin(targetAngle) * targetRadius * 0.70,
+    ];
     return {
-      phase: i / FOG_COUNT,
-      speed: 0.04 + h(1) * 0.07,
-      jx: (h(2) - 0.5) * 0.72,
-      jy: (h(3) - 0.5) * 0.60,
-      jz: (h(4) - 0.5) * 0.80,
+      origin: [
+        -0.2 + (hash(4) - 0.5) * 4.3,
+        0.15 + (hash(5) - 0.5) * 2.6,
+        (hash(6) - 0.5) * 1.9,
+      ],
+      target,
+      bend: (hash(7) - 0.5) * 0.42,
+      phase: hash(8) * Math.PI * 2,
+      speed: 0.72 + hash(9) * 0.38,
+      colorMix: hash(10),
     };
   }), []);
 
-  // Buffers mutáveis — alocados uma vez, nunca recriados no loop
-  const flowPos = useMemo(() => new Float32Array(FLOW_COUNT * 3), []);
-  const flowCol = useMemo(() => new Float32Array(FLOW_COUNT * 3), []);
-  const fogPos = useMemo(() => new Float32Array(FOG_COUNT * 3), []);
+  const dissolutionPos = useMemo(() => new Float32Array(DISSOLUTION_COUNT * 3), []);
+  const dissolutionCol = useMemo(() => new Float32Array(DISSOLUTION_COUNT * 3), []);
+  const convergencePos = useMemo(() => new Float32Array(CONVERGENCE_COUNT * 3), []);
+  const convergenceCol = useMemo(() => new Float32Array(CONVERGENCE_COUNT * 3), []);
+  const position = useMemo(() => new THREE.Vector3(), []);
+  const target = useMemo(() => new THREE.Vector3(), []);
+  const terracotta = useMemo(() => new THREE.Color('#8B4A3C'), []);
+  const warmTerracotta = useMemo(() => new THREE.Color('#C58E73'), []);
+  const pearl = useMemo(() => new THREE.Color('#F2EEE6'), []);
+  const mineralGrey = useMemo(() => new THREE.Color('#BFC4C7'), []);
+  const tempColor = useMemo(() => new THREE.Color(), []);
 
-  // Objetos auxiliares reutilizáveis (sem alocação dentro do loop)
-  const tmpVec = useMemo(() => new THREE.Vector3(), []);
-  const tmpCol = useMemo(() => new THREE.Color(), []);
-  const bauxCol = useMemo(() => new THREE.Color('#8B4A3C'), []);
-  const alumCol = useMemo(() => new THREE.Color('#E8E0D5'), []);
+  useEffect(() => {
+    scrollRef.current = scrollProgress;
+  }, [scrollProgress]);
 
   useFrame((state) => {
     const p = scrollRef.current;
+    const time = state.clock.elapsedTime;
 
-    // Janela de extração: 45 → 85
-    const fadeIn = THREE.MathUtils.clamp((p - 45) / 13, 0, 1);
-    const fadeOut = 1 - THREE.MathUtils.clamp((p - 74) / 10, 0, 1);
-    const alpha = fadeIn * fadeOut;
+    const dissolveIn = THREE.MathUtils.smoothstep(p, 46, 51);
+    const dissolveProgress = THREE.MathUtils.clamp((p - 48) / 19, 0, 1);
+    const dissolveOut = 1 - THREE.MathUtils.smoothstep(dissolveProgress, 0.55, 1);
+    const dissolveAlpha = dissolveIn * dissolveOut;
 
-    const active = alpha > 0.01;
-
-    if (flowRef.current) {
-      flowRef.current.visible = active;
-      if (active) flowRef.current.material.opacity = alpha * 0.90;
-    }
-    if (fogRef.current) {
-      fogRef.current.visible = active;
-      if (active) fogRef.current.material.opacity = alpha * 0.26;
-    }
-    if (!active) return;
-
-    const t = state.clock.elapsedTime;
-
-    // — Fluxo principal: posição na curva + jitter oscilatório —
-    for (let i = 0; i < FLOW_COUNT; i++) {
-      const d = flowData[i];
-      const loopT = (t * d.speed + d.phase) % 1.0;
-
-      curve.getPoint(loopT, tmpVec);
-
-      flowPos[i * 3] = tmpVec.x + d.jx * Math.sin(t * d.fx + d.phase * 6.2832);
-      flowPos[i * 3 + 1] = tmpVec.y + d.jy * Math.cos(t * d.fy + d.phase * 6.2832);
-      flowPos[i * 3 + 2] = tmpVec.z + d.jz;
-
-      // Gradiente terracota (bauxita) → cinza-claro (alumina) ao longo do arco
-      tmpCol.lerpColors(bauxCol, alumCol, loopT);
-      flowCol[i * 3] = tmpCol.r;
-      flowCol[i * 3 + 1] = tmpCol.g;
-      flowCol[i * 3 + 2] = tmpCol.b;
+    if (dissolutionRef.current) {
+      dissolutionRef.current.visible = dissolveAlpha > 0.008;
+      dissolutionRef.current.material.opacity = dissolveAlpha * 0.42;
     }
 
-    if (flowGeom.current) {
-      flowGeom.current.attributes.position.needsUpdate = true;
-      flowGeom.current.attributes.color.needsUpdate = true;
+    for (let i = 0; i < DISSOLUTION_COUNT; i += 1) {
+      const d = dissolutionData[i];
+      const travel = Math.min(1.2, dissolveProgress * d.speed);
+      const eased = 1 - Math.pow(1 - travel, 2.2);
+      const shimmer = Math.sin(time * 0.85 + d.phase) * 0.026 * dissolveAlpha;
+      dissolutionPos[i * 3] = d.origin[0] + d.direction[0] * eased + shimmer + d.curl * Math.sin(eased * Math.PI);
+      dissolutionPos[i * 3 + 1] = d.origin[1] + d.direction[1] * eased + Math.cos(time * 0.70 + d.phase) * 0.026 * dissolveAlpha;
+      dissolutionPos[i * 3 + 2] = d.origin[2] + d.direction[2] * eased;
+      tempColor.lerpColors(terracotta, warmTerracotta, d.colorMix * 0.58);
+      dissolutionCol[i * 3] = tempColor.r;
+      dissolutionCol[i * 3 + 1] = tempColor.g;
+      dissolutionCol[i * 3 + 2] = tempColor.b;
     }
 
-    // — Névoa dispersa: mesmo arco, jitter amplo, velocidade lenta —
-    for (let i = 0; i < FOG_COUNT; i++) {
-      const d = fogData[i];
-      const loopT = (t * d.speed + d.phase) % 1.0;
-
-      curve.getPoint(loopT, tmpVec);
-
-      fogPos[i * 3] = tmpVec.x + d.jx * Math.sin(t * 0.65 + d.phase * 6.2832);
-      fogPos[i * 3 + 1] = tmpVec.y + d.jy * Math.cos(t * 0.50 + d.phase * 6.2832);
-      fogPos[i * 3 + 2] = tmpVec.z + d.jz;
+    if (dissolutionGeom.current) {
+      dissolutionGeom.current.attributes.position.needsUpdate = true;
+      dissolutionGeom.current.attributes.color.needsUpdate = true;
     }
 
-    if (fogGeom.current) {
-      fogGeom.current.attributes.position.needsUpdate = true;
+    const convergenceProgress = THREE.MathUtils.clamp((p - 67) / 18, 0, 1);
+    const convergenceReveal = 1 - Math.pow(1 - convergenceProgress, 3);
+    const convergenceIn = THREE.MathUtils.smoothstep(p, 68, 72);
+    const convergenceOut = 1 - THREE.MathUtils.smoothstep(p, 84, 88);
+    const convergenceAlpha = convergenceIn * convergenceOut;
+
+    if (convergenceRef.current) {
+      convergenceRef.current.visible = convergenceAlpha > 0.008;
+      convergenceRef.current.material.opacity = convergenceAlpha * 0.62;
+    }
+
+    for (let i = 0; i < CONVERGENCE_COUNT; i += 1) {
+      const d = convergenceData[i];
+      target.set(
+        d.target[0] - convergenceProgress * 5,
+        d.target[1],
+        d.target[2],
+      );
+      const arc = Math.sin(convergenceReveal * Math.PI) * d.bend;
+      position.set(
+        THREE.MathUtils.lerp(d.origin[0], target.x, convergenceReveal),
+        THREE.MathUtils.lerp(d.origin[1], target.y, convergenceReveal) + arc,
+        THREE.MathUtils.lerp(d.origin[2], target.z, convergenceReveal),
+      );
+      position.x += Math.sin(time * d.speed + d.phase) * 0.022 * (1 - convergenceReveal);
+      position.y += Math.cos(time * d.speed * 0.8 + d.phase) * 0.020 * (1 - convergenceReveal);
+      convergencePos[i * 3] = position.x;
+      convergencePos[i * 3 + 1] = position.y;
+      convergencePos[i * 3 + 2] = position.z;
+      tempColor.lerpColors(pearl, mineralGrey, d.colorMix * 0.52);
+      convergenceCol[i * 3] = tempColor.r;
+      convergenceCol[i * 3 + 1] = tempColor.g;
+      convergenceCol[i * 3 + 2] = tempColor.b;
+    }
+
+    if (convergenceGeom.current) {
+      convergenceGeom.current.attributes.position.needsUpdate = true;
+      convergenceGeom.current.attributes.color.needsUpdate = true;
     }
   });
 
   return (
     <group>
-      {/* Fluxo principal com gradiente de cor bauxita → alumina */}
-      <points ref={flowRef} visible={false}>
-        <bufferGeometry ref={flowGeom}>
-          <bufferAttribute
-            attach="attributes-position"
-            count={FLOW_COUNT}
-            array={flowPos}
-            itemSize={3}
-          />
-          <bufferAttribute
-            attach="attributes-color"
-            count={FLOW_COUNT}
-            array={flowCol}
-            itemSize={3}
-          />
+      <points ref={dissolutionRef} visible={false}>
+        <bufferGeometry ref={dissolutionGeom}>
+          <bufferAttribute attach="attributes-position" count={DISSOLUTION_COUNT} array={dissolutionPos} itemSize={3} />
+          <bufferAttribute attach="attributes-color" count={DISSOLUTION_COUNT} array={dissolutionCol} itemSize={3} />
         </bufferGeometry>
-        <pointsMaterial
-          vertexColors
-          size={0.065}
-          transparent
-          opacity={0}
-          depthWrite={false}
-          sizeAttenuation
-        />
+        <pointsMaterial vertexColors size={0.045} transparent opacity={0} depthWrite={false} sizeAttenuation blending={THREE.AdditiveBlending} />
       </points>
-
-      {/* Névoa etérea — partículas difusas ao redor do jato */}
-      <points ref={fogRef} visible={false}>
-        <bufferGeometry ref={fogGeom}>
-          <bufferAttribute
-            attach="attributes-position"
-            count={FOG_COUNT}
-            array={fogPos}
-            itemSize={3}
-          />
+      <points ref={convergenceRef} visible={false}>
+        <bufferGeometry ref={convergenceGeom}>
+          <bufferAttribute attach="attributes-position" count={CONVERGENCE_COUNT} array={convergencePos} itemSize={3} />
+          <bufferAttribute attach="attributes-color" count={CONVERGENCE_COUNT} array={convergenceCol} itemSize={3} />
         </bufferGeometry>
-        <pointsMaterial
-          color="#EDE6D8"
-          size={0.030}
-          transparent
-          opacity={0}
-          depthWrite={false}
-          sizeAttenuation
-        />
+        <pointsMaterial vertexColors size={0.052} transparent opacity={0} depthWrite={false} sizeAttenuation blending={THREE.AdditiveBlending} />
       </points>
     </group>
   );
