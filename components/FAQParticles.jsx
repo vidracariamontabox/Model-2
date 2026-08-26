@@ -2,7 +2,8 @@
 
 import {useEffect, useRef} from "react";
 
-const PALETTE = ["#eaeaea", "#b7b1ab", "#8f8580", "#6f625d"];
+const PARTICLE_COLORS = ["#00f5ff", "#00d9ff", "#0096c7"];
+const LINE_COLOR = "#00d9ff";
 
 export default function FAQParticles() {
   const canvasRef = useRef(null);
@@ -18,7 +19,7 @@ export default function FAQParticles() {
     let height = 0;
     const pointer = {x: -1000, y: -1000};
     const particles = [];
-    const count = 58;
+    const count = 86;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -33,11 +34,14 @@ export default function FAQParticles() {
     const randomParticle = () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      vx: (Math.random() - 0.5) * 0.16,
-      vy: (Math.random() - 0.5) * 0.16,
-      radius: 0.7 + Math.random() * 1.5,
-      color: PALETTE[Math.floor(Math.random() * PALETTE.length)],
-      alpha: 0.18 + Math.random() * 0.32,
+      vx: (Math.random() - 0.5) * 0.58,
+      vy: (Math.random() - 0.5) * 0.58,
+      radius: 1.1 + Math.random() * 1.8,
+      color: PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
+      alpha: 0.48 + Math.random() * 0.34,
+      baseAlpha: 0.48 + Math.random() * 0.34,
+      phase: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.7 + Math.random() * 1.2,
     });
 
     const reset = () => {
@@ -60,8 +64,10 @@ export default function FAQParticles() {
 
         particle.x += particle.vx;
         particle.y += particle.vy;
-        particle.vx *= 0.998;
-        particle.vy *= 0.998;
+        particle.vx *= 0.999;
+        particle.vy *= 0.999;
+        particle.phase += 0.016 * particle.pulseSpeed;
+        particle.alpha = particle.baseAlpha + Math.sin(particle.phase) * 0.16;
 
         if (particle.x < -20) particle.x = width + 20;
         if (particle.x > width + 20) particle.x = -20;
@@ -77,9 +83,9 @@ export default function FAQParticles() {
           const dy = particle.y - other.y;
           const distance = Math.hypot(dx, dy);
           if (distance > linkDistance) continue;
-          const opacity = (1 - distance / linkDistance) * 0.13;
-          context.strokeStyle = `rgba(183,177,171,${opacity})`;
-          context.lineWidth = 0.6;
+          const opacity = (1 - distance / linkDistance) * 0.34;
+          context.strokeStyle = `${LINE_COLOR}${Math.round(opacity * 255).toString(16).padStart(2, "0")}`;
+          context.lineWidth = 0.8;
           context.beginPath();
           context.moveTo(particle.x, particle.y);
           context.lineTo(other.x, other.y);
@@ -107,6 +113,20 @@ export default function FAQParticles() {
       pointer.x = -1000;
       pointer.y = -1000;
     };
+    const onPointerDown = () => {
+      const pushed = 4;
+      for (let i = 0; i < pushed; i += 1) {
+        const particle = randomParticle();
+        particle.x = pointer.x;
+        particle.y = pointer.y;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1.2 + Math.random() * 1.2;
+        particle.vx = Math.cos(angle) * speed;
+        particle.vy = Math.sin(angle) * speed;
+        particles.push(particle);
+      }
+      while (particles.length > count + pushed) particles.shift();
+    };
 
     resize();
     reset();
@@ -114,21 +134,23 @@ export default function FAQParticles() {
     window.addEventListener("resize", resize);
     canvas.addEventListener("pointermove", onPointerMove);
     canvas.addEventListener("pointerleave", onPointerLeave);
+    canvas.addEventListener("pointerdown", onPointerDown);
 
     return () => {
       cancelAnimationFrame(animationFrame);
       window.removeEventListener("resize", resize);
       canvas.removeEventListener("pointermove", onPointerMove);
       canvas.removeEventListener("pointerleave", onPointerLeave);
+      canvas.removeEventListener("pointerdown", onPointerDown);
     };
   }, []);
 
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_#2a211e_0%,_#171311_42%,_#080808_100%)]"
+      className="pointer-events-none absolute inset-0 overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_#3a2b26_0%,_#1b1513_42%,_#080808_100%)]"
     >
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full opacity-80" />
+      <canvas ref={canvasRef} className="pointer-events-auto absolute inset-0 h-full w-full opacity-95" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(8,8,8,0.42)_100%)]" />
     </div>
   );
