@@ -99,81 +99,112 @@ function AluminumProfile({ scrollProgress }) {
   );
 }
 
-// Alumina — versão de estudo isolada.
-// Nesta etapa existe somente a nova pedra. Não há giro, partículas, traço,
-// fluxo, convergência, dissolução ou qualquer outra animação de transição.
+// Alumina — recriada a partir do asset real da pasta Stone.
+// A base é o rock1-opt.glb original, mas a cópia recebe uma leitura distinta:
+// mais compacta, baixa e facetada, sem copiar a escala ou a pose da Bauxita.
+// Nesta etapa não existe giro nem transição; a pedra apenas aparece no scroll.
 function Alumina({ scrollProgress }) {
-  const meshRef = useRef();
-  const geometry = useMemo(() => {
-    const base = new THREE.IcosahedronGeometry(1.22, 2);
-    const position = base.attributes.position;
-    const vertex = new THREE.Vector3();
+  const groupRef = useRef();
+  const { gl } = useThree();
+  const gltf = useLoader(GLTFLoader, '/assets/rock1-opt.glb', (loader) => {
+    setupGltfLoader(loader, gl);
+  });
 
-    for (let i = 0; i < position.count; i += 1) {
-      vertex.fromBufferAttribute(position, i);
-      const direction = vertex.clone().normalize();
-      const facetNoise = 0.86 + (
-        Math.sin(vertex.x * 7.7 + vertex.y * 3.1 + vertex.z * 5.9) * 0.5 + 0.5
-      ) * 0.22;
-      const verticalBias = 1 + direction.y * 0.08;
-      vertex.multiplyScalar(facetNoise * verticalBias);
-      vertex.x *= 1.34;
-      vertex.y *= 0.82;
-      vertex.z *= 0.90;
-      position.setXYZ(i, vertex.x, vertex.y, vertex.z);
-    }
+  const aluminaObject = useMemo(() => {
+    const clone = gltf.scene.clone(true);
+    const bounds = new THREE.Box3().setFromObject(clone);
+    const center = new THREE.Vector3();
+    const size = new THREE.Vector3();
+    bounds.getCenter(center);
+    bounds.getSize(size);
+    clone.position.sub(center);
 
-    position.needsUpdate = true;
-    base.computeVertexNormals();
-    return base;
-  }, []);
+    const maxDimension = Math.max(size.x, size.y, size.z) || 1;
+    clone.scale.setScalar(2.72 / maxDimension);
+    clone.rotation.set(0, 0, 0);
 
-  const material = useMemo(() => new THREE.MeshStandardMaterial({
-    color: '#85898B',
-    roughness: 0.56,
-    metalness: 0.72,
-    flatShading: true,
-    transparent: true,
-    opacity: 0,
-  }), []);
+    clone.traverse((child) => {
+      if (!child.isMesh || !child.geometry) return;
+      child.geometry = child.geometry.clone();
+      const position = child.geometry.attributes.position;
+      const vertex = new THREE.Vector3();
+
+      if (position) {
+        for (let i = 0; i < position.count; i += 1) {
+          vertex.fromBufferAttribute(position, i);
+          const nx = vertex.x / Math.max(size.x, 0.0001);
+          const ny = vertex.y / Math.max(size.y, 0.0001);
+          const nz = vertex.z / Math.max(size.z, 0.0001);
+          const facet = 0.94 + (
+            Math.sin(nx * 15.7 + ny * 8.9 + nz * 12.3) * 0.5 + 0.5
+          ) * 0.13;
+
+          // Compressão vertical + leve alongamento lateral: silhueta nova,
+          // mais parecida com um agregado baixo do que com a Bauxita.
+          vertex.x *= 1.16 * facet;
+          vertex.y *= 0.72 * (0.97 + Math.sin(nx * 5.2) * 0.025);
+          vertex.z *= 0.98 * facet;
+          position.setXYZ(i, vertex.x, vertex.y, vertex.z);
+        }
+        position.needsUpdate = true;
+        child.geometry.computeVertexNormals();
+      }
+
+      const material = new THREE.MeshStandardMaterial({
+        color: '#8B9091',
+        roughness: 0.48,
+        metalness: 0.74,
+        flatShading: true,
+        transparent: true,
+        opacity: 0,
+      });
+      child.material = material;
+    });
+
+    return clone;
+  }, [gltf]);
 
   useEffect(() => {
-    const mesh = meshRef.current;
-    if (!mesh) return undefined;
+    const group = groupRef.current;
+    if (!group) return undefined;
 
-    // A posição é fixa e não há incremento de rotation em nenhum frame.
-    mesh.position.set(-0.12, -0.05, 0);
-    mesh.rotation.set(0.08, -0.18, -0.04);
-    mesh.scale.setScalar(1.08);
+    // Posição e orientação fixas: nenhuma rotação é aplicada por frame.
+    group.position.set(-0.32, -0.04, 0);
+    group.rotation.set(0.05, -0.12, -0.03);
+    group.scale.set(1.08, 1.08, 1.08);
 
     return () => {
-      geometry.dispose();
-      material.dispose();
+      aluminaObject.traverse((child) => {
+        if (child.isMesh) {
+          child.geometry?.dispose();
+          child.material?.dispose();
+        }
+      });
     };
-  }, [geometry, material]);
+  }, [aluminaObject]);
 
   useEffect(() => {
-    const visibleProgress = THREE.MathUtils.clamp((scrollProgress - 68) / 8, 0, 1);
-    const opacity = visibleProgress * 0.96;
-    material.opacity = opacity;
-    if (meshRef.current) meshRef.current.visible = opacity > 0.01;
+    const reveal = THREE.MathUtils.smoothstep(scrollProgress, 65, 73);
+    const opacity = reveal * 0.98;
+    if (!groupRef.current) return;
+    groupRef.current.visible = opacity > 0.01;
+    groupRef.current.traverse((child) => {
+      if (!child.isMesh || !child.material) return;
+      child.material.opacity = opacity;
+    });
   }, [scrollProgress]);
 
   return (
-    <mesh ref={meshRef} geometry={geometry} material={material} visible={false} />
+    <group ref={groupRef} visible={false}>
+      <primitive object={aluminaObject} />
+    </group>
   );
 }
 
 /*
- * TRANSIÇÃO DESATIVADA INTENCIONALMENTE — ETAPA POSTERIOR
- *
- * O código da dissolução Bauxita → Alumina foi mantido comentado para que
- * esta fase mostre somente a pedra nova. Não reativar antes da aprovação da
- * silhueta, material e escala da Alumina.
- *
- * function MineralStream({ scrollProgress }) {
- *   // Dissolução radial, vazio e convergência serão reconstruídos depois.
- * }
+ * TRANSIÇÃO DESATIVADA — será reconstruída após a aprovação desta pedra.
+ * Dissolução, partículas, convergência e qualquer fluxo Bauxita → Alumina
+ * permanecem fora da cena nesta fase de estudo da forma.
  */
 // Bauxita — GLB real
 function Bauxita({ scrollProgress }) {
