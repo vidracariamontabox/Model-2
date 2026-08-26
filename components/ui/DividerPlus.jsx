@@ -13,7 +13,7 @@ export default function DividerPlus({customClass = "", lineClass = "", plusClass
         animate={isInView ? {scaleX: 1} : {scaleX: 0}}
         transition={{
           duration: 0.8, 
-          ease: [0.16, 1, 0.3, 1] // Equivalente ao power3.out do GSAP
+          ease: [0.16, 1, 0.3, 1] 
         }}
         style={{transformOrigin: "left center"}}
         className={`line ${lineClass}`.trim()}
@@ -23,7 +23,7 @@ export default function DividerPlus({customClass = "", lineClass = "", plusClass
         animate={isInView ? {opacity: 1, scale: 1} : {opacity: 0, scale: 0.8}}
         transition={{
           duration: 0.5, 
-          ease: [0.16, 1, 0.3, 1], // Equivalente ao power3.out do GSAP
+          ease: [0.16, 1, 0.3, 1], 
           delay: 0.1
         }}
         width="12"

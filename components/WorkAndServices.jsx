@@ -40,12 +40,12 @@ export default function WorkAndServices() {
     const track = trackRef.current;
     const wrapper = wrapperRef.current;
     const inners = cardInnerRefs.current.filter(Boolean);
-    
+
     const getScrollAmount = () => {
       return track.scrollWidth - window.innerWidth;
     };
 
-    // Configuração inicial: Pula Intro (0) e Primeira Foto (1)
+
     inners.forEach((inner, i) => {
       if (i > 1) {
         gsap.set(inner, { y: 550, opacity: 1 });
@@ -60,10 +60,10 @@ export default function WorkAndServices() {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: () => `+=${window.innerHeight * 6}`, // Aumentado de 4 para 6 para tornar o scroll horizontal mais lento e cinematográfico
+        end: () => `+=${window.innerHeight * 6}`, 
         pin: true,
         pinSpacing: true,
-        scrub: 1.2, // Aumentado de 0.8 para 1.2 para dar mais peso e inércia ao movimento horizontal
+        scrub: 1.2, 
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           const isRevealed = self.progress > 0.88;
@@ -84,18 +84,18 @@ export default function WorkAndServices() {
       onUpdate: function() {
         const currentX = gsap.getProperty(track, "x");
         const viewportWidth = window.innerWidth;
-        
+
         inners.forEach((inner, i) => {
           if (i <= 1) return;
 
           const card = inner.parentElement;
           if (!card) return;
-          
+
           const cardLeftInViewport = card.offsetLeft + currentX;
           const cardWidth = card.offsetWidth;
-          
+
           const r = (cardLeftInViewport + cardWidth / 2) / viewportWidth;
-          
+
           let yOffset = 0;
           if (r > 1.3) {
             yOffset = 550;
@@ -105,10 +105,10 @@ export default function WorkAndServices() {
           } else {
             yOffset = 0;
           }
+
           
-          // Ajuste: Aplica um offset de -120px apenas no último card (Instagram) para alinhá-lo horizontalmente com as fotos
           const finalY = (i === IMAGES.length + 1) ? yOffset - 120 : yOffset;
-          
+
           gsap.set(inner, { y: finalY, force3D: true });
         });
       }
@@ -127,7 +127,7 @@ export default function WorkAndServices() {
 
   }, { scope: containerRef });
 
-  // Ajuste Definivo: Linhas mais claras (white/20) e fundo transparente para o gradiente do wrapper
+
   const blockClass = "flex-shrink-0 w-[calc(100%-3rem)] md:w-[45vw] h-full flex items-center justify-center px-0 md:px-10 border-r border-white/10";
 
   return (
@@ -136,25 +136,25 @@ export default function WorkAndServices() {
       className="relative w-full h-dvh bg-black overflow-hidden m-0 p-0"
       style={{ containerType: "inline-size" }}
     >
+
       
-      {/* Services Camada Inferior */}
       <div className="absolute inset-0 z-10 overflow-hidden">
         <div className="h-full w-full">
           <Services isRevealed={isServicesRevealed} />
         </div>
       </div>
 
-      {/* About/Work Camada Superior com Gradiente Preto -> Cinza Escuro */}
+
       <div ref={wrapperRef} className="relative w-full h-full bg-gradient-to-r from-black via-[#0a0a0a] to-[#1a1a1a] z-20 will-change-transform overflow-hidden m-0 p-0">
         <div ref={trackRef} className="flex h-full items-center will-change-transform m-0 p-0">
+
           
-          {/* INTRO */}
           <div className={blockClass}>
             <div ref={el => cardInnerRefs.current[0] = el} className="max-w-md w-full will-change-transform px-6 md:px-0">
               <p className="mb-8 text-[0.68rem] font-light tracking-[0.28em] uppercase text-[#75706f] font-neuehaas">
                 Quem somos
               </p>
-              
+
               <div className="flex flex-col mb-8">
                 <h2 className="text-[clamp(1.8rem,3vw,2.5rem)] uppercase font-bold tracking-tight leading-[1.02] text-[#eaeaea] font-familjen">
                   <HoverBlur>Montabox</HoverBlur>
@@ -169,7 +169,7 @@ export default function WorkAndServices() {
               </div>
 
               <div className="mt-8 mb-8 h-px bg-[#75706f]/20 w-full" />
-              
+
               <p className="font-light text-[0.85rem] leading-[1.85] text-[#acaba9] mb-10 font-neuehaas">
                 Especializada em projetos grandes, residenciais e comerciais, entregamos soluções que unem estética refinada e engenharia de alta performance.
               </p>
@@ -200,7 +200,7 @@ export default function WorkAndServices() {
             </div>
           </div>
 
-          {/* OBRAS */}
+
           {IMAGES.map((img, i) => (
             <div key={i} className={blockClass}>
               <div 
@@ -232,7 +232,7 @@ export default function WorkAndServices() {
             </div>
           ))}
 
-          {/* INSTAGRAM */}
+
           <div className={blockClass}>
             <div 
               ref={el => cardInnerRefs.current[IMAGES.length + 1] = el}

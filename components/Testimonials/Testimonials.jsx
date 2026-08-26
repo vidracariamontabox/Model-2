@@ -11,7 +11,7 @@ export default function Testimonials({customClass = "", showBottomLine = false})
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
-  // Navegação manual
+
   const paginate = useCallback((newDirection) => {
     setDirection(newDirection);
     setActiveIndex((prevIndex) => {
@@ -33,7 +33,7 @@ export default function Testimonials({customClass = "", showBottomLine = false})
     [activeIndex],
   );
 
-  // Autoplay desacelerado para 8 segundos (estava em 5s)
+
   useEffect(() => {
     const timer = setInterval(() => {
       paginate(1);
@@ -65,7 +65,7 @@ export default function Testimonials({customClass = "", showBottomLine = false})
     <section id="testimonials" className={`testimonials-section ${customClass}`.trim()}>
       <div className="testimonials-section__container">
         <div className="testimonials-section__header">
-          {/* Apenas o título principal tem o efeito de revelação */}
+
           <BlurTextReveal
             as="h2"
             text="História.dos.clientes"
@@ -75,7 +75,7 @@ export default function Testimonials({customClass = "", showBottomLine = false})
           />
 
           <div className="testimonials-section__introWrap">
-            {/* Frase estática, sem efeito de animação */}
+
             <p className="testimonials-section__intro">
               Pequenos ou grandes projetos.
               <br /> A qualidade é a mesma.

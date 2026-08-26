@@ -12,8 +12,8 @@ export default function LazyTestimonials() {
   const triggerRef = useRef(null);
   const [shouldLoad, setShouldLoad] = useState(false);
 
-  // Pré-busca o chunk JS cedo, em background — isso NÃO monta nada
-  // na tela, só garante que o código já está baixado quando precisar.
+
+  
   useEffect(() => {
     import("./Testimonials");
   }, []);
@@ -25,9 +25,9 @@ export default function LazyTestimonials() {
       return undefined;
     }
 
-    // rootMargin pequeno agora: só MONTA o componente de verdade
-    // quando estiver perto de entrar na tela. Isso evita o salto de
-    // altura no meio da sequência de scroll do HorizontalTransition.
+
+    
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;

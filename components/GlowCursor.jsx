@@ -6,7 +6,7 @@ import * as THREE from "three";
 
 function createGlowTexture() {
   if (typeof document === "undefined") return null;
-  
+
   const size = 256;
   const canvas = document.createElement("canvas");
   canvas.width = size;

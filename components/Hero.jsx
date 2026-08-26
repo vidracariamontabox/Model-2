@@ -5,14 +5,14 @@ import {Canvas, useFrame, useThree} from "@react-three/fiber";
 import * as THREE from "three";
 import GlowCursor from "@/components/GlowCursor";
 
-// ─── Constantes ───────────────────────────────────────────────────────────────
+
 const CUBE_SIZE = 1.0;
 const GAP = 0.05;
 const STEP = CUBE_SIZE + GAP;
 const XY_OFFSET_MAX = STEP * 0.025;
 const SEED = 7331;
 
-// ─── Pseudo-random com seed ───────────────────────────────────────────────────
+
 function makeRng(seed) {
   let s = seed;
   return () => {
@@ -21,7 +21,7 @@ function makeRng(seed) {
   };
 }
 
-// ─── Grade com cubos quase frontais ──────────────────────────────────────────
+
 function CubeGrid() {
   const {viewport} = useThree();
   const cubesRef = useRef([]);
@@ -29,7 +29,7 @@ function CubeGrid() {
   const cols = Math.ceil(viewport.width / STEP) + 6;
   const rows = Math.ceil(viewport.height / STEP) + 6;
 
-  // Geometrias e Materiais Memoizados para evitar criação no servidor
+
   const {geometries, materials} = useMemo(() => {
     if (typeof window === "undefined") return {geometries: null, materials: null};
 
@@ -136,7 +136,7 @@ function CubeGrid() {
   );
 }
 
-// ─── Cena ─────────────────────────────────────────────────────────────────────
+
 function CameraRig() {
   const {camera} = useThree();
   useEffect(() => {
@@ -167,7 +167,7 @@ function Scene() {
   );
 }
 
-// ─── Hero ─────────────────────────────────────────────────────────────────────
+
 export default function Hero() {
   const [mouse, setMouse] = useState({x: -999, y: -999});
   const [glow, setGlow] = useState({x: -999, y: -999});
@@ -216,8 +216,7 @@ export default function Hero() {
         </Suspense>
       </Canvas>
 
-      {/* Camada arquitetônica: referências técnicas discretas para dar profundidade
-          ao Hero sem competir com a mensagem principal. */}
+
       <div className="absolute inset-0 z-[3] pointer-events-none opacity-70" aria-hidden="true">
         <svg className="h-full w-full" viewBox="0 0 1440 900" preserveAspectRatio="none" fill="none">
           <path d="M0 690H1440" stroke="rgba(190,190,190,0.12)" strokeWidth="1" />

@@ -33,14 +33,14 @@ export default function Preloader() {
 
     const finish = () => {
       if (!isMounted) return;
+
       
-      // Simula a finalização suave do progresso
       let current = progressRef.current;
       const step = () => {
         if (!isMounted) return;
         current += (100 - current) * 0.15;
         setProgress(Math.floor(current));
-        
+
         if (current < 99.5) {
           requestAnimationFrame(step);
         } else {

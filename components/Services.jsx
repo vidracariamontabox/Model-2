@@ -4,7 +4,7 @@ import {motion} from "framer-motion";
 import BlurTextReveal from "./ui/BlurTextReveal";
 
 const services = ["Fachada Pele de Vidro.", "Esquadrias de Alumínio.", "Painel Ripado."];
-const READING_DELAY = 100; // Reduzido drasticamente para aparecer logo
+const READING_DELAY = 100; 
 
 function CursiveAltoPadrao({play}) {
   return (
@@ -30,7 +30,7 @@ export default function Services({ isRevealed }) {
     }
 
     if (isRevealed) {
-      // O título ainda tem o efeito, mas o resto já deve estar lá
+
       setIsHeaderReady(true);
     } else {
       setIsHeaderReady(false);

@@ -12,7 +12,7 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
     animationType = "chars",
     stagger = 0.05,
     duration = 1.0,
-    ease = [0.25, 0.46, 0.45, 0.94], // Equivalente aproximado ao power2.out do GSAP
+    ease = [0.25, 0.46, 0.45, 0.94], 
     start = "top 90%",
     once = true,
     play,
@@ -25,9 +25,9 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
 
   const content = children || text || html;
 
-  // Criamos uma ordem aleatória estável para o stagger, simulando o "from: random" do GSAP
+
   const itemsCount = useMemo(() => {
-    if (typeof content !== "string") return 20; // fallback
+    if (typeof content !== "string") return 20; 
     return animationType === "words" ? content.split(/\s+/).length : content.length;
   }, [content, animationType]);
 
@@ -48,7 +48,7 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
       transition: {
         duration,
         ease,
-        // Usamos o delay customizado baseado na ordem aleatória para simular o stagger random do GSAP
+
         delay: randomOrder[i % itemsCount] * stagger,
       },
     }),

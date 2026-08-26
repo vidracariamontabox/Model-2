@@ -11,10 +11,10 @@ export default function SmoothScroll({ children }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // CALIBRAGEM TRIONN: Aumentando o peso para fluidez cinematográfica
+
     const lenis = new Lenis({
-      lerp: 0.05,            // Retornado para 0.05 para aumentar o "peso" e a fluidez (mais lento)
-      wheelMultiplier: 0.7,  // Reduzido para 0.7 para tornar a rolagem mais controlada
+      lerp: 0.05,            
+      wheelMultiplier: 0.7,  
       touchMultiplier: 1.5,
       infinite: false,
       smoothWheel: true,
@@ -23,10 +23,10 @@ export default function SmoothScroll({ children }) {
 
     lenisRef.current = lenis;
 
-    // Sincroniza o ScrollTrigger com o Lenis
+
     lenis.on("scroll", ScrollTrigger.update);
 
-    // Usa o ticker do GSAP para rodar o Lenis com prioridade
+
     function update(time) {
       lenis.raf(time * 1000);
     }
@@ -34,7 +34,7 @@ export default function SmoothScroll({ children }) {
     gsap.ticker.add(update);
     gsap.ticker.lagSmoothing(0);
 
-    // Limpeza
+
     return () => {
       lenis.destroy();
       gsap.ticker.remove(update);

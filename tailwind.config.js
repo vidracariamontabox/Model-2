@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+
 module.exports = {
   content: [
     './app/**/*.{js,jsx,ts,tsx}',
@@ -8,8 +8,8 @@ module.exports = {
   theme: {
     extend: {
 
-      // ─── FONTE ────────────────────────────────────────────────
-      // Referência: font-archivo, font-familjen (títulos), font-neuehaas (textos), font-ivy-presto
+
+      
       fontFamily: {
         archivo: ['var(--font-archivo)', 'sans-serif'],
         familjen: ['var(--font-familjen)', 'sans-serif'],
@@ -17,8 +17,8 @@ module.exports = {
         'ivy-presto': ['var(--font-ivy-presto)', 'serif'],
       },
 
-      // ─── PALETA MONTABOX ──────────────────────────────────────
-      // Cores: branco (#eaeaea), inox (#acaba9), cinza (#75706f), chumbo (#2c2c2c), preto (#121212)
+
+      
       colors: {
         branco: '#eaeaea',
         inox: '#acaba9',
@@ -28,8 +28,8 @@ module.exports = {
         preto2: '#000000',
       },
 
-      // ─── TIPOGRAFIA ───────────────────────────────────────────
-      // fluid-hero: clamp(3rem, 7vw, 6rem), fluid-section: clamp(1.8rem, 4vw, 3rem)
+
+      
       fontSize: {
         '2xs': ['0.65rem', { lineHeight: '1' }],
         '3xs': ['0.68rem', { lineHeight: '1' }],
@@ -42,13 +42,13 @@ module.exports = {
         'fluid-section': 'clamp(1.8rem, 4vw, 3rem)',
       },
 
-      // ─── LINE HEIGHT ──────────────────────────────────────────
+
       lineHeight: {
         'tight-2': '1.02',
         'body': '1.85',
       },
 
-      // ─── LETTER SPACING ───────────────────────────────────────
+
       letterSpacing: {
         'ultra': '0.18em',
         'wide-2': '0.28em',
@@ -56,7 +56,7 @@ module.exports = {
         'wide-4': '0.32em',
       },
 
-      // ─── LARGURAS ─────────────────────────────────────────────
+
       width: {
         '300px': '300px',
         '420px': '420px',
@@ -64,7 +64,7 @@ module.exports = {
         '200vw': '200vw',
       },
 
-      // ─── ALTURAS ──────────────────────────────────────────────
+
       height: {
         '300px': '300px',
         '420px': '420px',
@@ -72,17 +72,17 @@ module.exports = {
         '300vh': '300vh',
       },
 
-      // ─── BACKDROP BLUR ────────────────────────────────────────
+
       backdropBlur: {
         '6px': '6px',
       },
 
-      // ─── TRANSIÇÃO ────────────────────────────────────────────
+
       transitionDuration: {
         '400': '400ms',
       },
 
-      // ─── ESPAÇAMENTO CUSTOMIZADO ──────────────────────────────
+
       spacing: {
         '0.08em': '0.08em',
       },
@@ -90,8 +90,8 @@ module.exports = {
     },
   },
 
-  // ─── SAFELIST ─────────────────────────────────────────────────
-  // Garante que classes com valores arbitrários não sejam purgadas
+
+  
   safelist: [
     'bg-[#121212]',
     'bg-[#121212]/70',
