@@ -216,8 +216,25 @@ export default function Hero() {
         </Suspense>
       </Canvas>
 
+      {/* Camada arquitetônica: referências técnicas discretas para dar profundidade
+          ao Hero sem competir com a mensagem principal. */}
+      <div className="absolute inset-0 z-[3] pointer-events-none opacity-70" aria-hidden="true">
+        <svg className="h-full w-full" viewBox="0 0 1440 900" preserveAspectRatio="none" fill="none">
+          <path d="M0 690H1440" stroke="rgba(190,190,190,0.12)" strokeWidth="1" />
+          <path d="M1015 0V900" stroke="rgba(190,190,190,0.09)" strokeWidth="1" />
+          <path d="M1015 690H1440V310H1180L1015 145" stroke="rgba(190,190,190,0.16)" strokeWidth="1" />
+          <path d="M1180 310V690" stroke="rgba(190,190,190,0.07)" strokeWidth="1" />
+          <path d="M120 690V664H180" stroke="rgba(190,190,190,0.22)" strokeWidth="1" />
+          <circle cx="1015" cy="690" r="3" fill="rgba(210,210,210,0.55)" />
+          <circle cx="1180" cy="310" r="3" fill="rgba(210,210,210,0.45)" />
+        </svg>
+      </div>
+
       <div className="absolute top-[clamp(2rem,7vh,4rem)] left-[clamp(1.5rem,3vw,3rem)] z-10 pointer-events-none flex flex-col gap-[2.75rem] max-w-[min(42rem,90vw)] mt-20">
-        <h1 className=" font-ivy-presto text-[clamp(3rem,4.7vw+1.4rem,6.4rem)] font-bold tracking-[0.03em] text-[#eaeaea] leading-[0.95] m-0">
+        <h1
+          className="font-ivy-presto text-[clamp(3rem,4.7vw+1.4rem,6.4rem)] font-bold tracking-[0.03em] text-[#eaeaea] leading-[0.95] m-0"
+          style={{textShadow: "0 2px 3px rgba(0,0,0,0.72)"}}>
+
           Seu projeto é nosso projeto
         </h1>
         <p className="font-ivy-presto text-[clamp(1.05rem,1.5vw+0.4rem,1.1rem)] font-bold tracking-[0.08em] text-[#b7b1ab] m-0 max-w-[30rem]">
@@ -237,6 +254,16 @@ export default function Hero() {
         className="absolute inset-0 z-[2] pointer-events-none"
         style={{background: "radial-gradient(ellipse 55% 60% at 50% 50%, transparent 0%, rgba(8,8,8,0.4) 100%)"}}
       />
+
+      <div className="absolute bottom-[clamp(1.5rem,4vh,3rem)] left-[clamp(1.5rem,3vw,3rem)] z-10 pointer-events-none flex items-center gap-3 font-neuehaas text-[0.55rem] tracking-[0.24em] text-[#8d8d8d] uppercase">
+        <span className="h-px w-8 bg-[#8d8d8d]/60" />
+        <span>Vidraçaria · Serralheria · Alto padrão</span>
+      </div>
+
+      <div className="absolute bottom-[clamp(1.5rem,4vh,3rem)] right-[clamp(1.5rem,3vw,3rem)] z-10 pointer-events-none flex items-center gap-3 font-neuehaas text-[0.55rem] tracking-[0.24em] text-[#8d8d8d] uppercase">
+        <span>Scroll para explorar</span>
+        <span className="h-10 w-px bg-[#b7b1ab]/60" />
+      </div>
     </section>
   );
 }
