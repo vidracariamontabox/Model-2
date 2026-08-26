@@ -99,18 +99,18 @@ function AluminumProfile({ scrollProgress }) {
   );
 }
 
-// Alumina — recriada a partir do asset real da pasta Stone.
-// A base é o rock1-opt.glb original, mas a cópia recebe uma leitura distinta:
-// mais compacta, baixa e facetada, sem copiar a escala ou a pose da Bauxita.
-// Nesta etapa não existe giro nem transição; a pedra apenas aparece no scroll.
-function Alumina({ scrollProgress }) {
+// Alumina — cópia direta do asset real da pasta Stone.
+// A geometria é a mesma família visual da pedra principal, mas a forma recebe
+// outra escala, proporção e tratamento de material. Nesta etapa ela fica
+// estática para aprovação: sem giro, partículas ou transição.
+function Alumina({ isolate = false }) {
   const groupRef = useRef();
   const { gl } = useThree();
   const gltf = useLoader(GLTFLoader, '/assets/rock1-opt.glb', (loader) => {
     setupGltfLoader(loader, gl);
   });
 
-  const aluminaObject = useMemo(() => {
+    const aluminaObject = useMemo(() => {
     const clone = gltf.scene.clone(true);
     const bounds = new THREE.Box3().setFromObject(clone);
     const center = new THREE.Vector3();
@@ -118,84 +118,36 @@ function Alumina({ scrollProgress }) {
     bounds.getCenter(center);
     bounds.getSize(size);
     clone.position.sub(center);
-
-    const maxDimension = Math.max(size.x, size.y, size.z) || 1;
-    clone.scale.setScalar(2.72 / maxDimension);
+    const baseScale = 2.72 / (Math.max(size.x, size.y, size.z) || 1);
+    // Diferença visual segura: a geometria Stone permanece intacta e a nova
+    // silhueta é criada por proporção baixa e alongamento lateral.
+    clone.scale.set(baseScale * 1.16, baseScale * 0.74, baseScale * 0.96);
     clone.rotation.set(0, 0, 0);
-
+    clone.visible = true;
     clone.traverse((child) => {
-      if (!child.isMesh || !child.geometry) return;
-      child.geometry = child.geometry.clone();
-      const position = child.geometry.attributes.position;
-      const vertex = new THREE.Vector3();
-
-      if (position) {
-        for (let i = 0; i < position.count; i += 1) {
-          vertex.fromBufferAttribute(position, i);
-          const nx = vertex.x / Math.max(size.x, 0.0001);
-          const ny = vertex.y / Math.max(size.y, 0.0001);
-          const nz = vertex.z / Math.max(size.z, 0.0001);
-          const facet = 0.94 + (
-            Math.sin(nx * 15.7 + ny * 8.9 + nz * 12.3) * 0.5 + 0.5
-          ) * 0.13;
-
-          // Compressão vertical + leve alongamento lateral: silhueta nova,
-          // mais parecida com um agregado baixo do que com a Bauxita.
-          vertex.x *= 1.16 * facet;
-          vertex.y *= 0.72 * (0.97 + Math.sin(nx * 5.2) * 0.025);
-          vertex.z *= 0.98 * facet;
-          position.setXYZ(i, vertex.x, vertex.y, vertex.z);
-        }
-        position.needsUpdate = true;
-        child.geometry.computeVertexNormals();
-      }
-
-      const material = new THREE.MeshStandardMaterial({
-        color: '#8B9091',
-        roughness: 0.48,
-        metalness: 0.74,
-        flatShading: true,
-        transparent: true,
-        opacity: 0,
+      if (!child.isMesh) return;
+      child.visible = true;
+      child.frustumCulled = false;
+      child.material = new THREE.MeshStandardMaterial({
+        color: '#C7CCCD',
+        roughness: 0.42,
+        metalness: 0.42,
+        side: THREE.DoubleSide,
       });
-      child.material = material;
     });
-
     return clone;
   }, [gltf]);
 
   useEffect(() => {
-    const group = groupRef.current;
-    if (!group) return undefined;
-
-    // Posição e orientação fixas: nenhuma rotação é aplicada por frame.
-    group.position.set(-1.35, -0.04, 0);
-    group.rotation.set(0.05, -0.12, -0.03);
-    group.scale.set(1.08, 1.08, 1.08);
-
-    return () => {
-      aluminaObject.traverse((child) => {
-        if (child.isMesh) {
-          child.geometry?.dispose();
-          child.material?.dispose();
-        }
-      });
-    };
-  }, [aluminaObject]);
-
-  useEffect(() => {
-    const reveal = THREE.MathUtils.smoothstep(scrollProgress, 52, 60);
-    const opacity = reveal * 0.98;
     if (!groupRef.current) return;
-    groupRef.current.visible = opacity > 0.01;
-    groupRef.current.traverse((child) => {
-      if (!child.isMesh || !child.material) return;
-      child.material.opacity = opacity;
-    });
-  }, [scrollProgress]);
+    groupRef.current.position.set(isolate ? 0 : -1.05, isolate ? 0 : -0.02, isolate ? 0 : 1.8);
+    groupRef.current.rotation.set(0.05, -0.12, -0.03);
+    groupRef.current.scale.setScalar(isolate ? 1.08 : 1.02);
+    groupRef.current.visible = true;
+  }, [isolate, aluminaObject]);
 
   return (
-    <group ref={groupRef} visible={false}>
+    <group ref={groupRef} visible>
       <primitive object={aluminaObject} />
     </group>
   );
@@ -278,7 +230,7 @@ function Bauxita({ scrollProgress }) {
   );
 }
 
-export default function BauxitaJourney() {
+export default function BauxitaJourney({ showAluminaOnly = false }) {
   const containerRef = useRef();
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -316,7 +268,7 @@ export default function BauxitaJourney() {
       className="relative w-full h-screen bg-black overflow-hidden"
     >
       <div className="absolute top-[20%] z-20 w-full text-center px-4 pointer-events-none">
-        {scrollProgress < 55 && (
+        {!showAluminaOnly && scrollProgress < 55 && (
           <h1 className="block pl-[4%] text-left text-5xl md:text-8xl font-bold tracking-[0.16em] text-white uppercase">
             BAUXITA
           </h1>
@@ -341,9 +293,9 @@ export default function BauxitaJourney() {
           <directionalLight position={[-3, 3, -5]} intensity={0.8} color="#ffffff" />
           <pointLight position={[-5, -5, -5]} intensity={0.6} color="#A0522D" />
 
-          <Bauxita scrollProgress={scrollProgress} />
+          {!showAluminaOnly && <Bauxita scrollProgress={scrollProgress} />}
           {/* Transição desativada até a aprovação da nova pedra. */}
-          <Alumina scrollProgress={scrollProgress} />
+          <Alumina scrollProgress={scrollProgress} isolate={showAluminaOnly} />
           {/* Perfil de alumínio desativado: nesta etapa só a nova pedra deve aparecer. */}
         </Canvas>
       </div>
