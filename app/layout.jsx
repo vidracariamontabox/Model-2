@@ -7,22 +7,48 @@ import "./Testimonials.css";
 import "./testimonials-ui.css";
 
 export const metadata = {
+  metadataBase: new URL("https://vidracariamontabox.vercel.app"),
   title: "Montabox — Vidraçaria e Serralheria de Alto Padrão",
   description: "Especializada em projetos residenciais e comerciais de luxo, unindo estética refinada e engenharia de alta performance.",
+  keywords: [
+    "vidraçaria",
+    "serralheria de alumínio",
+    "esquadrias de alumínio",
+    "fachadas de vidro",
+    "guarda-corpo",
+    "Jaboticabal",
+    "São Paulo",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
     title: "Montabox — Vidraçaria e Serralheria de Alto Padrão",
     description: "Especializada em projetos residenciais e comerciais de luxo, unindo estética refinada e engenharia de alta performance.",
     siteName: "Montabox",
+    url: "/",
     locale: "pt_BR",
     type: "website",
+    images: [
+      {
+        url: "/icon.png",
+        alt: "Montabox — Vidraçaria e Serralheria de Alto Padrão",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Montabox — Vidraçaria e Serralheria de Alto Padrão",
     description: "Especializada em projetos residenciais e comerciais de luxo, unindo estética refinada e engenharia de alta performance.",
+    images: ["/icon.png"],
   },
   icons: {
     icon: "/icon.png",
+    apple: "/icon.png",
   },
 };
 
