@@ -18,10 +18,6 @@ const Hero = dynamic(() => import("@/components/Hero"), {
   loading: () => <div className="h-screen w-full bg-[#080808]" />
 });
 
-const BauxitaJourney = dynamic(() => import("@/components/BauxitaJourney"), { 
-  ssr: false,
-  loading: () => <div className="h-[550vh] bg-black" />
-});
 
 const CTA = dynamic(() => import("@/components/CTA"), { ssr: false });
 
@@ -34,7 +30,6 @@ export default function Page() {
         <WorkAndServices />
       </div>
       <LazyTestimonials />
-      <BauxitaJourney />
       <FAQ faqs={faqs} />
       <CTA />
       <Footer />
