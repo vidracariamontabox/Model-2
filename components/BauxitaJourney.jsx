@@ -169,7 +169,7 @@ function Alumina({ scrollProgress }) {
     if (!group) return undefined;
 
     // Posição e orientação fixas: nenhuma rotação é aplicada por frame.
-    group.position.set(-0.32, -0.04, 0);
+    group.position.set(-1.35, -0.04, 0);
     group.rotation.set(0.05, -0.12, -0.03);
     group.scale.set(1.08, 1.08, 1.08);
 
@@ -184,7 +184,7 @@ function Alumina({ scrollProgress }) {
   }, [aluminaObject]);
 
   useEffect(() => {
-    const reveal = THREE.MathUtils.smoothstep(scrollProgress, 65, 73);
+    const reveal = THREE.MathUtils.smoothstep(scrollProgress, 52, 60);
     const opacity = reveal * 0.98;
     if (!groupRef.current) return;
     groupRef.current.visible = opacity > 0.01;
@@ -321,15 +321,7 @@ export default function BauxitaJourney() {
             BAUXITA
           </h1>
         )}
-        {scrollProgress >= 70 && scrollProgress < 100 && (
-          <div className="absolute left-[10%] top-[40%] text-left">
-            <BlurTextReveal
-              text="Refinado com precisão"
-              className="text-sm md:text-base font-medium text-[#acaba9] uppercase tracking-widest"
-              stagger={0.05}
-            />
-          </div>
-        )}
+        {/* Texto da etapa da Alumina desativado: somente a pedra permanece nesta fase. */}
         {/* Texto da etapa posterior desativado junto com a transição da Alumina. */}
       </div>
 
