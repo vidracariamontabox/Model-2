@@ -56,26 +56,26 @@ function WhatsAppIcon(props) {
 
 const contactLinks = [
   {
-    icon: <FacebookIcon className="h-5 w-5 text-[#75706f]" />,
+    icon: <FacebookIcon className="h-5 w-5 text-[#858180]" />,
     label: "Facebook",
     href: "https://www.facebook.com/profile.php?id=100083338509379",
   },
   {
-    icon: <InstagramIcon className="h-5 w-5 text-[#75706f]" />,
+    icon: <InstagramIcon className="h-5 w-5 text-[#858180]" />,
     label: "Instagram",
     href: "https://www.instagram.com/montabox_vidros/",
   },
   {
-    icon: <PinterestIcon className="h-5 w-5 text-[#75706f]" />,
+    icon: <PinterestIcon className="h-5 w-5 text-[#858180]" />,
     label: "Pinterest",
     href: "https://br.pinterest.com/montabox_vidros/",
   },
   {
-    icon: <MapPinIcon className="h-7 w-7 text-[#75706f]" />,
+    icon: <MapPinIcon className="h-7 w-7 text-[#858180]" />,
     label: "Maps",
     href: "https://share.google/e7G9PhQQ1gHud9Q6f",
   },
-  {icon: <WhatsAppIcon className="h-5 w-5 text-[#75706f]" />, label: "WhatsApp", href: "https://wa.me/5516981984000"},
+  {icon: <WhatsAppIcon className="h-5 w-5 text-[#858180]" />, label: "WhatsApp", href: "https://wa.me/5516981984000"},
 ];
 
 export default function Footer() {
@@ -95,7 +95,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-2 text-[0.8rem] uppercase tracking-[0.3em] text-[#75706f]">Contatos</h4>
+            <h4 className="mb-2 text-[0.8rem] uppercase tracking-[0.3em] text-[#858180]">Contatos</h4>
             <div className="flex items-center gap-4">
               {contactLinks.map(({icon, label, href}) => (
                 <a
@@ -112,14 +112,14 @@ export default function Footer() {
           </div>
 
           <div className="text-[#d1d1d1]">
-            <h4 className="mb-2 text-[0.8rem] uppercase tracking-[0.3em] text-[#75706f]">Endereço</h4>
+            <h4 className="mb-2 text-[0.8rem] uppercase tracking-[0.3em] text-[#858180]">Endereço</h4>
             <p className="text-[0.7rem] font-light uppercase tracking-widest text-[#acaba9] transition-colors duration-300">
               R. Virgílio Pedro Ribeiro, 70 - Planalto Itália, Jaboticabal - SP
               <br />
               CEP: 14890-448
             </p>
             <div className="mt-6">
-              <h5 className="mb-2 text-[0.8rem] uppercase tracking-[0.3em] text-[#75706f]">Horário</h5>
+              <h5 className="mb-2 text-[0.8rem] uppercase tracking-[0.3em] text-[#858180]">Horário</h5>
               <p className="text-[0.7rem] font-light uppercase tracking-widest text-[#acaba9] transition-colors duration-300">
                 Das 07:30 às 17:30 — segunda a sexta
               </p>
@@ -129,13 +129,13 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-white/5 pt-8 md:flex-row">
           <div className="flex items-center gap-4">
-            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-[#75706f]">© {currentYear} Montabox</span>
+            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-[#858180]">© {currentYear} Montabox</span>
             <span className="h-1 w-1 rounded-full bg-white/10" />
-            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-[#75706f]">Vidraçaria e Serralheria</span>
+            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-[#858180]">Vidraçaria e Serralheria</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-[#75706f]">Design by</span>
+            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-[#858180]">Design by</span>
             <a
               href="https://www.instagram.com/bms_trafego/"
               target="_blank"
