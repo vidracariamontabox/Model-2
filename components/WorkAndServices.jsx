@@ -45,6 +45,15 @@ export default function WorkAndServices() {
       return track.scrollWidth - window.innerWidth;
     };
 
+    const cardMetrics = [];
+    const cacheCardMetrics = () => {
+      inners.forEach((inner, i) => {
+        const card = inner.parentElement;
+        cardMetrics[i] = card
+          ? {left: card.offsetLeft, width: card.offsetWidth}
+          : null;
+      });
+    };
 
     inners.forEach((inner, i) => {
       if (i > 1) {
@@ -55,6 +64,7 @@ export default function WorkAndServices() {
     });
 
     ScrollTrigger.refresh();
+    cacheCardMetrics();
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -65,6 +75,7 @@ export default function WorkAndServices() {
         pinSpacing: true,
         scrub: 1.2, 
         invalidateOnRefresh: true,
+        onRefresh: cacheCardMetrics,
         onUpdate: (self) => {
           const isRevealed = self.progress > 0.88;
           if (isRevealed !== revealedRef.current) {
@@ -88,11 +99,11 @@ export default function WorkAndServices() {
         inners.forEach((inner, i) => {
           if (i <= 1) return;
 
-          const card = inner.parentElement;
-          if (!card) return;
+          const metrics = cardMetrics[i];
+          if (!metrics) return;
 
-          const cardLeftInViewport = card.offsetLeft + currentX;
-          const cardWidth = card.offsetWidth;
+          const cardLeftInViewport = metrics.left + currentX;
+          const cardWidth = metrics.width;
 
           const r = (cardLeftInViewport + cardWidth / 2) / viewportWidth;
 

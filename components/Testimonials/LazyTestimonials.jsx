@@ -13,11 +13,6 @@ export default function LazyTestimonials() {
   const [shouldLoad, setShouldLoad] = useState(false);
 
 
-  
-  useEffect(() => {
-    import("./Testimonials");
-  }, []);
-
   useEffect(() => {
     const trigger = triggerRef.current;
     if (!trigger || !("IntersectionObserver" in window)) {
