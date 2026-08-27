@@ -192,7 +192,7 @@ export const TestimonialsData = [
     companyName: "Excelência",
     clientName: "Naur",
     clientDeg: "Biofarm Tecnologia em Veterinária",
-    clientImage: "/images/logo-1-biofarm.webp",
+    clientImage: "/images/Logo-1-biofarm.webp",
     quoteMessage:
       "OOOO RONALDO ORÇA LÁ PRA MIMMM.",
   },
