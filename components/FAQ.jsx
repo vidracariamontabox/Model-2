@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {motion} from "framer-motion";
 import BlurTextReveal from "./ui/BlurTextReveal";
 import FAQParticles from "./FAQParticles";
@@ -84,10 +84,30 @@ function FAQItem({item, index, isOpen, onToggle}) {
   );
 }
 
-export default function FAQ({faqs}) {
+export default function FAQ({faqs, onPreloadNext}) {
+  const sectionRef = useRef(null);
+  const nextPreloadTriggeredRef = useRef(false);
   const [openId, setOpenId] = useState(-1);
 
   const toggle = (id) => setOpenId((prev) => (prev === id ? -1 : id));
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || !onPreloadNext) return undefined;
+
+    const checkProgress = () => {
+      if (nextPreloadTriggeredRef.current) return;
+      const rect = section.getBoundingClientRect();
+      if (rect.top > -(rect.height * 0.5)) return;
+      nextPreloadTriggeredRef.current = true;
+      onPreloadNext();
+      window.removeEventListener("scroll", checkProgress);
+    };
+
+    window.addEventListener("scroll", checkProgress, {passive: true});
+    checkProgress();
+    return () => window.removeEventListener("scroll", checkProgress);
+  }, [onPreloadNext]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -100,7 +120,7 @@ export default function FAQ({faqs}) {
   };
 
   return (
-    <section id="faq" className="relative w-full overflow-hidden bg-[#080808] px-6 sm:px-10 py-24">
+    <section ref={sectionRef} id="faq" className="relative w-full overflow-hidden bg-[#080808] px-6 sm:px-10 py-24">
       <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify(jsonLd)}} />
 
       <FAQParticles />

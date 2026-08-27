@@ -1,5 +1,5 @@
 "use client";
-import {useCallback, useState, useEffect} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {motion, AnimatePresence} from "framer-motion";
 import BlurTextReveal from "../ui/BlurTextReveal";
 import DividerPlus from "../ui/DividerPlus";
@@ -7,7 +7,9 @@ import TestimonialCard from "./TestimonialCard";
 import {TestimonialsData} from "../../data/TestimonialsData";
 import WordShiftButton from "../ui/WordShiftButton";
 
-export default function Testimonials({customClass = "", showBottomLine = false}) {
+export default function Testimonials({customClass = "", showBottomLine = false, onPreloadNext}) {
+  const sectionRef = useRef(null);
+  const nextPreloadTriggeredRef = useRef(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -33,6 +35,24 @@ export default function Testimonials({customClass = "", showBottomLine = false})
     [activeIndex],
   );
 
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || !onPreloadNext) return undefined;
+
+    const checkProgress = () => {
+      if (nextPreloadTriggeredRef.current) return;
+      const rect = section.getBoundingClientRect();
+      if (rect.top > -(rect.height * 0.5)) return;
+      nextPreloadTriggeredRef.current = true;
+      onPreloadNext();
+      window.removeEventListener("scroll", checkProgress);
+    };
+
+    window.addEventListener("scroll", checkProgress, {passive: true});
+    checkProgress();
+    return () => window.removeEventListener("scroll", checkProgress);
+  }, [onPreloadNext]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -62,7 +82,7 @@ export default function Testimonials({customClass = "", showBottomLine = false})
   };
 
   return (
-    <section id="testimonials" className={`testimonials-section ${customClass}`.trim()}>
+    <section ref={sectionRef} id="testimonials" className={`testimonials-section ${customClass}`.trim()}>
       <div className="testimonials-section__container">
         <div className="testimonials-section__header">
 

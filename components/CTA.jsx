@@ -82,6 +82,7 @@ function PixelCanvas({colors, gap = 5, speed = 30}) {
   const animationRef = useRef(0);
   const lastFrameRef = useRef(0);
   const reducedMotionRef = useRef(false);
+  const isActiveRef = useRef(true);
 
   const init = useCallback(() => {
     const canvas = canvasRef.current;
@@ -120,6 +121,11 @@ function PixelCanvas({colors, gap = 5, speed = 30}) {
     const frameInterval = 1000 / 60;
 
     const loop = () => {
+      if (!isActiveRef.current || document.hidden) {
+        animationRef.current = 0;
+        return;
+      }
+
       animationRef.current = requestAnimationFrame(loop);
 
       const now = performance.now();
@@ -149,13 +155,33 @@ function PixelCanvas({colors, gap = 5, speed = 30}) {
     reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     init();
 
-    const resizeObserver = new ResizeObserver(() => init());
-    if (wrapRef.current) resizeObserver.observe(wrapRef.current);
+    const setActive = (active) => {
+      isActiveRef.current = active && !document.hidden;
+      if (isActiveRef.current && !animationRef.current) animate("appear");
+      if (!isActiveRef.current && animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = 0;
+      }
+    };
 
+    const visibilityChange = () => setActive(!document.hidden);
+    const intersectionObserver = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting),
+      {threshold: 0.01},
+    );
+    const resizeObserver = new ResizeObserver(() => init());
+
+    if (wrapRef.current) {
+      intersectionObserver.observe(wrapRef.current);
+      resizeObserver.observe(wrapRef.current);
+    }
+    document.addEventListener("visibilitychange", visibilityChange);
     animate("appear");
 
     return () => {
       resizeObserver.disconnect();
+      intersectionObserver.disconnect();
+      document.removeEventListener("visibilitychange", visibilityChange);
       cancelAnimationFrame(animationRef.current);
     };
   }, [init, animate]);

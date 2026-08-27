@@ -15,6 +15,7 @@ export default function FAQParticles() {
     if (!context) return undefined;
 
     let animationFrame;
+    let isActive = true;
     let width = 0;
     let height = 0;
     const pointer = {x: -1000, y: -1000};
@@ -101,6 +102,10 @@ export default function FAQParticles() {
         context.fill();
       });
       context.globalAlpha = 1;
+      if (!isActive || document.hidden) {
+        animationFrame = 0;
+        return;
+      }
       animationFrame = requestAnimationFrame(draw);
     };
 
@@ -128,8 +133,25 @@ export default function FAQParticles() {
       while (particles.length > count + pushed) particles.shift();
     };
 
+    const updateActivity = (active) => {
+      isActive = active && !document.hidden;
+      if (isActive && !animationFrame) draw();
+      if (!isActive && animationFrame) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+      }
+    };
+
+    const visibilityChange = () => updateActivity(!document.hidden);
+    const observer = new IntersectionObserver(
+      ([entry]) => updateActivity(entry.isIntersecting),
+      {threshold: 0.01},
+    );
+
     resize();
     reset();
+    observer.observe(canvas);
+    document.addEventListener("visibilitychange", visibilityChange);
     draw();
     window.addEventListener("resize", resize);
     canvas.addEventListener("pointermove", onPointerMove);
@@ -138,6 +160,8 @@ export default function FAQParticles() {
 
     return () => {
       cancelAnimationFrame(animationFrame);
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", visibilityChange);
       window.removeEventListener("resize", resize);
       canvas.removeEventListener("pointermove", onPointerMove);
       canvas.removeEventListener("pointerleave", onPointerLeave);

@@ -28,14 +28,21 @@ export default function SmoothScroll({ children }) {
 
 
     function update(time) {
+      if (document.hidden) return;
       lenis.raf(time * 1000);
     }
 
+    const handleVisibilityChange = () => {
+      if (document.hidden) lenis.stop();
+      else lenis.start();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
     gsap.ticker.add(update);
     gsap.ticker.lagSmoothing(0);
 
-
     return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       lenis.destroy();
       gsap.ticker.remove(update);
     };

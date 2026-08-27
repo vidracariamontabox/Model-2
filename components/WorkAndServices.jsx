@@ -22,13 +22,14 @@ const IMAGES = [
   { src: "/images/obra-8-athenas.webp", alt: "Athenas", title: "Edifício Athenas", year: "2024", desc: "Manutenção e instalação de sistemas de fachada em edifícios comerciais de grande porte." },
 ];
 
-export default function WorkAndServices() {
+export default function WorkAndServices({onPreloadNext}) {
   const containerRef = useRef(null);
   const wrapperRef = useRef(null);
   const trackRef = useRef(null);
   const cardInnerRefs = useRef([]);
   const [isServicesRevealed, setIsServicesRevealed] = useState(false);
   const revealedRef = useRef(false);
+  const preloadTriggeredRef = useRef(false);
 
   useEffect(() => {
     cardInnerRefs.current = new Array(IMAGES.length + 2).fill(null);
@@ -77,6 +78,11 @@ export default function WorkAndServices() {
         invalidateOnRefresh: true,
         onRefresh: cacheCardMetrics,
         onUpdate: (self) => {
+          if (self.progress >= 0.5 && !preloadTriggeredRef.current) {
+            preloadTriggeredRef.current = true;
+            onPreloadNext?.();
+          }
+
           const isRevealed = self.progress > 0.88;
           if (isRevealed !== revealedRef.current) {
             revealedRef.current = isRevealed;
