@@ -1,25 +1,21 @@
 "use client";
-import {Children, cloneElement, forwardRef, isValidElement, useRef, useMemo} from "react";
+import {Children, cloneElement, isValidElement, useRef, useMemo} from "react";
 import {motion, useInView} from "framer-motion";
 
-const BlurTextReveal = forwardRef(function BlurTextReveal(
-  {
-    as: Tag = "h2",
-    children,
-    text = "",
-    html = "",
-    className = "",
-    animationType = "chars",
-    stagger = 0.05,
-    duration = 1.0,
-    ease = [0.25, 0.46, 0.45, 0.94], 
-    start = "top 90%",
-    once = true,
-    play,
-    ...props
-  },
-  ref,
-) {
+function BlurTextReveal({
+  as: Tag = "h2",
+  children,
+  text = "",
+  html = "",
+  className = "",
+  animationType = "chars",
+  stagger = 0.05,
+  duration = 1.0,
+  ease = [0.25, 0.46, 0.45, 0.94],
+  once = true,
+  play,
+  ...props
+}) {
   const rootRef = useRef(null);
   const isInView = useInView(rootRef, {once, margin: "-10% 0px -10% 0px"});
 
@@ -67,7 +63,7 @@ const BlurTextReveal = forwardRef(function BlurTextReveal(
       </span>
     </Tag>
   );
-});
+}
 
 function SplitText({content, type, variants, animateState}) {
   let itemIdx = 0;

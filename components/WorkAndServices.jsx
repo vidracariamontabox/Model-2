@@ -247,7 +247,8 @@ export default function WorkAndServices() {
                 </p>
                 <a 
                   href="https://www.instagram.com/vidracariamontabox/" 
-                  target="_blank" 
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="px-6 py-3 border border-white/20 rounded-tr-[99px] rounded-bl-[99px] rounded-br-[99px] bg-transparent text-white font-neuehaas text-[0.6rem] tracking-[0.16em] uppercase hover:bg-white hover:text-black transition-all duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]"
                 >
                   Seguir no Instagram →

@@ -175,7 +175,6 @@ export default function CTA({
       Se você precisa de um modelo exclusivo entre em contato com nossa equipe. <br />
     </span>
   ),
-  onPrimaryClick,
   whatsappUrl = "https://wa.me/5516981984000",
 }) {
   const [isLoaded, setIsLoaded] = useState(false);

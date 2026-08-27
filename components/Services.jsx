@@ -1,10 +1,9 @@
 "use client";
-import {useEffect, useState, useRef} from "react";
+import {useEffect, useState} from "react";
 import {motion} from "framer-motion";
 import BlurTextReveal from "./ui/BlurTextReveal";
 
 const services = ["Fachada Pele de Vidro.", "Esquadrias de Alumínio.", "Painel Ripado."];
-const READING_DELAY = 100; 
 
 function CursiveAltoPadrao({play}) {
   return (
@@ -21,7 +20,6 @@ function CursiveAltoPadrao({play}) {
 
 export default function Services({ isRevealed }) {
   const [isHeaderReady, setIsHeaderReady] = useState(false);
-  const timerRef = useRef(null);
 
   useEffect(() => {
     if (isRevealed === undefined) {

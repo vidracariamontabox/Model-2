@@ -1,6 +1,6 @@
 "use client";
 
-import {Suspense, useEffect, useMemo, useRef, useState} from "react";
+import {Suspense, useMemo, useRef, useState} from "react";
 import {Canvas, useFrame, useThree} from "@react-three/fiber";
 import * as THREE from "three";
 import GlowCursor from "@/components/GlowCursor";
@@ -170,24 +170,6 @@ function Scene() {
 
 export default function Hero() {
   const [mouse, setMouse] = useState({x: -999, y: -999});
-  const [glow, setGlow] = useState({x: -999, y: -999});
-  const glowTargetRef = useRef({x: -999, y: -999});
-
-  useEffect(() => {
-    let rafId;
-    const animate = () => {
-      setGlow((prev) => {
-        const target = glowTargetRef.current;
-        const nextX = prev.x + (target.x - prev.x) * 0.14;
-        const nextY = prev.y + (target.y - prev.y) * 0.14;
-        return {x: nextX, y: nextY};
-      });
-      rafId = requestAnimationFrame(animate);
-    };
-    rafId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(rafId);
-  }, []);
-
   return (
     <section
       id="hero"
@@ -195,12 +177,10 @@ export default function Hero() {
         const rect = e.currentTarget.getBoundingClientRect();
         const next = {x: e.clientX - rect.left, y: e.clientY - rect.top};
         setMouse(next);
-        glowTargetRef.current = next;
       }}
       onMouseLeave={() => {
         const next = {x: -999, y: -999};
         setMouse(next);
-        glowTargetRef.current = next;
       }}
       className="relative w-full overflow-hidden bg-[#080808] h-dvh min-h-dvh max-h-dvh">
       <Canvas

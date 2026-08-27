@@ -11,7 +11,6 @@ module.exports = {
 
       
       fontFamily: {
-        archivo: ['var(--font-archivo)', 'sans-serif'],
         familjen: ['var(--font-familjen)', 'sans-serif'],
         neuehaas: ['var(--font-neuehaas)', 'sans-serif'],
         'ivy-presto': ['var(--font-ivy-presto)', 'serif'],
