@@ -95,7 +95,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-2 text-[0.8rem] uppercase tracking-[0.3em] text-[#858180]">Contatos</h4>
+            <h2 className="mb-2 text-[0.8rem] uppercase tracking-[0.3em] text-[#858180]">Contatos</h2>
             <div className="flex items-center gap-4">
               {contactLinks.map(({icon, label, href}) => (
                 <a
@@ -112,14 +112,14 @@ export default function Footer() {
           </div>
 
           <div className="text-[#d1d1d1]">
-            <h4 className="mb-2 text-[0.8rem] uppercase tracking-[0.3em] text-[#858180]">Endereço</h4>
+            <h2 className="mb-2 text-[0.8rem] uppercase tracking-[0.3em] text-[#858180]">Endereço</h2>
             <p className="text-[0.7rem] font-light uppercase tracking-widest text-[#acaba9] transition-colors duration-300">
               R. Virgílio Pedro Ribeiro, 70 - Planalto Itália, Jaboticabal - SP
               <br />
               CEP: 14890-448
             </p>
             <div className="mt-6">
-              <h5 className="mb-2 text-[0.8rem] uppercase tracking-[0.3em] text-[#858180]">Horário</h5>
+              <h3 className="mb-2 text-[0.8rem] uppercase tracking-[0.3em] text-[#858180]">Horário</h3>
               <p className="text-[0.7rem] font-light uppercase tracking-widest text-[#acaba9] transition-colors duration-300">
                 Das 07:30 às 17:30 — segunda a sexta
               </p>
