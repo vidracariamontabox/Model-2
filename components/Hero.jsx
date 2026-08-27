@@ -25,6 +25,7 @@ function makeRng(seed) {
 function CubeGrid() {
   const {viewport} = useThree();
   const cubesRef = useRef([]);
+  const animatedCubesRef = useRef([]);
 
   const cols = Math.ceil(viewport.width / STEP) + 6;
   const rows = Math.ceil(viewport.height / STEP) + 6;
@@ -50,10 +51,12 @@ function CubeGrid() {
   }, []);
 
   useEffect(() => {
-    const shuffled = [...cubesRef.current].filter(Boolean).sort(() => Math.random() - 0.5);
+    const cubes = cubesRef.current.filter(Boolean);
+    const shuffled = [...cubes].sort(() => Math.random() - 0.5);
     const animCount = Math.floor(shuffled.length * 0.2);
+    const animatedCubes = [];
 
-    cubesRef.current.forEach((child) => {
+    cubes.forEach((child) => {
       if (!child) return;
       child.userData.originX = child.position.x;
       child.userData.originY = child.position.y;
@@ -69,13 +72,16 @@ function CubeGrid() {
       child.userData.phase = Math.random() * Math.PI * 2;
       child.userData.speed = 0.3 + Math.random() * 0.4;
       child.userData.amplitude = 0.2 + Math.random() * 0.2;
+      animatedCubes.push(child);
     });
+
+    animatedCubesRef.current = animatedCubes;
   }, [cols, rows]);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
-    cubesRef.current.forEach((child) => {
-      if (!child || !child.userData.animated) return;
+    animatedCubesRef.current.forEach((child) => {
+      if (!child) return;
       const {axis, phase, speed, amplitude} = child.userData;
       const delta = Math.sin(t * speed + phase) * amplitude;
       if (axis === "x") child.position.x = child.userData.originX + delta;
@@ -170,8 +176,35 @@ function Scene() {
 
 export default function Hero() {
   const [mouse, setMouse] = useState({x: -999, y: -999});
+  const [isHeroActive, setIsHeroActive] = useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotionPreference = () => setPrefersReducedMotion(motionQuery.matches);
+    updateMotionPreference();
+    motionQuery.addEventListener?.("change", updateMotionPreference);
+
+    if (!section || !("IntersectionObserver" in window)) {
+      return () => motionQuery.removeEventListener?.("change", updateMotionPreference);
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsHeroActive(entry.isIntersecting);
+    });
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+      motionQuery.removeEventListener?.("change", updateMotionPreference);
+    };
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="hero"
       onMouseMove={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -185,6 +218,8 @@ export default function Hero() {
       className="relative w-full overflow-hidden bg-[#080808] h-dvh min-h-dvh max-h-dvh">
       <Canvas
         orthographic
+        frameloop={isHeroActive && !prefersReducedMotion ? "always" : "never"}
+        dpr={[1, 1.5]}
         gl={{alpha: true}}
         camera={{position: [0, 0, 100], zoom: 80, near: 0.1, far: 500}}
         style={{position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 1}}>
