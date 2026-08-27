@@ -1,6 +1,5 @@
 export const TestimonialsData = [
   {
-    id: "Qualidade do material",
     companyName: "Qualidade do material",
     clientName: "Gustavo Salomão",
     clientDeg: "Cliente",
@@ -10,7 +9,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Qualidade do material",
     companyName: "Qualidade do material",
     clientName: "Claudia B.",
     clientDeg: "Cliente",
@@ -20,7 +18,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Qualidade do material",
     companyName: "Qualidade do material",
     clientName: "Guilherme Daneze",
     clientDeg: "Cliente",
@@ -30,7 +27,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Qualidade do material",
     companyName: "Qualidade do material",
     clientName: "Nome do CLiente",
     clientDeg: "Cliente ou nome da empresa",
@@ -40,7 +36,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Acabamento",
     companyName: "Acabamento",
     clientName: "Victoria De Bonis",
     clientDeg: "Cliente",
@@ -50,7 +45,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Acabamento",
     companyName: "Acabamento",
     clientName: "Barbara Salioni",
     clientDeg: "Cliente",
@@ -60,7 +54,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Acabamento",
     companyName: "Acabamento",
     clientName: "Milena Govoni",
     clientDeg: "Cliente",
@@ -70,7 +63,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Acabamento",
     companyName: "Acabamento",
     clientName: "Andre de Souza Maria",
     clientDeg: "Grupo André Maria",
@@ -80,7 +72,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Esquadrias",
     companyName: "Esquadrias",
     clientName: "Junior Mazza",
     clientDeg: "Cliente",
@@ -90,7 +81,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Esquadrias",
     companyName: "Esquadrias",
     clientName: "Mauro Nunes Pereira Junior",
     clientDeg: "Cliente",
@@ -100,7 +90,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Esquadrias",
     companyName: "Esquadrias",
     clientName: "Bruna Tarina",
     clientDeg: "Cliente",
@@ -110,7 +99,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Esquadrias",
     companyName: "Esquadrias",
     clientName: "Claudia Goncalves de Souza",
     clientDeg: "Construtora & Incorporadora Souza Maria",
@@ -120,7 +108,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Cumpre o que promete",
     companyName: "Cumpre o que promete",
     clientName: "Pinotti Maquinas",
     clientDeg: "Empresário",
@@ -130,7 +117,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Cumpre o que promete",
     companyName: "Cumpre o que promete",
     clientName: "André Fávaro",
     clientDeg: "Dr. Oftalmologista - Franca-SP",
@@ -140,7 +126,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Cumpre o que promete",
     companyName: "Cumpre o que promete",
     clientName: "Sacha Breckenfeld Reck",
     clientDeg: "Tennessee Steak House - Ribeirão Preto-SP",
@@ -150,7 +135,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Profissionais",
     companyName: "Profissionais",
     clientName: "Cassio Fouad",
     clientDeg: "Cliente",
@@ -160,7 +144,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Profissionais",
     companyName: "Profissionais",
     clientName: "Mateus Eduardo Rodrigues",
     clientDeg: "Cliente",
@@ -170,7 +153,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Profissionais",
     companyName: "Profissionais",
     clientName: "Cristiane Freitas",
     clientDeg: "Cliente",
@@ -180,7 +162,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Profissionais",
     companyName: "Profissionais",
     clientName: "Manuela Masso",
     clientDeg: "S. proprietária da Artemper Distribuidora de Vidros",
@@ -190,7 +171,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Excelência",
     companyName: "Excelência",
     clientName: "Maria M.",
     clientDeg: "Cliente",
@@ -200,7 +180,6 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Excelência",
     companyName: "Excelência",
     clientName: "Fuad Saud",
     clientDeg: "Cliente",
@@ -210,17 +189,15 @@ export const TestimonialsData = [
   },
 
   {
-    id: "Excelência",
     companyName: "Excelência",
     clientName: "Naur",
     clientDeg: "Biofarm Tecnologia em Veterinária",
     clientImage: "/images/logo-1-biofarm.webp",
     quoteMessage:
-      "OOOO RONALDO ORÇA lÁ PRA MIMMM.",
+      "OOOO RONALDO ORÇA LÁ PRA MIMMM.",
   },
 
   {
-    id: "Excelência",
     companyName: "Excelência",
     clientName: "Claudionor Santana",
     clientDeg: "Oxiquímica Agrociência",
