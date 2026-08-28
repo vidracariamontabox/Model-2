@@ -52,6 +52,7 @@ export const metadata = {
   icons: {
   icon: { url: "/images/Favicon.webp", sizes: "48x48", type: "image/webp" },
   apple: { url: "/images/Logo-180x180.webp", sizes: "180x180", type: "image/webp" },
+},
 };
 
 const familjen = localFont({
