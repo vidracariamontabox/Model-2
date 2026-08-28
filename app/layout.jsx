@@ -14,10 +14,11 @@ export const metadata = {
     "vidraçaria",
     "serralheria de alumínio",
     "esquadrias de alumínio",
-    "fachadas de vidro",
+    "fachada pele de vidro",
     "guarda-corpo",
     "Jaboticabal",
     "São Paulo",
+    "Painel ripado de alumínio",
   ],
   alternates: {
     canonical: "/",
@@ -34,23 +35,24 @@ export const metadata = {
     locale: "pt_BR",
     type: "website",
     images: [
-      {
-        url: "/icon.png",
-        alt: "Montabox — Vidraçaria e Serralheria de Alto Padrão",
-      },
-    ],
+    {
+      url: "/images/Logo-500x500.webp",
+      width: 500,
+      height: 500,
+      alt: "Montabox — Vidraçaria e Serralheria de Alto Padrão",
+    },
+  ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Montabox — Vidraçaria e Serralheria de Alto Padrão",
     description: "Especializada em projetos residenciais e comerciais de luxo, unindo estética refinada e engenharia de alta performance.",
-    images: ["/icon.png"],
+    images: ["/images/Logo-1200x630.webp"],
   },
   icons: {
-    icon: "/icon.png",
-    apple: "/icon.png",
-  },
-};
+  icon: { url: "/images/Favicon.webp", sizes: "48x48", type: "image/webp" },
+  apple: { url: "/images/Logo-180x180.webp", sizes: "180x180", type: "image/webp" },
+},
 
 const familjen = localFont({
   src: "../public/fonts/FamiljenGroteskVariable_Regular.woff2",
