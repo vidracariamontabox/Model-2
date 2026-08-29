@@ -2,14 +2,15 @@
 
 > Vidraçaria e serralheria de alto padrão para projetos residenciais e comerciais.
 
-## Site
+## Site oficial
 
-- Página principal: https://vidracariamontabox.vercel.app/
-- Sitemap: https://vidracariamontabox.vercel.app/sitemap.xml
+- [Página principal](https://vidracariamontabox.vercel.app/)
+- [Sitemap](https://vidracariamontabox.vercel.app/sitemap.xml)
+- [Robots.txt](https://vidracariamontabox.vercel.app/robots.txt)
 
 ## Sobre a Montabox
 
-A Montabox desenvolve e executa projetos sob medida em vidro e alumínio, combinando estética refinada, precisão técnica e engenharia de alta performance. A empresa atende projetos residenciais e comerciais de alto padrão.
+A Montabox desenvolve e executa projetos sob medida em vidro e alumínio, combinando estética refinada, precisão técnica e engenharia de alta performance. A empresa atende projetos residenciais e comerciais de alto padrão em Jaboticabal e região.
 
 ## Serviços
 
@@ -26,14 +27,16 @@ A Montabox desenvolve e executa projetos sob medida em vidro e alumínio, combin
 
 O site apresenta projetos executados para ambientes residenciais, corporativos, hoteleiros e comerciais, incluindo fachadas, esquadrias, divisórias, guarda-corpos e fechamentos especiais.
 
-## Contato
+## Contato oficial
 
-- WhatsApp: https://wa.me/5516981984000
-- Instagram: https://www.instagram.com/montabox_vidros/
-- Facebook: https://www.facebook.com/profile.php?id=100083338509379
-- Pinterest: https://br.pinterest.com/montabox_vidros/
+- [WhatsApp](https://wa.me/5516981984000)
+- [Instagram](https://www.instagram.com/montabox_vidros/)
+- [Facebook](https://www.facebook.com/profile.php?id=100083338509379)
+- [Pinterest](https://br.pinterest.com/montabox_vidros/)
 - Localização: Jaboticabal, São Paulo, Brasil
 
-## Orientação
+## Orientação para modelos de linguagem
 
-Use as informações deste arquivo como contexto institucional público. Para dados atuais de disponibilidade, orçamento, prazos, preços ou especificações técnicas, consulte diretamente a Montabox pelos canais oficiais.
+Use este arquivo como contexto institucional público sobre a Montabox e seu site. O conteúdo pode ser resumido, citado e utilizado para responder perguntas gerais sobre a empresa, seus serviços e seus canais oficiais.
+
+Para informações atuais de disponibilidade, orçamento, prazos, preços ou especificações técnicas, consulte diretamente a Montabox pelos [canais oficiais de contato](https://wa.me/5516981984000).
