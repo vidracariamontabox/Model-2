@@ -43,9 +43,11 @@ export default function WorkAndServices({onPreloadNext}) {
     const inners = cardInnerRefs.current.filter(Boolean);
 
     let scrollAmount = 0;
+    let viewportWidth = window.innerWidth;
     const getScrollAmount = () => scrollAmount;
 
     const cardMetrics = [];
+    const setInnerY = inners.map(inner => gsap.quickSetter(inner, "y", "px"));
     const cacheCardMetrics = () => {
       inners.forEach((inner, i) => {
         const card = inner.parentElement;
@@ -65,6 +67,7 @@ export default function WorkAndServices({onPreloadNext}) {
 
     const cacheLayoutMetrics = () => {
       scrollAmount = track.scrollWidth - window.innerWidth;
+      viewportWidth = window.innerWidth;
       cacheCardMetrics();
     };
 
@@ -104,8 +107,6 @@ export default function WorkAndServices({onPreloadNext}) {
       duration: 3,
       onUpdate: function() {
         const currentX = -scrollAmount * this.progress();
-        const viewportWidth = window.innerWidth;
-
         inners.forEach((inner, i) => {
           if (i <= 1) return;
 
@@ -127,10 +128,10 @@ export default function WorkAndServices({onPreloadNext}) {
             yOffset = 0;
           }
 
-          
+
           const finalY = (i === IMAGES.length + 1) ? yOffset - 120 : yOffset;
 
-          gsap.set(inner, { y: finalY, force3D: true });
+          setInnerY[i](finalY);
         });
       }
     });
