@@ -42,9 +42,8 @@ export default function WorkAndServices({onPreloadNext}) {
     const wrapper = wrapperRef.current;
     const inners = cardInnerRefs.current.filter(Boolean);
 
-    const getScrollAmount = () => {
-      return track.scrollWidth - window.innerWidth;
-    };
+    let scrollAmount = 0;
+    const getScrollAmount = () => scrollAmount;
 
     const cardMetrics = [];
     const cacheCardMetrics = () => {
@@ -64,8 +63,13 @@ export default function WorkAndServices({onPreloadNext}) {
       }
     });
 
+    const cacheLayoutMetrics = () => {
+      scrollAmount = track.scrollWidth - window.innerWidth;
+      cacheCardMetrics();
+    };
+
     ScrollTrigger.refresh();
-    cacheCardMetrics();
+    cacheLayoutMetrics();
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -76,7 +80,7 @@ export default function WorkAndServices({onPreloadNext}) {
         pinSpacing: true,
         scrub: 1.2, 
         invalidateOnRefresh: true,
-        onRefresh: cacheCardMetrics,
+        onRefresh: cacheLayoutMetrics,
         onUpdate: (self) => {
           if (self.progress >= 0.5 && !preloadTriggeredRef.current) {
             preloadTriggeredRef.current = true;
@@ -99,7 +103,7 @@ export default function WorkAndServices({onPreloadNext}) {
       ease: "none",
       duration: 3,
       onUpdate: function() {
-        const currentX = gsap.getProperty(track, "x");
+        const currentX = -scrollAmount * this.progress();
         const viewportWidth = window.innerWidth;
 
         inners.forEach((inner, i) => {
