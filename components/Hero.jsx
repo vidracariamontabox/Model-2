@@ -178,7 +178,13 @@ export default function Hero() {
   const [mouse, setMouse] = useState({x: -999, y: -999});
   const [isHeroActive, setIsHeroActive] = useState(true);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [canvasReady, setCanvasReady] = useState(false);
   const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setCanvasReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -216,7 +222,8 @@ export default function Hero() {
         setMouse(next);
       }}
       className="relative w-full overflow-hidden bg-[#080808] h-dvh min-h-dvh max-h-dvh">
-      <Canvas
+      {canvasReady && (
+        <Canvas
         orthographic
         frameloop={isHeroActive && !prefersReducedMotion ? "always" : "never"}
         dpr={[1, 1.5]}
@@ -229,7 +236,8 @@ export default function Hero() {
           <GlowCursor mousePos={mouse} />
           <CubeGrid />
         </Suspense>
-      </Canvas>
+        </Canvas>
+      )}
 
 
       <div className="absolute inset-0 z-[3] pointer-events-none opacity-70" aria-hidden="true">
