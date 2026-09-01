@@ -149,7 +149,7 @@ export default function FAQ({faqs, onPreloadNext}) {
         <h2>
           <BlurTextReveal
             as="span"
-            text="Perguntas frequentes"
+            text="Perguntas frequentes (revisar)"
             animationType="words"
             stagger={0.12}
             className="mt-2 font-light text-2xl sm:text-3xl text-[#eaeaea]"

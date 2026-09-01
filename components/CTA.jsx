@@ -165,10 +165,9 @@ function PixelCanvas({colors, gap = 5, speed = 30}) {
     };
 
     const visibilityChange = () => setActive(!document.hidden);
-    const intersectionObserver = new IntersectionObserver(
-      ([entry]) => setActive(entry.isIntersecting),
-      {threshold: 0.01},
-    );
+    const intersectionObserver = new IntersectionObserver(([entry]) => setActive(entry.isIntersecting), {
+      threshold: 0.01,
+    });
     const resizeObserver = new ResizeObserver(() => init());
 
     if (wrapRef.current) {
