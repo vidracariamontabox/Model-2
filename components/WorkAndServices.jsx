@@ -192,7 +192,7 @@ export default function WorkAndServices({onPreloadNext}) {
 
               <div className="mt-8 mb-8 h-px bg-[#75706f]/20 w-full" />
 
-              <p className="font-light text-[0.85rem] leading-[1.85] text-[#acaba9] mb-10 font-neuehaas">
+              <p className="font-light text-[0.95rem] leading-[1.85] text-[#acaba9] mb-10 font-neuehaas">
                 Especializada em projetos grandes, residenciais e comerciais, entregamos soluções que unem estética refinada e engenharia de alta performance.
               </p>
 
@@ -241,12 +241,12 @@ export default function WorkAndServices({onPreloadNext}) {
 
                 <div className="mt-6 w-[95%] text-left">
                   <span className="block text-[8px] uppercase tracking-[0.25em] text-white/40 mb-1 font-neuehaas font-bold">
-                    {img.year} — Case Study
+                    {img.year} — Obra
                   </span>
                   <h3 className="text-sm md:text-base font-bold uppercase text-white font-familjen leading-tight tracking-tight mb-2">
                     {img.title}
                   </h3>
-                  <p className="text-[10px] md:text-[11px] font-neuehaas text-[#75706f] leading-relaxed max-w-[90%]">
+                  <p className="text-[15px] md:text-[11px] font-neuehaas text-[#75706f] leading-relaxed max-w-[90%]">
                     {img.desc}
                   </p>
                 </div>
